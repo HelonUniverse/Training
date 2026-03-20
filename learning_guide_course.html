@@ -1,0 +1,2232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning Guide Training | Self-Paced Course</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --terra: #B85042;
+    --terra-light: #d4695a;
+    --terra-dark: #8a3a30;
+    --sage: #A7BEAE;
+    --sage-dark: #7a9b84;
+    --sand: #F0EDE4;
+    --sand-dark: #e0dbd0;
+    --dark: #1E1E1E;
+    --dark2: #2c2c2c;
+    --charcoal: #3d3d3d;
+    --gray: #6b6b6b;
+    --muted: #999;
+    --white: #ffffff;
+    --locked: #c5c5c5;
+    --locked-bg: #f0f0f0;
+    --pass: #5a9b6e;
+    --pass-light: #e8f5ed;
+    --fail: #c0392b;
+    --fail-light: #fceae8;
+    --gold: #c9954a;
+    --gold-light: #fdf3e3;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--sand);
+    color: var(--dark);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    position: fixed;
+    left: 0; top: 0; bottom: 0;
+    width: 280px;
+    background: var(--dark);
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+    overflow-y: auto;
+  }
+
+  .sidebar-brand {
+    padding: 28px 24px 20px;
+    border-bottom: 1px solid #333;
+  }
+  .sidebar-brand h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 17px;
+    color: var(--white);
+    line-height: 1.3;
+    letter-spacing: 0.01em;
+  }
+  .sidebar-brand span {
+    display: inline-block;
+    margin-top: 6px;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--sage);
+  }
+
+  .progress-wrap {
+    padding: 16px 24px;
+    border-bottom: 1px solid #333;
+  }
+  .progress-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .progress-label span { color: var(--terra-light); }
+  .progress-bar {
+    height: 4px;
+    background: #333;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--terra), var(--gold));
+    border-radius: 2px;
+    transition: width 0.6s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .nav-section {
+    padding: 12px 0;
+    border-bottom: 1px solid #2a2a2a;
+  }
+  .nav-section-title {
+    padding: 6px 24px 10px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #555;
+  }
+
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 24px;
+    cursor: pointer;
+    transition: background 0.15s;
+    position: relative;
+  }
+  .nav-item:hover { background: #2a2a2a; }
+  .nav-item.active { background: #2a2a2a; }
+  .nav-item.active::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: var(--terra);
+  }
+  .nav-item.locked { opacity: 0.45; cursor: not-allowed; }
+
+  .nav-icon {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+    background: #333;
+    transition: background 0.15s;
+  }
+  .nav-item.active .nav-icon { background: var(--terra); }
+  .nav-item.completed .nav-icon { background: var(--pass); }
+  .nav-item.locked .nav-icon { background: #2a2a2a; }
+
+  .nav-text { flex: 1; }
+  .nav-title {
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--white);
+    line-height: 1.3;
+  }
+  .nav-item.locked .nav-title { color: #555; }
+  .nav-sub {
+    font-size: 11px;
+    color: #555;
+    margin-top: 2px;
+  }
+  .nav-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 10px;
+    background: #333;
+    color: #666;
+    letter-spacing: 0.05em;
+    flex-shrink: 0;
+  }
+  .nav-item.completed .nav-badge { background: var(--pass); color: white; }
+
+  /* ── MAIN ── */
+  .main {
+    margin-left: 280px;
+    min-height: 100vh;
+    padding: 0 0 80px;
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    background: var(--white);
+    border-bottom: 1px solid var(--sand-dark);
+    padding: 16px 48px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+  }
+  .topbar-breadcrumb {
+    font-size: 13px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .topbar-breadcrumb .current {
+    color: var(--dark);
+    font-weight: 600;
+  }
+  .module-badge {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    background: var(--sand);
+    color: var(--terra);
+    border: 1px solid var(--sand-dark);
+  }
+
+  /* ── CONTENT ── */
+  .content {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 48px 48px 0;
+  }
+
+  .screen { display: none; }
+  .screen.active { display: block; animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ── WELCOME SCREEN ── */
+  .welcome-hero {
+    background: var(--dark);
+    border-radius: 20px;
+    padding: 56px 52px;
+    margin-bottom: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .welcome-hero::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 300px; height: 300px;
+    background: radial-gradient(circle, rgba(184,80,66,0.3) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .welcome-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -40px; left: 40%;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(167,190,174,0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .welcome-tag {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--sage);
+    margin-bottom: 16px;
+  }
+  .welcome-hero h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 44px;
+    line-height: 1.15;
+    color: var(--white);
+    margin-bottom: 16px;
+  }
+  .welcome-hero h2 em {
+    font-style: normal;
+    color: var(--terra-light);
+  }
+  .welcome-hero p {
+    font-size: 16px;
+    color: #aaa;
+    line-height: 1.7;
+    max-width: 540px;
+    margin-bottom: 32px;
+  }
+  .welcome-stats {
+    display: flex;
+    gap: 32px;
+    margin-bottom: 32px;
+  }
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .stat-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--white);
+  }
+  .stat-label {
+    font-size: 12px;
+    color: #666;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* ── MODULE CARDS ── */
+  .module-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .module-card {
+    background: var(--white);
+    border-radius: 14px;
+    padding: 20px;
+    border: 1px solid var(--sand-dark);
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .module-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.08); }
+  .module-card.locked { opacity: 0.55; cursor: not-allowed; }
+  .module-card.locked:hover { transform: none; box-shadow: none; }
+  .module-card.completed { border-color: var(--pass); }
+  .module-card-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--sand-dark);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .module-card.completed .module-card-num { color: var(--pass); opacity: 0.4; }
+  .module-card h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--dark);
+    margin-bottom: 4px;
+    line-height: 1.35;
+  }
+  .module-card p {
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .module-card-status {
+    position: absolute;
+    top: 16px; right: 16px;
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+  }
+  .module-card.completed .module-card-status { background: var(--pass); color: white; }
+  .module-card.locked .module-card-status { background: var(--locked-bg); color: var(--locked); }
+  .module-card:not(.locked):not(.completed) .module-card-status { background: var(--terra); color: white; }
+
+  /* ── LESSON CONTENT ── */
+  .lesson-header {
+    margin-bottom: 36px;
+  }
+  .lesson-module-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--terra);
+    background: var(--gold-light);
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
+  .lesson-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 36px;
+    line-height: 1.2;
+    color: var(--dark);
+    margin-bottom: 10px;
+  }
+  .lesson-meta {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .lesson-meta span { display: flex; align-items: center; gap: 5px; }
+
+  .lesson-body {
+    font-size: 15.5px;
+    line-height: 1.75;
+    color: var(--charcoal);
+  }
+  .lesson-body h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    color: var(--dark);
+    margin: 36px 0 14px;
+    padding-top: 36px;
+    border-top: 1px solid var(--sand-dark);
+  }
+  .lesson-body h3:first-of-type { margin-top: 0; padding-top: 0; border-top: none; }
+  .lesson-body p { margin-bottom: 16px; }
+
+  .callout {
+    background: var(--gold-light);
+    border-left: 4px solid var(--terra);
+    padding: 16px 20px;
+    border-radius: 0 10px 10px 0;
+    margin: 20px 0;
+    font-size: 14.5px;
+    color: var(--dark2);
+    font-style: italic;
+  }
+  .callout strong { font-style: normal; color: var(--terra); }
+
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    margin: 20px 0;
+  }
+  .info-card {
+    background: var(--white);
+    border: 1px solid var(--sand-dark);
+    border-radius: 12px;
+    padding: 18px;
+  }
+  .info-card-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--terra);
+    margin-bottom: 6px;
+  }
+  .info-card p { font-size: 14px; color: var(--gray); margin: 0; line-height: 1.55; }
+
+  .steps-list { margin: 20px 0; }
+  .step-item {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    align-items: flex-start;
+  }
+  .step-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: var(--terra);
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .step-content h4 { font-size: 15px; font-weight: 600; color: var(--dark); margin-bottom: 4px; }
+  .step-content p { font-size: 14px; color: var(--gray); margin: 0; line-height: 1.55; }
+
+  .comparison-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--sand-dark);
+  }
+  .comparison-table th {
+    background: var(--terra);
+    color: white;
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .comparison-table td {
+    padding: 12px 16px;
+    font-size: 14px;
+    color: var(--gray);
+    border-top: 1px solid var(--sand-dark);
+    vertical-align: top;
+  }
+  .comparison-table tr:nth-child(odd) td { background: var(--sand); }
+  .comparison-table tr:nth-child(even) td { background: white; }
+  .comparison-table td:first-child { font-weight: 600; color: var(--dark); }
+
+  .highlight-box {
+    background: var(--dark);
+    color: var(--white);
+    padding: 24px 28px;
+    border-radius: 14px;
+    margin: 24px 0;
+  }
+  .highlight-box h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--terra-light);
+    margin-bottom: 12px;
+  }
+  .highlight-box ul { padding-left: 20px; }
+  .highlight-box ul li { font-size: 14px; color: #ccc; margin-bottom: 6px; line-height: 1.55; }
+
+  /* ── QUIZ ── */
+  .quiz-section {
+    margin-top: 56px;
+    padding-top: 40px;
+    border-top: 2px solid var(--sand-dark);
+  }
+  .quiz-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  .quiz-icon {
+    width: 48px; height: 48px;
+    background: var(--terra);
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    color: white;
+    flex-shrink: 0;
+  }
+  .quiz-header h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    color: var(--dark);
+    margin-bottom: 4px;
+  }
+  .quiz-header p { font-size: 13px; color: var(--muted); }
+
+  .quiz-question {
+    background: var(--white);
+    border: 1px solid var(--sand-dark);
+    border-radius: 14px;
+    padding: 24px;
+    margin-bottom: 20px;
+    transition: all 0.2s;
+  }
+  .quiz-question.correct { border-color: var(--pass); background: var(--pass-light); }
+  .quiz-question.wrong { border-color: var(--fail); background: var(--fail-light); }
+
+  .quiz-q-num {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .quiz-q-text {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 18px;
+    line-height: 1.4;
+  }
+  .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+  .quiz-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1.5px solid var(--sand-dark);
+    cursor: pointer;
+    transition: all 0.15s;
+    background: white;
+    font-size: 14px;
+    color: var(--gray);
+    line-height: 1.4;
+  }
+  .quiz-option:hover { border-color: var(--terra); background: var(--gold-light); }
+  .quiz-option.selected { border-color: var(--terra); background: var(--gold-light); color: var(--dark); }
+  .quiz-option.correct-ans { border-color: var(--pass); background: var(--pass-light); color: var(--dark); }
+  .quiz-option.wrong-ans { border-color: var(--fail); background: var(--fail-light); color: var(--dark); }
+  .quiz-option.disabled { pointer-events: none; }
+  .quiz-option-dot {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    border: 2px solid var(--sand-dark);
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: all 0.15s;
+  }
+  .quiz-option.selected .quiz-option-dot { border-color: var(--terra); background: var(--terra); }
+  .quiz-option.correct-ans .quiz-option-dot { border-color: var(--pass); background: var(--pass); }
+  .quiz-option.wrong-ans .quiz-option-dot { border-color: var(--fail); background: var(--fail); }
+
+  .quiz-feedback {
+    padding: 12px 16px;
+    border-radius: 10px;
+    font-size: 14px;
+    margin-top: 12px;
+    display: none;
+    line-height: 1.5;
+  }
+  .quiz-feedback.show { display: block; }
+  .quiz-feedback.correct { background: var(--pass-light); color: #2d6e3e; border: 1px solid var(--pass); }
+  .quiz-feedback.wrong { background: var(--fail-light); color: #8b1a1a; border: 1px solid #e0a0a0; }
+
+  .quiz-result {
+    background: var(--white);
+    border-radius: 16px;
+    padding: 36px;
+    text-align: center;
+    border: 2px solid var(--sand-dark);
+    margin-top: 24px;
+    display: none;
+  }
+  .quiz-result.show { display: block; animation: fadeIn 0.4s ease; }
+  .quiz-result.passed { border-color: var(--pass); }
+  .quiz-result.failed { border-color: var(--fail); }
+
+  .result-score {
+    font-family: 'Playfair Display', serif;
+    font-size: 64px;
+    font-weight: 900;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .result-score.pass { color: var(--pass); }
+  .result-score.fail { color: var(--fail); }
+  .result-message { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: var(--dark); }
+  .result-sub { font-size: 14px; color: var(--muted); margin-bottom: 28px; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 13px 28px;
+    border-radius: 10px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    text-decoration: none;
+  }
+  .btn-primary {
+    background: var(--terra);
+    color: white;
+  }
+  .btn-primary:hover { background: var(--terra-dark); transform: translateY(-1px); box-shadow: 0 4px 14px rgba(184,80,66,0.35); }
+  .btn-secondary {
+    background: var(--white);
+    color: var(--dark);
+    border: 1.5px solid var(--sand-dark);
+  }
+  .btn-secondary:hover { border-color: var(--terra); color: var(--terra); }
+  .btn-success {
+    background: var(--pass);
+    color: white;
+  }
+  .btn-success:hover { background: #4a8a5e; }
+  .btn-lg { padding: 16px 36px; font-size: 15px; border-radius: 12px; }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; pointer-events: none; }
+
+  .lesson-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 48px;
+    padding-top: 32px;
+    border-top: 1px solid var(--sand-dark);
+  }
+
+  /* ── COMPLETION SCREEN ── */
+  .completion-screen {
+    text-align: center;
+    padding: 80px 40px;
+  }
+  .completion-badge {
+    width: 120px; height: 120px;
+    background: linear-gradient(135deg, var(--terra), var(--gold));
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 52px;
+    margin: 0 auto 32px;
+    box-shadow: 0 16px 48px rgba(184,80,66,0.3);
+  }
+  .completion-screen h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    color: var(--dark);
+    margin-bottom: 14px;
+  }
+  .completion-screen p { font-size: 17px; color: var(--gray); max-width: 480px; margin: 0 auto 36px; line-height: 1.7; }
+  .cert-modules {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+  }
+  .cert-chip {
+    background: var(--pass-light);
+    color: var(--pass);
+    border: 1px solid var(--pass);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  /* ── TOAST ── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--dark);
+    color: white;
+    padding: 14px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    z-index: 999;
+    max-width: 320px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+  .toast.success { border-left: 4px solid var(--pass); }
+  .toast.locked-msg { border-left: 4px solid var(--terra); }
+
+  .lock-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(240,240,240,0.7);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    backdrop-filter: blur(2px);
+  }
+</style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <h1>Learning Guide<br>Training</h1>
+    <span>Self-Paced Course</span>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-label">
+      Your Progress <span id="progress-text">0%</span>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Getting Started</div>
+    <div class="nav-item active" onclick="showScreen('welcome')" id="nav-welcome">
+      <div class="nav-icon">🏠</div>
+      <div class="nav-text">
+        <div class="nav-title">Course Home</div>
+        <div class="nav-sub">Overview & modules</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Part 1 — Teaching Strategies</div>
+    <div class="nav-item" onclick="tryNav('m1')" id="nav-m1">
+      <div class="nav-icon">🎯</div>
+      <div class="nav-text">
+        <div class="nav-title">Who Is a Learning Guide?</div>
+        <div class="nav-sub">Roles & responsibilities</div>
+      </div>
+      <div class="nav-badge">Quiz</div>
+    </div>
+    <div class="nav-item locked" onclick="tryNav('m2')" id="nav-m2">
+      <div class="nav-icon">🔒</div>
+      <div class="nav-text">
+        <div class="nav-title">Know Your Learners</div>
+        <div class="nav-sub">4 lenses of understanding</div>
+      </div>
+      <div class="nav-badge">Quiz</div>
+    </div>
+    <div class="nav-item locked" onclick="tryNav('m3')" id="nav-m3">
+      <div class="nav-icon">🔒</div>
+      <div class="nav-text">
+        <div class="nav-title">5 Core Strategies</div>
+        <div class="nav-sub">High-impact techniques</div>
+      </div>
+      <div class="nav-badge">Quiz</div>
+    </div>
+    <div class="nav-item locked" onclick="tryNav('m4')" id="nav-m4">
+      <div class="nav-icon">🔒</div>
+      <div class="nav-text">
+        <div class="nav-title">Giving Effective Feedback</div>
+        <div class="nav-sub">WWW+EBI framework</div>
+      </div>
+      <div class="nav-badge">Quiz</div>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-section-title">Part 2 — Using MBTP</div>
+    <div class="nav-item locked" onclick="tryNav('m5')" id="nav-m5">
+      <div class="nav-icon">🔒</div>
+      <div class="nav-text">
+        <div class="nav-title">What Is MBTP?</div>
+        <div class="nav-sub">Philosophy & approach</div>
+      </div>
+      <div class="nav-badge">Quiz</div>
+    </div>
+    <div class="nav-item locked" onclick="tryNav('m6')" id="nav-m6">
+      <div class="nav-icon">🔒</div>
+      <div class="nav-text">
+        <div class="nav-title">How MBTP Is Organized</div>
+        <div class="nav-sub">Structure & pacing</div>
+      </div>
+      <div class="nav-badge">Quiz</div>
+    </div>
+    <div class="nav-item locked" onclick="tryNav('m7')" id="nav-m7">
+      <div class="nav-icon">🔒</div>
+      <div class="nav-text">
+        <div class="nav-title">A Typical MBTP Day</div>
+        <div class="nav-sub">Step-by-step session</div>
+      </div>
+      <div class="nav-badge">Quiz</div>
+    </div>
+    <div class="nav-item locked" onclick="tryNav('m8')" id="nav-m8">
+      <div class="nav-icon">🔒</div>
+      <div class="nav-text">
+        <div class="nav-title">Age Levels & Differences</div>
+        <div class="nav-sub">PreK through Upper Elem</div>
+      </div>
+      <div class="nav-badge">Quiz</div>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-item locked" onclick="tryNav('complete')" id="nav-complete">
+      <div class="nav-icon">🏆</div>
+      <div class="nav-text">
+        <div class="nav-title">Course Completion</div>
+        <div class="nav-sub">Certificate & summary</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-breadcrumb">
+      <span>Learning Guide Training</span>
+      <span>›</span>
+      <span class="current" id="topbar-current">Course Home</span>
+    </div>
+    <div class="module-badge" id="topbar-badge">Self-Paced</div>
+  </div>
+
+  <div class="content">
+
+    <!-- WELCOME SCREEN -->
+    <div class="screen active" id="screen-welcome">
+      <div class="welcome-hero">
+        <div class="welcome-tag">✦ Self-Paced Course</div>
+        <h2>Become a Confident<br><em>Learning Guide</em></h2>
+        <p>A complete training covering general teaching strategies and how to use the Moving Beyond the Page curriculum — built for brand-new guides across all age levels.</p>
+        <div class="welcome-stats">
+          <div class="stat">
+            <span class="stat-num">8</span>
+            <span class="stat-label">Modules</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">~2</span>
+            <span class="stat-label">Hours</span>
+          </div>
+          <div class="stat">
+            <span class="stat-num">80%</span>
+            <span class="stat-label">Pass score</span>
+          </div>
+        </div>
+        <button class="btn btn-primary btn-lg" onclick="tryNav('m1')">
+          Start Course →
+        </button>
+      </div>
+
+      <div class="module-grid">
+        <div class="module-card" onclick="tryNav('m1')" id="card-m1">
+          <div class="module-card-num">01</div>
+          <div class="module-card-status">→</div>
+          <h3>Who Is a Learning Guide?</h3>
+          <p>Roles, responsibilities, and the mixed-group advantage</p>
+        </div>
+        <div class="module-card locked" onclick="tryNav('m2')" id="card-m2">
+          <div class="module-card-num">02</div>
+          <div class="module-card-status">🔒</div>
+          <h3>Know Your Learners</h3>
+          <p>Prior knowledge, learning styles, language, motivation</p>
+        </div>
+        <div class="module-card locked" onclick="tryNav('m3')" id="card-m3">
+          <div class="module-card-num">03</div>
+          <div class="module-card-status">🔒</div>
+          <h3>5 Core Teaching Strategies</h3>
+          <p>High-impact instructional techniques for any setting</p>
+        </div>
+        <div class="module-card locked" onclick="tryNav('m4')" id="card-m4">
+          <div class="module-card-num">04</div>
+          <div class="module-card-status">🔒</div>
+          <h3>Giving Effective Feedback</h3>
+          <p>The WWW+EBI framework — specific, timely, growth-focused</p>
+        </div>
+        <div class="module-card locked" onclick="tryNav('m5')" id="card-m5">
+          <div class="module-card-num">05</div>
+          <div class="module-card-status">🔒</div>
+          <h3>What Is MBTP?</h3>
+          <p>Philosophy, approach, and what makes it different</p>
+        </div>
+        <div class="module-card locked" onclick="tryNav('m6')" id="card-m6">
+          <div class="module-card-num">06</div>
+          <div class="module-card-status">🔒</div>
+          <h3>How MBTP Is Organized</h3>
+          <p>Levels, concepts, units, lessons, and daily pacing</p>
+        </div>
+        <div class="module-card locked" onclick="tryNav('m7')" id="card-m7">
+          <div class="module-card-num">07</div>
+          <div class="module-card-status">🔒</div>
+          <h3>A Typical MBTP Day</h3>
+          <p>Step-by-step walkthrough of a daily session</p>
+        </div>
+        <div class="module-card locked" onclick="tryNav('m8')" id="card-m8">
+          <div class="module-card-num">08</div>
+          <div class="module-card-status">🔒</div>
+          <h3>Age Levels & Differences</h3>
+          <p>PreK through Upper Elementary — what changes and why</p>
+        </div>
+      </div>
+
+      <div class="callout">
+        <strong>How checkpoints work:</strong> Each module ends with a short quiz. You need to score 80% or higher to unlock the next module. You can retake quizzes as many times as needed — there's no penalty for trying again.
+      </div>
+    </div>
+
+    <!-- MODULE 1: Who Is a Learning Guide? -->
+    <div class="screen" id="screen-m1">
+      <div class="lesson-header">
+        <div class="lesson-module-tag">✦ Module 1 of 8 — Part 1: Teaching Strategies</div>
+        <h2>Who Is a Learning Guide?</h2>
+        <div class="lesson-meta">
+          <span>📖 ~10 min read</span>
+          <span>✦ Quiz to unlock next module</span>
+        </div>
+      </div>
+      <div class="lesson-body">
+        <h3>Defining the Role</h3>
+        <p>A <strong>Learning Guide</strong> is anyone who intentionally supports another person's growth — regardless of their title, background, or years of experience. You might be a certified teacher, a parent volunteer, a tutor, a community educator, or an instructional aide. What you share is a commitment to the learner in front of you.</p>
+        <p>The mixed-group setting is actually an advantage. When guides come from different backgrounds, they bring different examples, different lived experiences, and different ways of relating to learners. That diversity makes the whole group stronger.</p>
+
+        <div class="info-grid">
+          <div class="info-card">
+            <div class="info-card-label">Certified Teachers Bring</div>
+            <p>Structured instructional methods, curriculum familiarity, assessment skills, and knowledge of developmental stages.</p>
+          </div>
+          <div class="info-card">
+            <div class="info-card-label">Parent Volunteers Bring</div>
+            <p>Deep knowledge of their learner's history, high motivation, flexibility, and personal connection that builds trust.</p>
+          </div>
+          <div class="info-card">
+            <div class="info-card-label">Tutors & Mentors Bring</div>
+            <p>Subject expertise, one-on-one focus, patience for repetition, and a non-evaluative relationship with the learner.</p>
+          </div>
+          <div class="info-card">
+            <div class="info-card-label">Aides & Assistants Bring</div>
+            <p>Presence, consistency, support during transitions, and often the strongest relationship with hesitant learners.</p>
+          </div>
+        </div>
+
+        <h3>The Learning Guide Mindset</h3>
+        <p>Effective learning guides share three core beliefs, regardless of their background:</p>
+        <div class="steps-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <h4>Every learner can grow</h4>
+              <p>Growth mindset starts with the guide, not the learner. When you believe your learner is capable of progress, they begin to believe it too.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <h4>Your job is to facilitate, not perform</h4>
+              <p>The best sessions are the ones where the learner does most of the thinking. Your role is to ask good questions, not to deliver lectures.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <h4>Reflection improves practice</h4>
+              <p>After every session, the most effective guides ask: What worked? What confused my learner? What would I do differently next time?</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout">
+          <strong>Remember:</strong> You don't have to be an expert in everything to be an excellent learning guide. You do need to be prepared, present, and reflective.
+        </div>
+
+        <h3>What Learning Guides Are NOT Responsible For</h3>
+        <p>New guides often take on too much. Here's what is <em>not</em> your burden to carry alone:</p>
+        <p>You are not responsible for fixing every learning gap in one session. You are not responsible for a learner's motivation on a hard day. You are not expected to be a licensed therapist, a curriculum designer, or an expert in every subject. Your job is to show up prepared, create a safe and engaging space, and do your best — then reflect and improve.</p>
+      </div>
+
+      <!-- QUIZ -->
+      <div class="quiz-section">
+        <div class="quiz-header">
+          <div class="quiz-icon">✏️</div>
+          <div>
+            <h3>Module 1 Checkpoint</h3>
+            <p>Score 80% or higher (4 of 5 correct) to unlock Module 2</p>
+          </div>
+        </div>
+
+        <div id="quiz-m1">
+          <div class="quiz-question" id="m1q1">
+            <div class="quiz-q-num">Question 1 of 5</div>
+            <div class="quiz-q-text">Which of the following best describes a Learning Guide?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this, 'm1q1', false)"><div class="quiz-option-dot"></div>Only certified teachers who have completed a formal education degree</div>
+              <div class="quiz-option" onclick="selectOption(this, 'm1q1', true)"><div class="quiz-option-dot"></div>Anyone who intentionally supports another person's learning, regardless of title or background</div>
+              <div class="quiz-option" onclick="selectOption(this, 'm1q1', false)"><div class="quiz-option-dot"></div>Parents who homeschool their own children exclusively</div>
+              <div class="quiz-option" onclick="selectOption(this, 'm1q1', false)"><div class="quiz-option-dot"></div>Professionals who hold a state tutoring license</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m1q1"></div>
+          </div>
+
+          <div class="quiz-question" id="m1q2">
+            <div class="quiz-q-num">Question 2 of 5</div>
+            <div class="quiz-q-text">What is the primary role of a Learning Guide during a session?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this, 'm1q2', false)"><div class="quiz-option-dot"></div>To lecture and provide all the information the learner needs</div>
+              <div class="quiz-option" onclick="selectOption(this, 'm1q2', false)"><div class="quiz-option-dot"></div>To complete activities alongside the learner as a peer</div>
+              <div class="quiz-option" onclick="selectOption(this, 'm1q2', true)"><div class="quiz-option-dot"></div>To facilitate thinking, ask good questions, and create a supportive learning environment</div>
+              <div class="quiz-option" onclick="selectOption(this, 'm1q2', false)"><div class="quiz-option-dot"></div>To evaluate and grade the learner's performance on standardized tests</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m1q2"></div>
+          </div>
+
+          <div class="quiz-question" id="m1q3">
+            <div class="quiz-q-num">Question 3 of 5</div>
+            <div class="quiz-q-text">Why is a mixed-group of learning guides (teachers, parents, tutors) considered an advantage?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this, 'm1q3', false)"><div class="quiz-option-dot"></div>It reduces costs since fewer certified teachers are needed</div>
+              <div class="quiz-option" onclick="selectOption(this, 'm1q3', true)"><div class="quiz-option-dot"></div>Different backgrounds bring diverse perspectives, examples, and ways of relating to learners</div>
+              <div class="quiz-option" onclick="selectOption(this, 'm1q3', false)"><div class="quiz-option-dot"></div>Mixed groups always agree on the best teaching approach</div>
+              <div class="quiz-option" onclick="selectOption(this, 'm1q3', false)"><div class="quiz-option-dot"></div>Volunteers can replace certified staff to lower administrative overhead</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m1q3"></div>
+          </div>
+
+          <div class="quiz-question" id="m1q4">
+            <div class="quiz-q-num">Question 4 of 5</div>
+            <div class="quiz-q-text">Which of the three Learning Guide mindset beliefs states that "the best sessions are ones where the learner does most of the thinking"?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this, 'm1q4', false)"><div class="quiz-option-dot"></div>Every learner can grow</div>
+              <div class="quiz-option" onclick="selectOption(this, 'm1q4', false)"><div class="quiz-option-dot"></div>Reflection improves practice</div>
+              <div class="quiz-option" onclick="selectOption(this, 'm1q4', true)"><div class="quiz-option-dot"></div>Your job is to facilitate, not perform</div>
+              <div class="quiz-option" onclick="selectOption(this, 'm1q4', false)"><div class="quiz-option-dot"></div>Consistency builds relationship</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m1q4"></div>
+          </div>
+
+          <div class="quiz-question" id="m1q5">
+            <div class="quiz-q-num">Question 5 of 5</div>
+            <div class="quiz-q-text">Which of the following is NOT something a Learning Guide is responsible for?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this, 'm1q5', false)"><div class="quiz-option-dot"></div>Arriving prepared for each session</div>
+              <div class="quiz-option" onclick="selectOption(this, 'm1q5', false)"><div class="quiz-option-dot"></div>Creating a safe and engaging environment</div>
+              <div class="quiz-option" onclick="selectOption(this, 'm1q5', true)"><div class="quiz-option-dot"></div>Fixing every learning gap in a single session</div>
+              <div class="quiz-option" onclick="selectOption(this, 'm1q5', false)"><div class="quiz-option-dot"></div>Reflecting after each session to improve practice</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m1q5"></div>
+          </div>
+        </div>
+
+        <div id="result-m1" class="quiz-result">
+          <div class="result-score" id="score-m1"></div>
+          <div class="result-message" id="msg-m1"></div>
+          <div class="result-sub" id="sub-m1"></div>
+          <button class="btn btn-success btn-lg" id="next-m1" onclick="unlockAndGo('m2')" style="display:none">Continue to Module 2 →</button>
+          <button class="btn btn-secondary" id="retry-m1" onclick="retryQuiz('m1')" style="display:none">Retake Quiz</button>
+        </div>
+
+        <div style="margin-top:24px; display:flex; justify-content:flex-end;">
+          <button class="btn btn-primary" id="submit-m1" onclick="submitQuiz('m1',5)" disabled>Submit Answers</button>
+        </div>
+      </div>
+
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showScreen('welcome')">← Back to Home</button>
+      </div>
+    </div>
+
+    <!-- MODULE 2: Know Your Learners -->
+    <div class="screen" id="screen-m2">
+      <div class="lesson-header">
+        <div class="lesson-module-tag">✦ Module 2 of 8 — Part 1: Teaching Strategies</div>
+        <h2>Know Your Learners</h2>
+        <div class="lesson-meta">
+          <span>📖 ~12 min read</span>
+          <span>✦ Quiz to unlock next module</span>
+        </div>
+      </div>
+      <div class="lesson-body">
+        <h3>The 4 Lenses of Understanding</h3>
+        <p>Before you can teach effectively, you need to understand who is sitting in front of you. Effective learning guides use four lenses to understand their learners — and regularly revisit each one as the learner grows.</p>
+
+        <div class="info-grid">
+          <div class="info-card">
+            <div class="info-card-label">Lens 1: Prior Knowledge</div>
+            <p>What does your learner already know about this topic? Activating prior knowledge before a lesson helps new information "stick" to something familiar. Use warm-up questions, think-pair-share, or a simple "What do you already know about X?"</p>
+          </div>
+          <div class="info-card">
+            <div class="info-card-label">Lens 2: Learning Style</div>
+            <p>How does this learner engage best? Some prefer hearing explanations; others need to draw, build, or move. Offer a variety of modalities across sessions rather than relying on one format every time.</p>
+          </div>
+          <div class="info-card">
+            <div class="info-card-label">Lens 3: Language & Literacy</div>
+            <p>What is your learner's reading level and language background? Use clear, accessible language. Avoid jargon. Pair written instructions with visuals or examples when possible.</p>
+          </div>
+          <div class="info-card">
+            <div class="info-card-label">Lens 4: Motivation & Interest</div>
+            <p>What does your learner care about? When content connects to something the learner values — sports, animals, family, future goals — engagement rises dramatically. Ask before you assume.</p>
+          </div>
+        </div>
+
+        <h3>Why Prior Knowledge Matters Most</h3>
+        <p>Research in cognitive science consistently shows that learning is most effective when new information is connected to what a learner already knows. This is why "activating prior knowledge" is the most important thing you can do at the start of any lesson.</p>
+        <p>A learner who surprises you — by knowing more than expected, or struggling where you didn't anticipate — is giving you valuable information. Use that information to adjust your approach in real time.</p>
+
+        <div class="callout">
+          <strong>Quick strategy:</strong> Before any new lesson, spend 3–5 minutes asking open-ended questions: "What do you already know about this?" or "Have you ever learned about anything like this before?" The answers will shape your entire session.
+        </div>
+
+        <h3>Connecting to Motivation</h3>
+        <p>Motivation is not fixed. A learner who seems disengaged is often a learner whose interests haven't been connected to the content yet. Your job is to build that bridge.</p>
+        <p>Ask your learner directly: "What's something you're really into right now?" Then find a connection — even a loose one — to the day's material. That single act of relevance can transform a difficult session into a breakthrough one.</p>
+
+        <table class="comparison-table">
+          <tr><th>If your learner seems...</th><th>Try this...</th></tr>
+          <tr><td>Bored or disengaged</td><td>Connect content to a personal interest. Ask what they care about before starting.</td></tr>
+          <tr><td>Confused or stuck</td><td>Check prior knowledge gaps. Go back one step. Reteach the foundational concept first.</td></tr>
+          <tr><td>Refusing to read/write</td><td>Offer an alternative mode — draw it, say it aloud, or build a model instead.</td></tr>
+          <tr><td>Rushing through work</td><td>Check for depth, not just completion. Ask follow-up questions to extend thinking.</td></tr>
+          <tr><td>Overly anxious</td><td>Lower the stakes. Remind them this is practice, not a performance.</td></tr>
+        </table>
+      </div>
+
+      <div class="quiz-section">
+        <div class="quiz-header">
+          <div class="quiz-icon">✏️</div>
+          <div>
+            <h3>Module 2 Checkpoint</h3>
+            <p>Score 80% or higher (4 of 5 correct) to unlock Module 3</p>
+          </div>
+        </div>
+        <div id="quiz-m2">
+          <div class="quiz-question" id="m2q1">
+            <div class="quiz-q-num">Question 1 of 5</div>
+            <div class="quiz-q-text">Which of the 4 lenses involves understanding what a learner already knows before starting a lesson?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m2q1',false)"><div class="quiz-option-dot"></div>Learning Style</div>
+              <div class="quiz-option" onclick="selectOption(this,'m2q1',true)"><div class="quiz-option-dot"></div>Prior Knowledge</div>
+              <div class="quiz-option" onclick="selectOption(this,'m2q1',false)"><div class="quiz-option-dot"></div>Motivation & Interest</div>
+              <div class="quiz-option" onclick="selectOption(this,'m2q1',false)"><div class="quiz-option-dot"></div>Language & Literacy</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m2q1"></div>
+          </div>
+          <div class="quiz-question" id="m2q2">
+            <div class="quiz-q-num">Question 2 of 5</div>
+            <div class="quiz-q-text">A learner is refusing to write but seems to understand the concept. What should you try first?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m2q2',false)"><div class="quiz-option-dot"></div>Skip the activity and move on</div>
+              <div class="quiz-option" onclick="selectOption(this,'m2q2',false)"><div class="quiz-option-dot"></div>Make the learner write it anyway to build discipline</div>
+              <div class="quiz-option" onclick="selectOption(this,'m2q2',true)"><div class="quiz-option-dot"></div>Offer an alternative mode — draw it, say it aloud, or build a model</div>
+              <div class="quiz-option" onclick="selectOption(this,'m2q2',false)"><div class="quiz-option-dot"></div>Contact a supervisor about the learner's behavior</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m2q2"></div>
+          </div>
+          <div class="quiz-question" id="m2q3">
+            <div class="quiz-q-num">Question 3 of 5</div>
+            <div class="quiz-q-text">Why is activating prior knowledge the most important thing to do at the start of a lesson?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m2q3',false)"><div class="quiz-option-dot"></div>It fills time at the beginning of class</div>
+              <div class="quiz-option" onclick="selectOption(this,'m2q3',true)"><div class="quiz-option-dot"></div>New information sticks best when connected to what a learner already knows</div>
+              <div class="quiz-option" onclick="selectOption(this,'m2q3',false)"><div class="quiz-option-dot"></div>It helps the guide know who the smartest learner is</div>
+              <div class="quiz-option" onclick="selectOption(this,'m2q3',false)"><div class="quiz-option-dot"></div>It replaces the need for formal assessment</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m2q3"></div>
+          </div>
+          <div class="quiz-question" id="m2q4">
+            <div class="quiz-q-num">Question 4 of 5</div>
+            <div class="quiz-q-text">According to the module, motivation is:</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m2q4',false)"><div class="quiz-option-dot"></div>Fixed — some learners are just more motivated than others</div>
+              <div class="quiz-option" onclick="selectOption(this,'m2q4',true)"><div class="quiz-option-dot"></div>Not fixed — connecting content to a learner's interests can transform engagement</div>
+              <div class="quiz-option" onclick="selectOption(this,'m2q4',false)"><div class="quiz-option-dot"></div>The learner's responsibility, not the guide's</div>
+              <div class="quiz-option" onclick="selectOption(this,'m2q4',false)"><div class="quiz-option-dot"></div>Mostly determined by how easy the material is</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m2q4"></div>
+          </div>
+          <div class="quiz-question" id="m2q5">
+            <div class="quiz-q-num">Question 5 of 5</div>
+            <div class="quiz-q-text">Which lens reminds guides to use clear language, avoid jargon, and pair instructions with visuals?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m2q5',false)"><div class="quiz-option-dot"></div>Prior Knowledge</div>
+              <div class="quiz-option" onclick="selectOption(this,'m2q5',false)"><div class="quiz-option-dot"></div>Motivation & Interest</div>
+              <div class="quiz-option" onclick="selectOption(this,'m2q5',false)"><div class="quiz-option-dot"></div>Learning Style</div>
+              <div class="quiz-option" onclick="selectOption(this,'m2q5',true)"><div class="quiz-option-dot"></div>Language & Literacy</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m2q5"></div>
+          </div>
+        </div>
+        <div id="result-m2" class="quiz-result">
+          <div class="result-score" id="score-m2"></div>
+          <div class="result-message" id="msg-m2"></div>
+          <div class="result-sub" id="sub-m2"></div>
+          <button class="btn btn-success btn-lg" id="next-m2" onclick="unlockAndGo('m3')" style="display:none">Continue to Module 3 →</button>
+          <button class="btn btn-secondary" id="retry-m2" onclick="retryQuiz('m2')" style="display:none">Retake Quiz</button>
+        </div>
+        <div style="margin-top:24px; display:flex; justify-content:flex-end;">
+          <button class="btn btn-primary" id="submit-m2" onclick="submitQuiz('m2',5)" disabled>Submit Answers</button>
+        </div>
+      </div>
+      <div class="lesson-nav">
+        <button class="btn btn-secondary" onclick="showScreen('m1')">← Module 1</button>
+      </div>
+    </div>
+
+    <!-- MODULE 3: 5 Core Strategies -->
+    <div class="screen" id="screen-m3">
+      <div class="lesson-header">
+        <div class="lesson-module-tag">✦ Module 3 of 8 — Part 1: Teaching Strategies</div>
+        <h2>5 Core Teaching Strategies</h2>
+        <div class="lesson-meta"><span>📖 ~12 min read</span><span>✦ Quiz to unlock next module</span></div>
+      </div>
+      <div class="lesson-body">
+        <h3>Why These Five?</h3>
+        <p>Hundreds of teaching strategies exist, but five are consistently supported by both research and real-world practice. These work across subjects, age levels, and learning environments — and they are the foundation of effective learning guide sessions.</p>
+
+        <div class="steps-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <h4>I Do, We Do, You Do (Gradual Release)</h4>
+              <p>Model the skill or concept first (I Do). Then practice it together (We Do). Then release the learner to try it independently (You Do). This sequence prevents learners from being thrown into the deep end before they're ready — and prevents guides from doing all the work forever.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <h4>Chunking</h4>
+              <p>Break complex content into small, manageable pieces before combining them. Think of it like a recipe — you don't combine all ingredients without understanding what each one does. Present one concept at a time, confirm understanding, then build to the next.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <h4>Frequent Checks for Understanding</h4>
+              <p>Don't wait until the end of the lesson to discover your learner was confused for the past 20 minutes. Check early and often — thumbs up/down, quick oral questions, exit tickets, or think-pair-share. A confused learner will rarely tell you they're confused. You have to ask.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">4</div>
+            <div class="step-content">
+              <h4>Scaffolding</h4>
+              <p>Provide temporary supports — sentence frames, graphic organizers, word banks, partially completed examples — and then gradually remove them as the learner gains confidence. A scaffold that never comes down becomes a crutch. Plan from the start how and when you'll fade the support.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">5</div>
+            <div class="step-content">
+              <h4>Spaced Practice</h4>
+              <p>Revisit content across multiple sessions rather than cramming everything into one. Memory science shows that returning to a concept after a gap — even just 24 hours — dramatically improves long-term retention. Start each new session with a 3–5 minute review of the previous one.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="highlight-box">
+          <h4>Putting it all together</h4>
+          <ul>
+            <li>Start every session with spaced recall (review yesterday's concept)</li>
+            <li>Use chunking to introduce new material in digestible pieces</li>
+            <li>Model with I Do before asking the learner to try independently</li>
+            <li>Add scaffolds when the learner struggles — remove them when they don't</li>
+            <li>Check for understanding frequently — never assume silence means comprehension</li>
+          </ul>
+        </div>
+      </div>
+      <div class="quiz-section">
+        <div class="quiz-header">
+          <div class="quiz-icon">✏️</div>
+          <div><h3>Module 3 Checkpoint</h3><p>Score 80% or higher (4 of 5 correct) to unlock Module 4</p></div>
+        </div>
+        <div id="quiz-m3">
+          <div class="quiz-question" id="m3q1">
+            <div class="quiz-q-num">Question 1 of 5</div>
+            <div class="quiz-q-text">In the "I Do, We Do, You Do" model, what happens during the "We Do" phase?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m3q1',false)"><div class="quiz-option-dot"></div>The guide models the skill while the learner watches</div>
+              <div class="quiz-option" onclick="selectOption(this,'m3q1',true)"><div class="quiz-option-dot"></div>The guide and learner practice the skill together</div>
+              <div class="quiz-option" onclick="selectOption(this,'m3q1',false)"><div class="quiz-option-dot"></div>The learner completes the task independently</div>
+              <div class="quiz-option" onclick="selectOption(this,'m3q1',false)"><div class="quiz-option-dot"></div>The learner is assessed on what they have learned</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m3q1"></div>
+          </div>
+          <div class="quiz-question" id="m3q2">
+            <div class="quiz-q-num">Question 2 of 5</div>
+            <div class="quiz-q-text">What is the main risk of a scaffold that is never removed?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m3q2',false)"><div class="quiz-option-dot"></div>The learner will become bored with the same format</div>
+              <div class="quiz-option" onclick="selectOption(this,'m3q2',true)"><div class="quiz-option-dot"></div>It becomes a crutch that prevents independent skill development</div>
+              <div class="quiz-option" onclick="selectOption(this,'m3q2',false)"><div class="quiz-option-dot"></div>It takes too much time to create each session</div>
+              <div class="quiz-option" onclick="selectOption(this,'m3q2',false)"><div class="quiz-option-dot"></div>It doesn't meet standards for formal assessment</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m3q2"></div>
+          </div>
+          <div class="quiz-question" id="m3q3">
+            <div class="quiz-q-num">Question 3 of 5</div>
+            <div class="quiz-q-text">According to spaced practice, when should a guide ideally review previous material?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m3q3',false)"><div class="quiz-option-dot"></div>Only before a formal test or assessment</div>
+              <div class="quiz-option" onclick="selectOption(this,'m3q3',false)"><div class="quiz-option-dot"></div>Once a week during a dedicated review day</div>
+              <div class="quiz-option" onclick="selectOption(this,'m3q3',true)"><div class="quiz-option-dot"></div>At the start of each new session — even just 3–5 minutes</div>
+              <div class="quiz-option" onclick="selectOption(this,'m3q3',false)"><div class="quiz-option-dot"></div>Only when a learner asks for a review</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m3q3"></div>
+          </div>
+          <div class="quiz-question" id="m3q4">
+            <div class="quiz-q-num">Question 4 of 5</div>
+            <div class="quiz-q-text">A guide is teaching multi-step math problem solving. She explains each step separately before combining them. Which strategy is she using?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m3q4',false)"><div class="quiz-option-dot"></div>Spaced Practice</div>
+              <div class="quiz-option" onclick="selectOption(this,'m3q4',true)"><div class="quiz-option-dot"></div>Chunking</div>
+              <div class="quiz-option" onclick="selectOption(this,'m3q4',false)"><div class="quiz-option-dot"></div>Scaffolding</div>
+              <div class="quiz-option" onclick="selectOption(this,'m3q4',false)"><div class="quiz-option-dot"></div>I Do, We Do, You Do</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m3q4"></div>
+          </div>
+          <div class="quiz-question" id="m3q5">
+            <div class="quiz-q-num">Question 5 of 5</div>
+            <div class="quiz-q-text">Why should guides check for understanding frequently rather than waiting until the end of a lesson?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m3q5',false)"><div class="quiz-option-dot"></div>To grade participation during the session</div>
+              <div class="quiz-option" onclick="selectOption(this,'m3q5',false)"><div class="quiz-option-dot"></div>To make the lesson feel more interactive</div>
+              <div class="quiz-option" onclick="selectOption(this,'m3q5',true)"><div class="quiz-option-dot"></div>A confused learner rarely speaks up — the guide must proactively catch misunderstandings early</div>
+              <div class="quiz-option" onclick="selectOption(this,'m3q5',false)"><div class="quiz-option-dot"></div>It is a requirement for curriculum compliance</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m3q5"></div>
+          </div>
+        </div>
+        <div id="result-m3" class="quiz-result">
+          <div class="result-score" id="score-m3"></div>
+          <div class="result-message" id="msg-m3"></div>
+          <div class="result-sub" id="sub-m3"></div>
+          <button class="btn btn-success btn-lg" id="next-m3" onclick="unlockAndGo('m4')" style="display:none">Continue to Module 4 →</button>
+          <button class="btn btn-secondary" id="retry-m3" onclick="retryQuiz('m3')" style="display:none">Retake Quiz</button>
+        </div>
+        <div style="margin-top:24px; display:flex; justify-content:flex-end;">
+          <button class="btn btn-primary" id="submit-m3" onclick="submitQuiz('m3',5)" disabled>Submit Answers</button>
+        </div>
+      </div>
+      <div class="lesson-nav"><button class="btn btn-secondary" onclick="showScreen('m2')">← Module 2</button></div>
+    </div>
+
+    <!-- MODULE 4: Giving Feedback -->
+    <div class="screen" id="screen-m4">
+      <div class="lesson-header">
+        <div class="lesson-module-tag">✦ Module 4 of 8 — Part 1: Teaching Strategies</div>
+        <h2>Giving Effective Feedback</h2>
+        <div class="lesson-meta"><span>📖 ~10 min read</span><span>✦ Quiz to unlock Part 2</span></div>
+      </div>
+      <div class="lesson-body">
+        <h3>Why Feedback Matters</h3>
+        <p>Feedback is one of the most powerful tools in a learning guide's toolkit — and one of the most frequently misused. Feedback that is vague ("Good job!"), purely critical ("This is wrong"), or delayed ("Let's review this next week") does little to move learning forward.</p>
+        <p>Effective feedback is <strong>specific</strong>, <strong>timely</strong>, and <strong>growth-oriented</strong>. The WWW+EBI framework gives you a repeatable structure to make this happen every session.</p>
+
+        <h3>The WWW+EBI Framework</h3>
+        <div class="steps-list">
+          <div class="step-item">
+            <div class="step-num" style="background:var(--sage-dark)">W</div>
+            <div class="step-content">
+              <h4>What Worked — Strength #1</h4>
+              <p>Start with a genuine, specific observation of something the learner did well. Not "Great job!" but "You organized your main idea clearly in the first sentence — that made the paragraph much easier to follow."</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num" style="background:var(--sage-dark)">W</div>
+            <div class="step-content">
+              <h4>What Worked — Strength #2</h4>
+              <p>Identify a second strength before moving on. This reinforces that the feedback isn't just softening criticism — it's genuinely celebrating what's working. "You also used two strong examples to support your point."</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num" style="background:var(--sage-dark)">W</div>
+            <div class="step-content">
+              <h4>What Worked — Overall Effort</h4>
+              <p>Acknowledge progress or persistence. "This shows real improvement from last week's draft." Growth acknowledgment keeps learners motivated to keep trying.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">EBI</div>
+            <div class="step-content">
+              <h4>Even Better If…</h4>
+              <p>Offer one specific, actionable next step. Not a list of corrections — one clear thing to focus on. "Even better if you added a topic sentence to each paragraph to guide the reader." The learner now knows exactly what to work on.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout">
+          <strong>Common mistake to avoid:</strong> Starting with "Great job!" with no specificity. Push yourself to name the exact thing that worked: the sentence, the calculation, the question the learner asked. Specific praise is far more motivating than generic praise.
+        </div>
+
+        <h3>Feedback vs. Correction</h3>
+        <table class="comparison-table">
+          <tr><th>Instead of...</th><th>Try...</th></tr>
+          <tr><td>"This is wrong."</td><td>"Your answer for problem 3 doesn't match — let's look at the step where the numbers diverge."</td></tr>
+          <tr><td>"Good job!"</td><td>"You remembered to carry the one in every problem — that's the exact skill we practiced last session."</td></tr>
+          <tr><td>"You need to re-read this."</td><td>"Even better if you re-read paragraph 2 and ask yourself: does this connect back to the main idea?"</td></tr>
+          <tr><td>"I told you this already."</td><td>"This concept trips up a lot of learners. Let's try a different way of approaching it."</td></tr>
+        </table>
+      </div>
+      <div class="quiz-section">
+        <div class="quiz-header">
+          <div class="quiz-icon">✏️</div>
+          <div><h3>Module 4 Checkpoint</h3><p>Score 80% or higher to unlock Part 2 — Moving Beyond the Page</p></div>
+        </div>
+        <div id="quiz-m4">
+          <div class="quiz-question" id="m4q1">
+            <div class="quiz-q-num">Question 1 of 5</div>
+            <div class="quiz-q-text">What does "EBI" stand for in the WWW+EBI framework?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m4q1',false)"><div class="quiz-option-dot"></div>Evidence-Based Instruction</div>
+              <div class="quiz-option" onclick="selectOption(this,'m4q1',true)"><div class="quiz-option-dot"></div>Even Better If</div>
+              <div class="quiz-option" onclick="selectOption(this,'m4q1',false)"><div class="quiz-option-dot"></div>Explicit Behavior Intervention</div>
+              <div class="quiz-option" onclick="selectOption(this,'m4q1',false)"><div class="quiz-option-dot"></div>Engagement Before Instruction</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m4q1"></div>
+          </div>
+          <div class="quiz-question" id="m4q2">
+            <div class="quiz-q-num">Question 2 of 5</div>
+            <div class="quiz-q-text">Why does the WWW+EBI framework include THREE "What Worked" steps before the improvement suggestion?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m4q2',false)"><div class="quiz-option-dot"></div>To make sessions last longer</div>
+              <div class="quiz-option" onclick="selectOption(this,'m4q2',true)"><div class="quiz-option-dot"></div>To genuinely celebrate strengths before redirecting — not just soften criticism</div>
+              <div class="quiz-option" onclick="selectOption(this,'m4q2',false)"><div class="quiz-option-dot"></div>Because three is the required minimum for curriculum compliance</div>
+              <div class="quiz-option" onclick="selectOption(this,'m4q2',false)"><div class="quiz-option-dot"></div>To give the learner time to calm down before hearing feedback</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m4q2"></div>
+          </div>
+          <div class="quiz-question" id="m4q3">
+            <div class="quiz-q-num">Question 3 of 5</div>
+            <div class="quiz-q-text">How many specific next steps should you give in the EBI part of the framework?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m4q3',false)"><div class="quiz-option-dot"></div>As many as you can identify — the learner needs a full list of corrections</div>
+              <div class="quiz-option" onclick="selectOption(this,'m4q3',false)"><div class="quiz-option-dot"></div>Two to three, prioritized from most to least important</div>
+              <div class="quiz-option" onclick="selectOption(this,'m4q3',true)"><div class="quiz-option-dot"></div>One clear, actionable next step</div>
+              <div class="quiz-option" onclick="selectOption(this,'m4q3',false)"><div class="quiz-option-dot"></div>None — the learner should discover improvements on their own</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m4q3"></div>
+          </div>
+          <div class="quiz-question" id="m4q4">
+            <div class="quiz-q-num">Question 4 of 5</div>
+            <div class="quiz-q-text">Which of the following is the BEST example of specific praise?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m4q4',false)"><div class="quiz-option-dot"></div>"Amazing work today!"</div>
+              <div class="quiz-option" onclick="selectOption(this,'m4q4',false)"><div class="quiz-option-dot"></div>"I'm proud of you for trying hard."</div>
+              <div class="quiz-option" onclick="selectOption(this,'m4q4',true)"><div class="quiz-option-dot"></div>"You remembered to carry the one in every problem — that's the exact skill we practiced last session."</div>
+              <div class="quiz-option" onclick="selectOption(this,'m4q4',false)"><div class="quiz-option-dot"></div>"Good job on the math worksheet."</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m4q4"></div>
+          </div>
+          <div class="quiz-question" id="m4q5">
+            <div class="quiz-q-num">Question 5 of 5</div>
+            <div class="quiz-q-text">Effective feedback should be:</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m4q5',false)"><div class="quiz-option-dot"></div>General, delayed, and focused primarily on errors</div>
+              <div class="quiz-option" onclick="selectOption(this,'m4q5',true)"><div class="quiz-option-dot"></div>Specific, timely, and growth-oriented</div>
+              <div class="quiz-option" onclick="selectOption(this,'m4q5',false)"><div class="quiz-option-dot"></div>Only positive — avoid mentioning weaknesses to protect confidence</div>
+              <div class="quiz-option" onclick="selectOption(this,'m4q5',false)"><div class="quiz-option-dot"></div>Always written — verbal feedback is too informal</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m4q5"></div>
+          </div>
+        </div>
+        <div id="result-m4" class="quiz-result">
+          <div class="result-score" id="score-m4"></div>
+          <div class="result-message" id="msg-m4"></div>
+          <div class="result-sub" id="sub-m4"></div>
+          <button class="btn btn-success btn-lg" id="next-m4" onclick="unlockAndGo('m5')" style="display:none">Begin Part 2 — Using MBTP →</button>
+          <button class="btn btn-secondary" id="retry-m4" onclick="retryQuiz('m4')" style="display:none">Retake Quiz</button>
+        </div>
+        <div style="margin-top:24px; display:flex; justify-content:flex-end;">
+          <button class="btn btn-primary" id="submit-m4" onclick="submitQuiz('m4',5)" disabled>Submit Answers</button>
+        </div>
+      </div>
+      <div class="lesson-nav"><button class="btn btn-secondary" onclick="showScreen('m3')">← Module 3</button></div>
+    </div>
+
+    <!-- MODULE 5: What Is MBTP? -->
+    <div class="screen" id="screen-m5">
+      <div class="lesson-header">
+        <div class="lesson-module-tag">✦ Module 5 of 8 — Part 2: Using Moving Beyond the Page</div>
+        <h2>What Is Moving Beyond the Page?</h2>
+        <div class="lesson-meta"><span>📖 ~10 min read</span><span>✦ Quiz to unlock next module</span></div>
+      </div>
+      <div class="lesson-body">
+        <h3>An Entirely Different Kind of Curriculum</h3>
+        <p>Moving Beyond the Page (MBTP) is not a workbook curriculum. If you've ever used a program where you open to page 23, complete a worksheet, and move on — this is different. MBTP is a <strong>literature-based, unit study curriculum</strong> that integrates Language Arts, Science, and Social Studies into connected learning experiences built around real books, hands-on projects, and big ideas.</p>
+        <p>It was designed for gifted and creative learners, but it works beautifully for any learner who thrives on variety, creativity, and depth over repetition. Every day in MBTP looks different — one lesson might involve a science experiment, the next a creative writing task, the next a cooking activity tied to historical context.</p>
+
+        <h3>Three Defining Pillars</h3>
+        <div class="steps-list">
+          <div class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <h4>Concept-Based</h4>
+              <p>MBTP organizes each year around 4 big conceptual themes. All three subjects — Science, Social Studies, and Language Arts — connect back to that same concept simultaneously. Learners don't just memorize facts; they explore big ideas and see how subjects connect to each other and to the real world.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <h4>Differentiated</h4>
+              <p>Almost every lesson offers two activity options. Option 1 is more structured and straightforward. Option 2 is more challenging and open-ended. Learning guides choose based on where their learner is — and can switch between options from lesson to lesson.</p>
+            </div>
+          </div>
+          <div class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <h4>Project-Driven</h4>
+              <p>Every unit ends with a culminating Final Project. This is the primary assessment in MBTP — not a quiz or test. The learner demonstrates understanding through real work: a presentation, a model, a written piece, a performance. This is non-negotiable and should never be skipped.</p>
+            </div>
+          </div>
+        </div>
+
+        <h3>What MBTP Is — and Is Not</h3>
+        <table class="comparison-table">
+          <tr><th>MBTP IS</th><th>MBTP IS NOT</th></tr>
+          <tr><td>Literature-based — real books, not textbooks</td><td>A workbook or drill-and-practice program</td></tr>
+          <tr><td>Secular and standards-aligned</td><td>Faith-based or tied to a religious framework</td></tr>
+          <tr><td>Integrated across subjects</td><td>Isolated subject instruction</td></tr>
+          <tr><td>Project and discussion-driven</td><td>Test and quiz-heavy</td></tr>
+          <tr><td>Designed for variety and creativity</td><td>Designed for rote memorization</td></tr>
+          <tr><td>Flexible with activity options</td><td>Rigid one-size-fits-all lessons</td></tr>
+        </table>
+
+        <div class="callout">
+          <strong>Important:</strong> MBTP does not teach phonics or decoding. For younger learners (Ages 4-7), you must pair MBTP with a separate reading program — such as Lexia Core5 — to cover foundational literacy skills.
+        </div>
+      </div>
+      <div class="quiz-section">
+        <div class="quiz-header">
+          <div class="quiz-icon">✏️</div>
+          <div><h3>Module 5 Checkpoint</h3><p>Score 80% or higher to unlock Module 6</p></div>
+        </div>
+        <div id="quiz-m5">
+          <div class="quiz-question" id="m5q1">
+            <div class="quiz-q-num">Question 1 of 5</div>
+            <div class="quiz-q-text">Which of the following best describes Moving Beyond the Page?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m5q1',false)"><div class="quiz-option-dot"></div>A workbook-based curriculum with daily drill exercises</div>
+              <div class="quiz-option" onclick="selectOption(this,'m5q1',true)"><div class="quiz-option-dot"></div>A literature-based, integrated unit study curriculum using real books and hands-on projects</div>
+              <div class="quiz-option" onclick="selectOption(this,'m5q1',false)"><div class="quiz-option-dot"></div>A faith-based homeschool program with religious content</div>
+              <div class="quiz-option" onclick="selectOption(this,'m5q1',false)"><div class="quiz-option-dot"></div>A digital-only test prep program for gifted students</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m5q1"></div>
+          </div>
+          <div class="quiz-question" id="m5q2">
+            <div class="quiz-q-num">Question 2 of 5</div>
+            <div class="quiz-q-text">What is the primary assessment tool in MBTP?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m5q2',false)"><div class="quiz-option-dot"></div>Weekly multiple-choice quizzes</div>
+              <div class="quiz-option" onclick="selectOption(this,'m5q2',false)"><div class="quiz-option-dot"></div>End-of-year standardized testing</div>
+              <div class="quiz-option" onclick="selectOption(this,'m5q2',true)"><div class="quiz-option-dot"></div>The culminating Final Project at the end of each unit</div>
+              <div class="quiz-option" onclick="selectOption(this,'m5q2',false)"><div class="quiz-option-dot"></div>Daily worksheet completion scores</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m5q2"></div>
+          </div>
+          <div class="quiz-question" id="m5q3">
+            <div class="quiz-q-num">Question 3 of 5</div>
+            <div class="quiz-q-text">What does "differentiated" mean in the context of MBTP's three pillars?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m5q3',true)"><div class="quiz-option-dot"></div>Each lesson offers two activity options — one more structured, one more challenging</div>
+              <div class="quiz-option" onclick="selectOption(this,'m5q3',false)"><div class="quiz-option-dot"></div>Different learners receive completely different curricula</div>
+              <div class="quiz-option" onclick="selectOption(this,'m5q3',false)"><div class="quiz-option-dot"></div>Subjects are taught at different times of day</div>
+              <div class="quiz-option" onclick="selectOption(this,'m5q3',false)"><div class="quiz-option-dot"></div>Guides customize every lesson from scratch</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m5q3"></div>
+          </div>
+          <div class="quiz-question" id="m5q4">
+            <div class="quiz-q-num">Question 4 of 5</div>
+            <div class="quiz-q-text">What must guides ADD alongside MBTP for learners in the Ages 4-7 range?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m5q4',false)"><div class="quiz-option-dot"></div>A separate math curriculum</div>
+              <div class="quiz-option" onclick="selectOption(this,'m5q4',true)"><div class="quiz-option-dot"></div>A separate phonics/reading decoding program (e.g., Lexia Core5)</div>
+              <div class="quiz-option" onclick="selectOption(this,'m5q4',false)"><div class="quiz-option-dot"></div>A separate social studies workbook</div>
+              <div class="quiz-option" onclick="selectOption(this,'m5q4',false)"><div class="quiz-option-dot"></div>Nothing — MBTP is complete at all age levels</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m5q4"></div>
+          </div>
+          <div class="quiz-question" id="m5q5">
+            <div class="quiz-q-num">Question 5 of 5</div>
+            <div class="quiz-q-text">Which MBTP pillar describes how all three subjects connect to the same overarching theme each year?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m5q5',false)"><div class="quiz-option-dot"></div>Project-Driven</div>
+              <div class="quiz-option" onclick="selectOption(this,'m5q5',false)"><div class="quiz-option-dot"></div>Differentiated</div>
+              <div class="quiz-option" onclick="selectOption(this,'m5q5',true)"><div class="quiz-option-dot"></div>Concept-Based</div>
+              <div class="quiz-option" onclick="selectOption(this,'m5q5',false)"><div class="quiz-option-dot"></div>Standards-Aligned</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m5q5"></div>
+          </div>
+        </div>
+        <div id="result-m5" class="quiz-result">
+          <div class="result-score" id="score-m5"></div>
+          <div class="result-message" id="msg-m5"></div>
+          <div class="result-sub" id="sub-m5"></div>
+          <button class="btn btn-success btn-lg" id="next-m5" onclick="unlockAndGo('m6')" style="display:none">Continue to Module 6 →</button>
+          <button class="btn btn-secondary" id="retry-m5" onclick="retryQuiz('m5')" style="display:none">Retake Quiz</button>
+        </div>
+        <div style="margin-top:24px; display:flex; justify-content:flex-end;">
+          <button class="btn btn-primary" id="submit-m5" onclick="submitQuiz('m5',5)" disabled>Submit Answers</button>
+        </div>
+      </div>
+      <div class="lesson-nav"><button class="btn btn-secondary" onclick="showScreen('m4')">← Module 4</button></div>
+    </div>
+
+    <!-- MODULE 6: How MBTP Is Organized -->
+    <div class="screen" id="screen-m6">
+      <div class="lesson-header">
+        <div class="lesson-module-tag">✦ Module 6 of 8 — Part 2: Using Moving Beyond the Page</div>
+        <h2>How MBTP Is Organized</h2>
+        <div class="lesson-meta"><span>📖 ~12 min read</span><span>✦ Quiz to unlock next module</span></div>
+      </div>
+      <div class="lesson-body">
+        <h3>The Curriculum Hierarchy</h3>
+        <p>MBTP has a clear structure at every level. Understanding this hierarchy is essential — once you know it, navigating any unit becomes intuitive.</p>
+        <div class="steps-list">
+          <div class="step-item"><div class="step-num">1</div><div class="step-content"><h4>Age Level</h4><p>MBTP uses age ranges (e.g., Ages 7-9, Ages 9-11) rather than grade levels. Choose your level based on the learner's skill level, not their birthdate. It's okay to go one level up or down to find the right fit.</p></div></div>
+          <div class="step-item"><div class="step-num">2</div><div class="step-content"><h4>Concept</h4><p>Each year contains 4 major concepts — big thematic ideas that run approximately 9 weeks each. All three subjects (Science, Social Studies, Language Arts) connect to the same concept simultaneously.</p></div></div>
+          <div class="step-item"><div class="step-num">3</div><div class="step-content"><h4>Unit</h4><p>Each concept contains 3 units — one Science unit, one Social Studies unit, and one Language Arts unit. Each unit is contained in its own bound book with all lessons inside.</p></div></div>
+          <div class="step-item"><div class="step-num">4</div><div class="step-content"><h4>Lesson</h4><p>Each unit contains 10-13 lessons plus a Final Project (approximately 3 weeks of daily work). Complete one lesson per subject per day to stay on pace with a traditional school year.</p></div></div>
+        </div>
+
+        <h3>Daily Pacing</h3>
+        <table class="comparison-table">
+          <tr><th>Age Level</th><th>Daily Time Per Lesson</th><th>Book Format</th></tr>
+          <tr><td>Ages 4-5 / 5-7</td><td>45–60 min</td><td>Separate parent manual + student pages</td></tr>
+          <tr><td>Ages 7-9 / 8-10</td><td>60–90 min</td><td>Combined parent-student guide</td></tr>
+          <tr><td>Ages 9-11 / 10-12</td><td>90+ min</td><td>Student-directed; Parent Overview in back</td></tr>
+        </table>
+
+        <div class="callout">
+          <strong>Pacing rule:</strong> One lesson per subject per day = on pace for the school year. Don't skip the Final Project to make up time — instead, shorten independent activities and keep the core reading and discussion.
+        </div>
+
+        <h3>Your Materials</h3>
+        <div class="info-grid">
+          <div class="info-card"><div class="info-card-label">Unit Books</div><p>One per subject per unit. Consumable — do not share between learners in the same year.</p></div>
+          <div class="info-card"><div class="info-card-label">Parent Overview Pages</div><p>Answer keys, rubrics, and discussion guidance. Located at the back of books for older levels, separate for younger levels.</p></div>
+          <div class="info-card"><div class="info-card-label">Literature Books</div><p>Real books — novels and nonfiction. Purchased separately. Check the materials list one week before each unit begins.</p></div>
+          <div class="info-card"><div class="info-card-label">Science Kits</div><p>Included in full packages. Contains manipulatives for experiments. Verify contents at the start of each unit.</p></div>
+        </div>
+      </div>
+      <div class="quiz-section">
+        <div class="quiz-header">
+          <div class="quiz-icon">✏️</div>
+          <div><h3>Module 6 Checkpoint</h3><p>Score 80% or higher to unlock Module 7</p></div>
+        </div>
+        <div id="quiz-m6">
+          <div class="quiz-question" id="m6q1">
+            <div class="quiz-q-num">Question 1 of 5</div>
+            <div class="quiz-q-text">How many major Concepts does an MBTP year contain?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m6q1',false)"><div class="quiz-option-dot"></div>3</div>
+              <div class="quiz-option" onclick="selectOption(this,'m6q1',true)"><div class="quiz-option-dot"></div>4</div>
+              <div class="quiz-option" onclick="selectOption(this,'m6q1',false)"><div class="quiz-option-dot"></div>6</div>
+              <div class="quiz-option" onclick="selectOption(this,'m6q1',false)"><div class="quiz-option-dot"></div>12</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m6q1"></div>
+          </div>
+          <div class="quiz-question" id="m6q2">
+            <div class="quiz-q-num">Question 2 of 5</div>
+            <div class="quiz-q-text">How should a guide choose which Age Level to use?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m6q2',false)"><div class="quiz-option-dot"></div>Always match the learner's exact age</div>
+              <div class="quiz-option" onclick="selectOption(this,'m6q2',true)"><div class="quiz-option-dot"></div>Choose based on the learner's skill level — it's okay to go up or down a level</div>
+              <div class="quiz-option" onclick="selectOption(this,'m6q2',false)"><div class="quiz-option-dot"></div>Use whatever level the school district recommends</div>
+              <div class="quiz-option" onclick="selectOption(this,'m6q2',false)"><div class="quiz-option-dot"></div>Start at the lowest level regardless of ability</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m6q2"></div>
+          </div>
+          <div class="quiz-question" id="m6q3">
+            <div class="quiz-q-num">Question 3 of 5</div>
+            <div class="quiz-q-text">Each MBTP Concept contains how many units?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m6q3',false)"><div class="quiz-option-dot"></div>2 (Science and Language Arts)</div>
+              <div class="quiz-option" onclick="selectOption(this,'m6q3',true)"><div class="quiz-option-dot"></div>3 (Science, Social Studies, and Language Arts)</div>
+              <div class="quiz-option" onclick="selectOption(this,'m6q3',false)"><div class="quiz-option-dot"></div>4 (including Math)</div>
+              <div class="quiz-option" onclick="selectOption(this,'m6q3',false)"><div class="quiz-option-dot"></div>1 integrated unit covering all subjects</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m6q3"></div>
+          </div>
+          <div class="quiz-question" id="m6q4">
+            <div class="quiz-q-num">Question 4 of 5</div>
+            <div class="quiz-q-text">Where are answer keys and rubrics found in MBTP materials?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m6q4',false)"><div class="quiz-option-dot"></div>In the front of each unit book alongside the materials list</div>
+              <div class="quiz-option" onclick="selectOption(this,'m6q4',false)"><div class="quiz-option-dot"></div>Only available by contacting MBTP customer service</div>
+              <div class="quiz-option" onclick="selectOption(this,'m6q4',true)"><div class="quiz-option-dot"></div>In the Parent Overview pages — at the back of books for older levels, separate for younger levels</div>
+              <div class="quiz-option" onclick="selectOption(this,'m6q4',false)"><div class="quiz-option-dot"></div>Inside each individual lesson alongside the student activities</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m6q4"></div>
+          </div>
+          <div class="quiz-question" id="m6q5">
+            <div class="quiz-q-num">Question 5 of 5</div>
+            <div class="quiz-q-text">If a guide is running behind schedule, what is the BEST approach?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m6q5',false)"><div class="quiz-option-dot"></div>Skip the Final Project and do extra lessons to catch up</div>
+              <div class="quiz-option" onclick="selectOption(this,'m6q5',true)"><div class="quiz-option-dot"></div>Shorten independent activities but keep reading, discussion, and the Final Project intact</div>
+              <div class="quiz-option" onclick="selectOption(this,'m6q5',false)"><div class="quiz-option-dot"></div>Double up on lessons and do two subjects in one sitting</div>
+              <div class="quiz-option" onclick="selectOption(this,'m6q5',false)"><div class="quiz-option-dot"></div>Move to the next unit immediately regardless of where the current unit stands</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m6q5"></div>
+          </div>
+        </div>
+        <div id="result-m6" class="quiz-result">
+          <div class="result-score" id="score-m6"></div>
+          <div class="result-message" id="msg-m6"></div>
+          <div class="result-sub" id="sub-m6"></div>
+          <button class="btn btn-success btn-lg" id="next-m6" onclick="unlockAndGo('m7')" style="display:none">Continue to Module 7 →</button>
+          <button class="btn btn-secondary" id="retry-m6" onclick="retryQuiz('m6')" style="display:none">Retake Quiz</button>
+        </div>
+        <div style="margin-top:24px; display:flex; justify-content:flex-end;">
+          <button class="btn btn-primary" id="submit-m6" onclick="submitQuiz('m6',5)" disabled>Submit Answers</button>
+        </div>
+      </div>
+      <div class="lesson-nav"><button class="btn btn-secondary" onclick="showScreen('m5')">← Module 5</button></div>
+    </div>
+
+    <!-- MODULE 7: A Typical MBTP Day -->
+    <div class="screen" id="screen-m7">
+      <div class="lesson-header">
+        <div class="lesson-module-tag">✦ Module 7 of 8 — Part 2: Using Moving Beyond the Page</div>
+        <h2>A Typical MBTP Session</h2>
+        <div class="lesson-meta"><span>📖 ~10 min read</span><span>✦ Quiz to unlock final module</span></div>
+      </div>
+      <div class="lesson-body">
+        <h3>The 5-Step Daily Session Structure</h3>
+        <p>MBTP does the lesson planning for you. Your job is to follow the structure consistently, prepare adequately, and facilitate with presence. Here is the sequence that makes every session effective:</p>
+        <div class="steps-list">
+          <div class="step-item"><div class="step-num">1</div><div class="step-content"><h4>Prepare (Before the Session)</h4><p>Read the lesson before you sit down with your learner. Never teach cold. Gather all materials listed at the top of the lesson. Preview the Parent Overview so you know where the lesson is heading, what the right answers are, and what the learner should understand by the end.</p></div></div>
+          <div class="step-item"><div class="step-num">2</div><div class="step-content"><h4>Open Together</h4><p>Begin with a 3–5 minute spaced recall of the previous lesson. Use the opening prompt in the guide to introduce today's topic. This bridges what was learned with what's coming — and warms the learner's brain up for new information.</p></div></div>
+          <div class="step-item"><div class="step-num">3</div><div class="step-content"><h4>Read & Discuss</h4><p>Read the assigned pages from the unit book or novel — together at younger levels, independently at older levels. Use the discussion questions provided in the lesson. These questions are carefully designed; don't skip them in favor of moving faster.</p></div></div>
+          <div class="step-item"><div class="step-num">4</div><div class="step-content"><h4>Do the Activity</h4><p>Choose Option 1 (structured) or Option 2 (extended). Let the learner take the lead on the activity while you observe, prompt, and support. Resist the urge to do it for them — productive struggle is part of the learning.</p></div></div>
+          <div class="step-item"><div class="step-num">5</div><div class="step-content"><h4>Wrap Up & Document</h4><p>Review 1–2 key takeaways from the lesson. Note whether the learner demonstrated understanding, struggled with a concept, or needs revisiting. Check off the lesson. This documentation becomes your guide for planning the next session's opening recall.</p></div></div>
+        </div>
+
+        <div class="highlight-box">
+          <h4>The non-negotiables</h4>
+          <ul>
+            <li>Read the lesson BEFORE you sit down with your learner — always</li>
+            <li>Use the discussion questions — they are the heart of MBTP</li>
+            <li>Don't do the activity FOR the learner — facilitate and observe</li>
+            <li>Complete the Final Project — it is the assessment, not a bonus</li>
+          </ul>
+        </div>
+
+        <h3>What to Do When Learners Struggle</h3>
+        <p>MBTP lessons sometimes challenge learners. When that happens, resist the instinct to just give the answer. Instead: slow down, re-read the relevant section together, ask a guiding question ("What do you think the author means here?"), and check the Parent Overview for teaching hints. If understanding is still not there, try Option 1 instead of Option 2 next session, and revisit the concept in the opening of the following session through spaced recall.</p>
+      </div>
+      <div class="quiz-section">
+        <div class="quiz-header">
+          <div class="quiz-icon">✏️</div>
+          <div><h3>Module 7 Checkpoint</h3><p>Score 80% or higher to unlock the final module</p></div>
+        </div>
+        <div id="quiz-m7">
+          <div class="quiz-question" id="m7q1">
+            <div class="quiz-q-num">Question 1 of 5</div>
+            <div class="quiz-q-text">What should a learning guide do BEFORE sitting down with their learner for an MBTP session?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m7q1',false)"><div class="quiz-option-dot"></div>Print extra worksheets to supplement the lesson</div>
+              <div class="quiz-option" onclick="selectOption(this,'m7q1',true)"><div class="quiz-option-dot"></div>Read the lesson, gather all materials, and preview the Parent Overview</div>
+              <div class="quiz-option" onclick="selectOption(this,'m7q1',false)"><div class="quiz-option-dot"></div>Ask the learner to read the lesson aloud first</div>
+              <div class="quiz-option" onclick="selectOption(this,'m7q1',false)"><div class="quiz-option-dot"></div>Write a quiz based on the previous lesson</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m7q1"></div>
+          </div>
+          <div class="quiz-question" id="m7q2">
+            <div class="quiz-q-num">Question 2 of 5</div>
+            <div class="quiz-q-text">What is the purpose of the "Open Together" step at the start of a session?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m7q2',false)"><div class="quiz-option-dot"></div>To grade the learner's homework from the previous session</div>
+              <div class="quiz-option" onclick="selectOption(this,'m7q2',true)"><div class="quiz-option-dot"></div>To review the previous lesson (spaced recall) and introduce today's topic</div>
+              <div class="quiz-option" onclick="selectOption(this,'m7q2',false)"><div class="quiz-option-dot"></div>To read the entire unit introduction aloud</div>
+              <div class="quiz-option" onclick="selectOption(this,'m7q2',false)"><div class="quiz-option-dot"></div>To let the learner choose which subject to do first</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m7q2"></div>
+          </div>
+          <div class="quiz-question" id="m7q3">
+            <div class="quiz-q-num">Question 3 of 5</div>
+            <div class="quiz-q-text">Why should guides NOT skip the discussion questions in an MBTP lesson?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m7q3',false)"><div class="quiz-option-dot"></div>They are required for state compliance reports</div>
+              <div class="quiz-option" onclick="selectOption(this,'m7q3',true)"><div class="quiz-option-dot"></div>They are carefully designed and form the heart of the MBTP learning experience</div>
+              <div class="quiz-option" onclick="selectOption(this,'m7q3',false)"><div class="quiz-option-dot"></div>They are the easiest part of the lesson for learners</div>
+              <div class="quiz-option" onclick="selectOption(this,'m7q3',false)"><div class="quiz-option-dot"></div>Skipping them triggers an automatic curriculum audit</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m7q3"></div>
+          </div>
+          <div class="quiz-question" id="m7q4">
+            <div class="quiz-q-num">Question 4 of 5</div>
+            <div class="quiz-q-text">When a learner struggles during an activity, what should the guide do FIRST?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m7q4',false)"><div class="quiz-option-dot"></div>Give the learner the correct answer to keep the session moving</div>
+              <div class="quiz-option" onclick="selectOption(this,'m7q4',false)"><div class="quiz-option-dot"></div>Move on to the next lesson and come back later</div>
+              <div class="quiz-option" onclick="selectOption(this,'m7q4',true)"><div class="quiz-option-dot"></div>Slow down, re-read the relevant section, and ask a guiding question</div>
+              <div class="quiz-option" onclick="selectOption(this,'m7q4',false)"><div class="quiz-option-dot"></div>Switch to a completely different curriculum for that subject</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m7q4"></div>
+          </div>
+          <div class="quiz-question" id="m7q5">
+            <div class="quiz-q-num">Question 5 of 5</div>
+            <div class="quiz-q-text">What is the purpose of the "Wrap Up & Document" step?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m7q5',false)"><div class="quiz-option-dot"></div>To assign homework for the next session</div>
+              <div class="quiz-option" onclick="selectOption(this,'m7q5',true)"><div class="quiz-option-dot"></div>To review key takeaways, note the learner's understanding, and inform the next session's opening recall</div>
+              <div class="quiz-option" onclick="selectOption(this,'m7q5',false)"><div class="quiz-option-dot"></div>To celebrate the end of the session with a reward</div>
+              <div class="quiz-option" onclick="selectOption(this,'m7q5',false)"><div class="quiz-option-dot"></div>To complete the grading rubric for the Final Project</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m7q5"></div>
+          </div>
+        </div>
+        <div id="result-m7" class="quiz-result">
+          <div class="result-score" id="score-m7"></div>
+          <div class="result-message" id="msg-m7"></div>
+          <div class="result-sub" id="sub-m7"></div>
+          <button class="btn btn-success btn-lg" id="next-m7" onclick="unlockAndGo('m8')" style="display:none">Continue to Module 8 →</button>
+          <button class="btn btn-secondary" id="retry-m7" onclick="retryQuiz('m7')" style="display:none">Retake Quiz</button>
+        </div>
+        <div style="margin-top:24px; display:flex; justify-content:flex-end;">
+          <button class="btn btn-primary" id="submit-m7" onclick="submitQuiz('m7',5)" disabled>Submit Answers</button>
+        </div>
+      </div>
+      <div class="lesson-nav"><button class="btn btn-secondary" onclick="showScreen('m6')">← Module 6</button></div>
+    </div>
+
+    <!-- MODULE 8: Age Levels -->
+    <div class="screen" id="screen-m8">
+      <div class="lesson-header">
+        <div class="lesson-module-tag">✦ Module 8 of 8 — Part 2: Using Moving Beyond the Page</div>
+        <h2>Age Levels & What Changes</h2>
+        <div class="lesson-meta"><span>📖 ~12 min read</span><span>✦ Final quiz — complete to earn your certificate</span></div>
+      </div>
+      <div class="lesson-body">
+        <h3>Why Age Levels Matter</h3>
+        <p>The single most important thing about MBTP's age levels is this: <strong>choose by skill level, not birthdate.</strong> MBTP uses broad age ranges rather than specific grade levels precisely because learner readiness varies widely. Going one level up or down to match your learner is completely expected and encouraged.</p>
+
+        <h3>Ages 4-5 / 5-7 — PreK through Early Elementary</h3>
+        <div class="info-grid">
+          <div class="info-card"><div class="info-card-label">Guide's Role</div><p>Full instructor. You lead every aspect of every lesson. The learner follows your direction completely.</p></div>
+          <div class="info-card"><div class="info-card-label">Book Format</div><p>Separate parent manual + removable student activity pages. The parent manual is yours alone.</p></div>
+          <div class="info-card"><div class="info-card-label">Reading</div><p>Guide reads aloud to learner. No independent reading expected. Discussion is oral.</p></div>
+          <div class="info-card"><div class="info-card-label">Critical Note</div><p>Add a separate phonics/decoding program. MBTP does not teach foundational reading at this level.</p></div>
+        </div>
+
+        <h3>Ages 7-9 / 8-10 — Elementary</h3>
+        <div class="info-grid">
+          <div class="info-card"><div class="info-card-label">Guide's Role</div><p>Shared instruction. You begin stepping back, but stay available. This is the transition level.</p></div>
+          <div class="info-card"><div class="info-card-label">Book Format</div><p>Combined parent-student guide. Both guide and learner work from the same book.</p></div>
+          <div class="info-card"><div class="info-card-label">Reading</div><p>Shared reading — you read some, the learner reads some. Learner begins working more independently.</p></div>
+          <div class="info-card"><div class="info-card-label">Assessment</div><p>Culminating Final Project per unit. Observation-based for daily work.</p></div>
+        </div>
+
+        <h3>Ages 9-11 / 10-12 — Upper Elementary</h3>
+        <div class="info-grid">
+          <div class="info-card"><div class="info-card-label">Guide's Role</div><p>Oversight and discussion partner. The learner self-directs daily work. You review, discuss, and grade.</p></div>
+          <div class="info-card"><div class="info-card-label">Book Format</div><p>Student-directed guide. Learner reads instructions directly. Parent Overview is at the back.</p></div>
+          <div class="info-card"><div class="info-card-label">Reading</div><p>Learner reads all assigned texts independently. Discussion questions are still essential — don't skip them.</p></div>
+          <div class="info-card"><div class="info-card-label">Assessment</div><p>Formal rubrics in Parent Overview. Graded Final Projects. Rich discussion is part of the assessment.</p></div>
+        </div>
+
+        <div class="callout">
+          <strong>The key progression:</strong> At Ages 4-7, the guide is front and center. At Ages 7-10, the guide steps to the side. At Ages 9-12, the guide steps to the back — but never entirely out of the room. The learner's independence grows gradually, not overnight.
+        </div>
+
+        <h3>Getting Started — Your Final Checklist</h3>
+        <div class="steps-list">
+          <div class="step-item"><div class="step-num">✓</div><div class="step-content"><h4>Confirm the right age level</h4><p>Use skill readiness, not age. Read the 'Choosing the Right Level' guidance on the MBTP website if unsure.</p></div></div>
+          <div class="step-item"><div class="step-num">✓</div><div class="step-content"><h4>Read the 'Getting Started' guide</h4><p>Every MBTP package includes a 'How to Use' section. Read it before opening any lesson.</p></div></div>
+          <div class="step-item"><div class="step-num">✓</div><div class="step-content"><h4>Preview Unit 1's materials list</h4><p>Order or borrow all required books and materials at least one week before starting Unit 1.</p></div></div>
+          <div class="step-item"><div class="step-num">✓</div><div class="step-content"><h4>Set a consistent daily schedule</h4><p>One lesson per subject per day. Consistency beats intensity every time.</p></div></div>
+          <div class="step-item"><div class="step-num">✓</div><div class="step-content"><h4>Day 1: Read the Unit Introduction together</h4><p>Never skip this. It sets the conceptual foundation for everything that follows in the unit.</p></div></div>
+        </div>
+      </div>
+      <div class="quiz-section">
+        <div class="quiz-header">
+          <div class="quiz-icon">🏆</div>
+          <div><h3>Final Module Checkpoint</h3><p>Score 80% or higher to complete the course and earn your certificate</p></div>
+        </div>
+        <div id="quiz-m8">
+          <div class="quiz-question" id="m8q1">
+            <div class="quiz-q-num">Question 1 of 5</div>
+            <div class="quiz-q-text">How should a learning guide choose the correct MBTP age level for their learner?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m8q1',false)"><div class="quiz-option-dot"></div>Always match the learner's exact age to the level</div>
+              <div class="quiz-option" onclick="selectOption(this,'m8q1',true)"><div class="quiz-option-dot"></div>Choose based on skill readiness — going up or down a level is expected</div>
+              <div class="quiz-option" onclick="selectOption(this,'m8q1',false)"><div class="quiz-option-dot"></div>Start all learners at the youngest level and advance yearly</div>
+              <div class="quiz-option" onclick="selectOption(this,'m8q1',false)"><div class="quiz-option-dot"></div>Use whatever level the school district assigned</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m8q1"></div>
+          </div>
+          <div class="quiz-question" id="m8q2">
+            <div class="quiz-q-num">Question 2 of 5</div>
+            <div class="quiz-q-text">At the Ages 9-11 / 10-12 level, what is the guide's primary role?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m8q2',false)"><div class="quiz-option-dot"></div>Leading every lesson directly and reading aloud to the learner</div>
+              <div class="quiz-option" onclick="selectOption(this,'m8q2',false)"><div class="quiz-option-dot"></div>Working from the same combined book as the learner</div>
+              <div class="quiz-option" onclick="selectOption(this,'m8q2',true)"><div class="quiz-option-dot"></div>Oversight, discussion, and grading — the learner self-directs daily work</div>
+              <div class="quiz-option" onclick="selectOption(this,'m8q2',false)"><div class="quiz-option-dot"></div>Creating supplementary worksheets to reinforce each lesson</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m8q2"></div>
+          </div>
+          <div class="quiz-question" id="m8q3">
+            <div class="quiz-q-num">Question 3 of 5</div>
+            <div class="quiz-q-text">At which age level does the guide begin stepping back while remaining available?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m8q3',false)"><div class="quiz-option-dot"></div>Ages 4-5 / 5-7</div>
+              <div class="quiz-option" onclick="selectOption(this,'m8q3',true)"><div class="quiz-option-dot"></div>Ages 7-9 / 8-10</div>
+              <div class="quiz-option" onclick="selectOption(this,'m8q3',false)"><div class="quiz-option-dot"></div>Ages 9-11 / 10-12</div>
+              <div class="quiz-option" onclick="selectOption(this,'m8q3',false)"><div class="quiz-option-dot"></div>All levels equally</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m8q3"></div>
+          </div>
+          <div class="quiz-question" id="m8q4">
+            <div class="quiz-q-num">Question 4 of 5</div>
+            <div class="quiz-q-text">What should a guide do on the very first day of a new MBTP unit?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m8q4',false)"><div class="quiz-option-dot"></div>Start immediately with Lesson 1 to save time</div>
+              <div class="quiz-option" onclick="selectOption(this,'m8q4',false)"><div class="quiz-option-dot"></div>Give the learner a pre-test on the unit topic</div>
+              <div class="quiz-option" onclick="selectOption(this,'m8q4',true)"><div class="quiz-option-dot"></div>Read the Unit Introduction together — never skip it</div>
+              <div class="quiz-option" onclick="selectOption(this,'m8q4',false)"><div class="quiz-option-dot"></div>Review all the Final Project requirements before starting any lessons</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m8q4"></div>
+          </div>
+          <div class="quiz-question" id="m8q5">
+            <div class="quiz-q-num">Question 5 of 5</div>
+            <div class="quiz-q-text">Which statement best describes the progression of learner independence across MBTP age levels?</div>
+            <div class="quiz-options">
+              <div class="quiz-option" onclick="selectOption(this,'m8q5',false)"><div class="quiz-option-dot"></div>Independence stays the same across all levels — guides always lead fully</div>
+              <div class="quiz-option" onclick="selectOption(this,'m8q5',false)"><div class="quiz-option-dot"></div>Learners are fully independent from day one in all age levels</div>
+              <div class="quiz-option" onclick="selectOption(this,'m8q5',true)"><div class="quiz-option-dot"></div>Guide leads at young ages, steps to the side at middle levels, moves to oversight at upper levels</div>
+              <div class="quiz-option" onclick="selectOption(this,'m8q5',false)"><div class="quiz-option-dot"></div>Independence is determined by the specific subject, not the age level</div>
+            </div>
+            <div class="quiz-feedback" id="fb-m8q5"></div>
+          </div>
+        </div>
+        <div id="result-m8" class="quiz-result">
+          <div class="result-score" id="score-m8"></div>
+          <div class="result-message" id="msg-m8"></div>
+          <div class="result-sub" id="sub-m8"></div>
+          <button class="btn btn-success btn-lg" id="next-m8" onclick="unlockAndGo('complete')" style="display:none">🎉 Complete the Course →</button>
+          <button class="btn btn-secondary" id="retry-m8" onclick="retryQuiz('m8')" style="display:none">Retake Quiz</button>
+        </div>
+        <div style="margin-top:24px; display:flex; justify-content:flex-end;">
+          <button class="btn btn-primary" id="submit-m8" onclick="submitQuiz('m8',5)" disabled>Submit Answers</button>
+        </div>
+      </div>
+      <div class="lesson-nav"><button class="btn btn-secondary" onclick="showScreen('m7')">← Module 7</button></div>
+    </div>
+
+    <!-- COMPLETION SCREEN -->
+    <div class="screen" id="screen-complete">
+      <div class="completion-screen">
+        <div class="completion-badge">🏆</div>
+        <h2>Course Complete!</h2>
+        <p>You've finished all 8 modules and passed every checkpoint. You're now ready to step into your role as a confident, prepared Learning Guide.</p>
+        <div class="cert-modules">
+          <div class="cert-chip">✓ Who Is a Learning Guide?</div>
+          <div class="cert-chip">✓ Know Your Learners</div>
+          <div class="cert-chip">✓ 5 Core Strategies</div>
+          <div class="cert-chip">✓ Effective Feedback</div>
+          <div class="cert-chip">✓ What Is MBTP?</div>
+          <div class="cert-chip">✓ How MBTP Is Organized</div>
+          <div class="cert-chip">✓ A Typical MBTP Day</div>
+          <div class="cert-chip">✓ Age Levels & Differences</div>
+        </div>
+        <div style="display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+          <button class="btn btn-primary btn-lg" onclick="showScreen('welcome')">← Back to Course Home</button>
+          <button class="btn btn-secondary btn-lg" onclick="window.print()">🖨 Print Certificate</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <span id="toast-icon">🔒</span>
+  <span id="toast-msg"></span>
+</div>
+
+<script>
+// ── STATE ──────────────────────────────────────────────────────────────────
+const ORDER = ['welcome','m1','m2','m3','m4','m5','m6','m7','m8','complete'];
+const MODULES = ['m1','m2','m3','m4','m5','m6','m7','m8'];
+const MODULE_NAMES = {
+  welcome:'Course Home', m1:'Module 1', m2:'Module 2', m3:'Module 3', m4:'Module 4',
+  m5:'Module 5', m6:'Module 6', m7:'Module 7', m8:'Module 8', complete:'Completion'
+};
+
+// Track which modules are unlocked and completed
+const state = {
+  unlocked: new Set(['welcome','m1']),
+  completed: new Set(),
+  answers: {},   // { 'm1q1': true/false, ... }
+  submitted: new Set(),  // modules that have been submitted
+};
+
+// ── NAVIGATION ──────────────────────────────────────────────────────────────
+function tryNav(id) {
+  if (!state.unlocked.has(id)) {
+    showToast('🔒', 'Complete the previous module quiz to unlock this one.', 'locked-msg');
+    return;
+  }
+  showScreen(id);
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + id).classList.add('active');
+
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navEl = document.getElementById('nav-' + id);
+  if (navEl) navEl.classList.add('active');
+
+  document.getElementById('topbar-current').textContent = MODULE_NAMES[id] || id;
+  updateProgress();
+  window.scrollTo(0,0);
+}
+
+function unlockAndGo(nextId) {
+  state.unlocked.add(nextId);
+  updateNavState();
+  updateProgress();
+  showScreen(nextId);
+}
+
+function updateNavState() {
+  MODULES.forEach(m => {
+    const navEl = document.getElementById('nav-' + m);
+    const cardEl = document.getElementById('card-' + m);
+    if (!navEl) return;
+    navEl.classList.remove('locked','completed');
+    if (cardEl) { cardEl.classList.remove('locked','completed'); }
+
+    if (state.completed.has(m)) {
+      navEl.classList.add('completed');
+      navEl.querySelector('.nav-icon').textContent = '✓';
+      navEl.querySelector('.nav-badge').textContent = '✓';
+      if (cardEl) {
+        cardEl.classList.add('completed');
+        cardEl.querySelector('.module-card-status').textContent = '✓';
+      }
+    } else if (!state.unlocked.has(m)) {
+      navEl.classList.add('locked');
+      navEl.querySelector('.nav-icon').textContent = '🔒';
+      if (cardEl) {
+        cardEl.classList.add('locked');
+        cardEl.querySelector('.module-card-status').textContent = '🔒';
+      }
+    } else {
+      navEl.querySelector('.nav-icon').textContent = ['🎯','🔍','💡','💬','📗','📋','📅','👶'][MODULES.indexOf(m)];
+      if (cardEl) cardEl.querySelector('.module-card-status').textContent = '→';
+    }
+  });
+
+  // complete nav
+  const completeNav = document.getElementById('nav-complete');
+  if (state.unlocked.has('complete')) {
+    completeNav.classList.remove('locked');
+    completeNav.querySelector('.nav-icon').textContent = '🏆';
+  }
+}
+
+function updateProgress() {
+  const total = MODULES.length;
+  const done = state.completed.size;
+  const pct = Math.round((done / total) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = pct + '%';
+}
+
+// ── QUIZ LOGIC ──────────────────────────────────────────────────────────────
+function selectOption(el, qid, isCorrect) {
+  if (state.submitted.has(qid.slice(0,2))) return; // module already submitted
+  const parent = el.closest('.quiz-options');
+  parent.querySelectorAll('.quiz-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+  state.answers[qid] = isCorrect;
+  checkSubmitReady(qid.slice(0,2));
+}
+
+function checkSubmitReady(moduleId) {
+  const qs = document.querySelectorAll(`#quiz-${moduleId} .quiz-question`);
+  const allAnswered = Array.from(qs).every(q => state.answers[q.id] !== undefined);
+  document.getElementById('submit-' + moduleId).disabled = !allAnswered;
+}
+
+function submitQuiz(moduleId, total) {
+  if (state.submitted.has(moduleId)) return;
+  state.submitted.add(moduleId);
+
+  const qs = document.querySelectorAll(`#quiz-${moduleId} .quiz-question`);
+  let correct = 0;
+
+  qs.forEach(q => {
+    const qid = q.id;
+    const isCorrect = state.answers[qid];
+    const opts = q.querySelectorAll('.quiz-option');
+    const fb = document.getElementById('fb-' + qid);
+
+    opts.forEach(o => {
+      o.classList.add('disabled');
+      const wasSelected = o.classList.contains('selected');
+      // find which option is correct by re-checking onclick
+      const onclick = o.getAttribute('onclick');
+      const corrAttr = onclick && onclick.includes('true');
+      if (corrAttr) o.classList.add('correct-ans');
+      else if (wasSelected && !corrAttr) o.classList.add('wrong-ans');
+    });
+
+    if (isCorrect) {
+      correct++;
+      q.classList.add('correct');
+      fb.textContent = '✓ Correct!';
+      fb.className = 'quiz-feedback show correct';
+    } else {
+      q.classList.add('wrong');
+      fb.textContent = '✗ Not quite — the highlighted option above is correct.';
+      fb.className = 'quiz-feedback show wrong';
+    }
+  });
+
+  const pct = Math.round((correct / total) * 100);
+  const passed = pct >= 80;
+
+  const resultEl = document.getElementById('result-' + moduleId);
+  resultEl.classList.add('show', passed ? 'passed' : 'failed');
+
+  document.getElementById('score-' + moduleId).textContent = pct + '%';
+  document.getElementById('score-' + moduleId).className = 'result-score ' + (passed ? 'pass' : 'fail');
+  document.getElementById('msg-' + moduleId).textContent = passed ? '🎉 You passed!' : 'Not quite — try again';
+  document.getElementById('sub-' + moduleId).textContent = passed
+    ? `${correct} of ${total} correct — module complete!`
+    : `${correct} of ${total} correct — you need ${Math.ceil(total*0.8)} to pass. Review the material and retake.`;
+
+  document.getElementById('submit-' + moduleId).style.display = 'none';
+
+  if (passed) {
+    state.completed.add(moduleId);
+    document.getElementById('next-' + moduleId).style.display = 'inline-flex';
+    updateNavState();
+    updateProgress();
+    showToast('✓', 'Module complete! Next module unlocked.', 'success');
+  } else {
+    document.getElementById('retry-' + moduleId).style.display = 'inline-flex';
+  }
+}
+
+function retryQuiz(moduleId) {
+  state.submitted.delete(moduleId);
+  // Clear all answers for this module
+  Object.keys(state.answers).filter(k => k.startsWith(moduleId)).forEach(k => delete state.answers[k]);
+
+  // Reset UI
+  const qs = document.querySelectorAll(`#quiz-${moduleId} .quiz-question`);
+  qs.forEach(q => {
+    q.classList.remove('correct','wrong');
+    q.querySelectorAll('.quiz-option').forEach(o => {
+      o.classList.remove('selected','correct-ans','wrong-ans','disabled');
+    });
+    const fb = document.getElementById('fb-' + q.id);
+    if (fb) { fb.className = 'quiz-feedback'; fb.textContent = ''; }
+  });
+
+  const resultEl = document.getElementById('result-' + moduleId);
+  resultEl.classList.remove('show','passed','failed');
+  document.getElementById('retry-' + moduleId).style.display = 'none';
+  document.getElementById('next-' + moduleId).style.display = 'none';
+  document.getElementById('submit-' + moduleId).style.display = 'inline-flex';
+  document.getElementById('submit-' + moduleId).disabled = true;
+  window.scrollTo(0, document.querySelector('.quiz-section').offsetTop - 80);
+}
+
+// ── TOAST ──────────────────────────────────────────────────────────────────
+let toastTimer;
+function showToast(icon, msg, type = '') {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-icon').textContent = icon;
+  document.getElementById('toast-msg').textContent = msg;
+  t.className = 'toast show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { t.className = 'toast'; }, 3200);
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+updateNavState();
+updateProgress();
+</script>
+</body>
+</html>

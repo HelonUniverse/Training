@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curriculum Access Training | The Autism Helper</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Spectral:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#5C3D8F;--purple2:#7B5EA7;--purple3:#A98FCC;
+  --lavender:#EDE8F5;--lav2:#F7F4FC;
+  --teal:#2A8C7A;--teal-l:#E0F5F1;
+  --amber:#D4820A;--amber-l:#FEF3DE;
+  --red:#C0392B;--red-l:#FDEDEC;
+  --pass:#1E7E4E;--pass-l:#D4EDDA;
+  --dark:#1A1225;--ink:#2D2040;--gray:#5E5279;--muted:#9B8FB0;
+  --white:#FFFFFF;--bg:#F8F6FC;--rule:#E8E2F0;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;}
+
+/* SIDEBAR */
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:268px;background:var(--dark);display:flex;flex-direction:column;z-index:100;overflow-y:auto;}
+.sb-brand{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.07);}
+.sb-logo{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.sb-ic{width:38px;height:38px;background:linear-gradient(135deg,#F47B20,#FDB913);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.sb-brand h1{font-size:14px;font-weight:700;color:white;line-height:1.3;}
+.sb-brand span{font-size:10px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:#FDB913;}
+.sb-prog{padding:12px 20px;border-bottom:1px solid rgba(255,255,255,.05);}
+.sb-prog-top{display:flex;justify-content:space-between;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:6px;}
+.sb-prog-top span{color:#FDB913;}
+.pb{height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;}
+.pf{height:100%;background:linear-gradient(90deg,#F47B20,#FDB913);transition:width .6s ease;}
+.sb-sec{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.sb-sec-title{padding:5px 20px 7px;font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.2);}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 20px;cursor:pointer;transition:background .15s;position:relative;}
+.ni:hover{background:rgba(255,255,255,.05);}
+.ni.active{background:rgba(244,123,32,.25);}
+.ni.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#F47B20;}
+.ni.locked{opacity:.38;cursor:not-allowed;}
+.ni-ic{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;background:rgba(255,255,255,.07);}
+.ni.active .ni-ic{background:#F47B20;}
+.ni.completed .ni-ic{background:var(--teal);}
+.ni-t{font-size:12px;font-weight:600;color:rgba(255,255,255,.82);flex:1;line-height:1.3;}
+.ni.locked .ni-t{color:rgba(255,255,255,.28);}
+.ni-sub{font-size:10px;color:rgba(255,255,255,.28);margin-top:1px;}
+.nbadge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.3);}
+.ni.completed .nbadge{background:var(--teal);color:white;}
+
+/* MAIN */
+.main{margin-left:268px;min-height:100vh;padding-bottom:80px;}
+.topbar{background:white;border-bottom:1px solid var(--rule);padding:13px 42px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.tb-crumb{font-size:12px;color:var(--muted);}
+.tb-crumb .cur{color:var(--ink);font-weight:600;}
+.tb-badge{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 11px;border-radius:20px;background:#FEF3EA;color:#F47B20;border:1px solid #FDDBB8;}
+.content{max-width:800px;margin:0 auto;padding:42px 42px 0;}
+.screen{display:none;}
+.screen.active{display:block;animation:fu .3s ease;}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* HERO */
+.hero{background:linear-gradient(135deg,#2D2D2D 0%,#F47B20 100%);border-radius:18px;padding:50px 46px;margin-bottom:26px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-60px;right:-60px;width:280px;height:280px;background:radial-gradient(circle,rgba(253,185,19,.15) 0%,transparent 70%);}
+.hero-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple3);margin-bottom:12px;}
+.hero h2{font-family:'Spectral',serif;font-size:38px;line-height:1.2;color:white;margin-bottom:10px;}
+.hero h2 em{font-style:normal;color:#FDB913;}
+.hero p{font-size:15px;color:rgba(255,255,255,.6);line-height:1.7;max-width:480px;margin-bottom:26px;}
+.hero-stats{display:flex;gap:26px;margin-bottom:26px;}
+.hs-n{font-family:'Spectral',serif;font-size:30px;font-weight:600;color:white;}
+.hs-l{font-size:11px;color:rgba(255,255,255,.38);text-transform:uppercase;letter-spacing:.07em;}
+.mod-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:26px;}
+.mc{background:white;border-radius:13px;padding:17px;border:1px solid var(--rule);cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.mc:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.07);}
+.mc.locked{opacity:.5;cursor:not-allowed;}
+.mc.locked:hover{transform:none;box-shadow:none;}
+.mc.completed{border-color:var(--teal);}
+.mc-num{font-family:'Spectral',serif;font-size:34px;font-weight:600;color:#EDE8F5;line-height:1;margin-bottom:6px;}
+.mc.completed .mc-num{color:var(--teal);opacity:.35;}
+.mc h3{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px;line-height:1.35;}
+.mc p{font-size:11px;color:var(--muted);line-height:1.5;}
+.mc-s{position:absolute;top:13px;right:13px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;}
+.mc.completed .mc-s{background:var(--teal);color:white;}
+.mc.locked .mc-s{background:#EEE;color:#AAA;}
+.mc:not(.locked):not(.completed) .mc-s{background:#F47B20;color:white;}
+
+/* LESSON */
+.lh{margin-bottom:30px;}
+.ltag{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#F47B20;background:#FEF3EA;padding:4px 11px;border-radius:20px;margin-bottom:11px;}
+.lh h2{font-family:'Spectral',serif;font-size:34px;line-height:1.2;color:var(--ink);margin-bottom:8px;}
+.lmeta{display:flex;align-items:center;gap:16px;font-size:12px;color:var(--muted);}
+.lb{font-size:15px;line-height:1.75;color:var(--gray);}
+.lb h3{font-family:'Spectral',serif;font-size:21px;color:var(--ink);margin:30px 0 11px;padding-top:30px;border-top:1px solid var(--rule);}
+.lb h3:first-of-type{margin-top:0;padding-top:0;border-top:none;}
+.lb p{margin-bottom:13px;}
+.callout{background:var(--amber-l);border-left:4px solid #F47B20;padding:13px 17px;border-radius:0 10px 10px 0;margin:17px 0;font-size:14px;color:var(--ink);font-style:italic;}
+.callout strong{font-style:normal;color:var(--purple);}
+.ig{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:17px 0;}
+.ic{background:white;border:1px solid var(--rule);border-radius:11px;padding:15px;}
+.ic-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#F47B20;margin-bottom:5px;}
+.ic p{font-size:13px;color:var(--gray);margin:0;line-height:1.55;}
+.steps{margin:17px 0;}
+.step{display:flex;gap:13px;margin-bottom:13px;align-items:flex-start;}
+.sn{width:30px;height:30px;border-radius:50%;background:#F47B20;color:white;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sc h4{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.sc p{font-size:13px;color:var(--gray);margin:0;line-height:1.55;}
+.ctable{width:100%;border-collapse:collapse;margin:17px 0;border-radius:11px;overflow:hidden;border:1px solid var(--rule);}
+.ctable th{background:#F47B20;color:white;padding:11px 14px;text-align:left;font-size:12px;font-weight:600;}
+.ctable td{padding:11px 14px;font-size:13px;color:var(--gray);border-top:1px solid var(--rule);vertical-align:top;}
+.ctable tr:nth-child(odd) td{background:var(--lav2);}
+.ctable tr:nth-child(even) td{background:white;}
+.ctable td:first-child{font-weight:700;color:var(--ink);}
+.hlbox{background:var(--dark);padding:20px 24px;border-radius:13px;margin:20px 0;}
+.hlbox h4{font-family:'Spectral',serif;font-size:18px;color:var(--purple3);margin-bottom:9px;}
+.hlbox ul{padding-left:18px;}
+.hlbox ul li{font-size:13px;color:#ccc;margin-bottom:5px;line-height:1.55;}
+.level-strip{display:flex;gap:8px;margin:17px 0;flex-wrap:wrap;}
+.lv{padding:8px 14px;border-radius:9px;font-size:12px;font-weight:700;text-align:center;border:1.5px solid;}
+.lv1{background:#FEF9C3;border-color:#D97706;color:#92400E;}
+.lv2{background:#DCFCE7;border-color:#16A34A;color:#14532D;}
+.lv3{background:#DBEAFE;border-color:#2563EB;color:#1E3A8A;}
+.lv4{background:#F3E8FF;border-color:#9333EA;color:#581C87;}
+.lv5{background:#FFF7ED;border-color:#EA580C;color:#7C2D12;}
+.lv6{background:#FDF2F8;border-color:#DB2777;color:#831843;}
+
+/* QUIZ */
+.qs{margin-top:50px;padding-top:34px;border-top:2px solid var(--rule);}
+.qh{display:flex;align-items:center;gap:12px;margin-bottom:24px;}
+.qi{width:44px;height:44px;background:#F47B20;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;color:white;flex-shrink:0;}
+.qh h3{font-family:'Spectral',serif;font-size:22px;color:var(--ink);margin-bottom:3px;}
+.qh p{font-size:12px;color:var(--muted);}
+.qq{background:white;border:1px solid var(--rule);border-radius:13px;padding:21px;margin-bottom:17px;transition:all .2s;}
+.qq.correct{border-color:var(--pass);background:var(--pass-l);}
+.qq.wrong{border-color:var(--red);background:var(--red-l);}
+.qn{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.qt{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:15px;line-height:1.4;}
+.qopts{display:flex;flex-direction:column;gap:8px;}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-radius:9px;border:1.5px solid var(--rule);cursor:pointer;transition:all .15s;background:white;font-size:13px;color:var(--gray);line-height:1.4;}
+.opt:hover{border-color:var(--purple);background:var(--lav2);}
+.opt.selected{border-color:#F47B20;background:#FEF3EA;color:var(--ink);}
+.opt.correct-ans{border-color:var(--pass);background:var(--pass-l);}
+.opt.wrong-ans{border-color:var(--red);background:var(--red-l);}
+.opt.disabled{pointer-events:none;}
+.od{width:17px;height:17px;border-radius:50%;border:2px solid #CCC;flex-shrink:0;margin-top:1px;transition:all .15s;}
+.opt.selected .od{border-color:var(--purple);background:#F47B20;}
+.opt.correct-ans .od{border-color:var(--pass);background:var(--pass);}
+.opt.wrong-ans .od{border-color:var(--red);background:var(--red);}
+.qfb{padding:11px 14px;border-radius:9px;font-size:13px;margin-top:9px;display:none;line-height:1.5;}
+.qfb.show{display:block;}
+.qfb.correct{background:var(--pass-l);color:#155724;border:1px solid var(--pass);}
+.qfb.wrong{background:var(--red-l);color:#721c24;border:1px solid #e0a0a0;}
+.qr{background:white;border-radius:14px;padding:30px;text-align:center;border:2px solid var(--rule);margin-top:20px;display:none;}
+.qr.show{display:block;animation:fu .4s ease;}
+.qr.passed{border-color:var(--pass);}
+.qr.failed{border-color:var(--red);}
+.rs{font-family:'Spectral',serif;font-size:60px;font-weight:600;line-height:1;margin-bottom:7px;}
+.rs.pass{color:var(--pass);}
+.rs.fail{color:var(--red);}
+.rm{font-size:18px;font-weight:700;margin-bottom:7px;color:var(--ink);}
+.rsub{font-size:13px;color:var(--muted);margin-bottom:22px;}
+
+.btn{display:inline-flex;align-items:center;gap:7px;padding:11px 24px;border-radius:9px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;border:none;}
+.btn-p{background:#F47B20;color:white;}
+.btn-p:hover{background:#C85E10;transform:translateY(-1px);}
+.btn-ok{background:var(--teal);color:white;}
+.btn-ok:hover{background:#1f6b5c;}
+.btn-s{background:white;color:var(--ink);border:1.5px solid #DDD;}
+.btn-s:hover{border-color:var(--purple);color:var(--purple);}
+.btn-lg{padding:14px 30px;font-size:14px;border-radius:11px;}
+.btn:disabled{opacity:.4;cursor:not-allowed;pointer-events:none;}
+.ln{display:flex;align-items:center;justify-content:space-between;margin-top:42px;padding-top:26px;border-top:1px solid var(--rule);}
+
+.comp-wrap{text-align:center;padding:68px 40px;}
+.comp-badge{width:108px;height:108px;background:linear-gradient(135deg,#F47B20,#FDB913);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:46px;margin:0 auto 26px;box-shadow:0 14px 40px rgba(244,123,32,.3);}
+.comp-wrap h2{font-family:'Spectral',serif;font-size:40px;color:var(--ink);margin-bottom:11px;}
+.comp-wrap p{font-size:16px;color:var(--gray);max-width:440px;margin:0 auto 30px;line-height:1.7;}
+.chips{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-bottom:34px;}
+.chip{background:var(--pass-l);color:var(--pass);border:1px solid var(--pass);padding:5px 13px;border-radius:20px;font-size:12px;font-weight:600;}
+
+.toast{position:fixed;bottom:22px;right:22px;background:var(--dark);color:white;padding:13px 18px;border-radius:11px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:9px;transform:translateY(100px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:999;max-width:300px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-left:4px solid var(--teal);}
+.toast.locked-msg{border-left:4px solid #FDB913;}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo"><div class="sb-ic">🧩</div><div><h1>Curriculum Access<br>Training</h1></div></div>
+    <span>The Autism Helper · Self-Paced</span>
+  </div>
+  <div class="sb-prog">
+    <div class="sb-prog-top">Progress <span id="pt">0%</span></div>
+    <div class="pb"><div class="pf" id="pf" style="width:0%"></div></div>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-sec-title">Modules</div>
+    <div class="ni active" onclick="show('welcome')" id="nav-welcome"><div class="ni-ic">🏠</div><div style="flex:1"><div class="ni-t">Course Home</div><div class="ni-sub">Overview</div></div></div>
+    <div class="ni" onclick="go('m1')" id="nav-m1"><div class="ni-ic">🧩</div><div style="flex:1"><div class="ni-t">What Is Curriculum Access?</div><div class="ni-sub">Platform overview & purpose</div></div><div class="nbadge">Quiz</div></div>
+    <div class="ni locked" onclick="go('m2')" id="nav-m2"><div class="ni-ic">🔒</div><div style="flex:1"><div class="ni-t">Levels, Subjects & Placement</div><div class="ni-sub">6 levels, 9 subjects, skills matrix</div></div><div class="nbadge">Quiz</div></div>
+    <div class="ni locked" onclick="go('m3')" id="nav-m3"><div class="ni-ic">🔒</div><div style="flex:1"><div class="ni-t">Running a Lesson</div><div class="ni-sub">Instructional routine & materials</div></div><div class="nbadge">Quiz</div></div>
+    <div class="ni locked" onclick="go('m4')" id="nav-m4"><div class="ni-ic">🔒</div><div style="flex:1"><div class="ni-t">Data Collection & Progress</div><div class="ni-sub">Rubrics, data sheets, decisions</div></div><div class="nbadge">Quiz</div></div>
+    <div class="ni locked" onclick="go('m5')" id="nav-m5"><div class="ni-ic">🔒</div><div style="flex:1"><div class="ni-t">Curriculum Access in HLPP</div><div class="ni-sub">How it fits the micro-school</div></div><div class="nbadge">Quiz</div></div>
+    <div class="ni locked" onclick="go('complete')" id="nav-complete"><div class="ni-ic">🏆</div><div style="flex:1"><div class="ni-t">Certificate</div></div></div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div class="tb-crumb">Curriculum Access Training › <span class="cur" id="cur">Course Home</span></div>
+    <div class="tb-badge">Self-Paced</div>
+  </div>
+  <div class="content">
+
+    <!-- WELCOME -->
+    <div class="screen active" id="screen-welcome">
+      <div class="hero">
+        <div class="hero-tag">✦ Self-Paced Course</div>
+        <h2>Mastering<br><em>Curriculum Access</em></h2>
+        <p>Learn to use The Autism Helper's Curriculum Access platform — understand its structure, place learners correctly, run structured lessons, track data, and connect it to the Helon Universe micro-school model.</p>
+        <div class="hero-stats">
+          <div><div class="hs-n">5</div><div class="hs-l">Modules</div></div>
+          <div><div class="hs-n">~70</div><div class="hs-l">Minutes</div></div>
+          <div><div class="hs-n">75%</div><div class="hs-l">Pass score</div></div>
+        </div>
+        <button class="btn btn-p btn-lg" onclick="go('m1')">Start Course →</button>
+      </div>
+      <div class="mod-grid">
+        <div class="mc" onclick="go('m1')" id="card-m1"><div class="mc-num">01</div><div class="mc-s">→</div><h3>What Is Curriculum Access?</h3><p>Platform purpose, design philosophy, who it serves</p></div>
+        <div class="mc locked" onclick="go('m2')" id="card-m2"><div class="mc-num">02</div><div class="mc-s">🔒</div><h3>Levels, Subjects & Placement</h3><p>6 levels, 9 subject areas, placement assessments</p></div>
+        <div class="mc locked" onclick="go('m3')" id="card-m3"><div class="mc-num">03</div><div class="mc-s">🔒</div><h3>Running a Lesson</h3><p>The structured instructional routine, step by step</p></div>
+        <div class="mc locked" onclick="go('m4')" id="card-m4"><div class="mc-num">04</div><div class="mc-s">🔒</div><h3>Data Collection & Progress</h3><p>Rubrics, pre/post tests, data-based decisions</p></div>
+        <div class="mc locked" onclick="go('m5')" id="card-m5"><div class="mc-num">05</div><div class="mc-s">🔒</div><h3>Curriculum Access in HLPP</h3><p>How CA replaces or supplements MBTP in your micro-school</p></div>
+      </div>
+      <div class="callout"><strong>Checkpoint rule:</strong> Each module ends with a 4-question quiz. Score 75%+ (3 of 4) to unlock the next module. Unlimited retakes — no penalty for trying again.</div>
+    </div>
+
+    <!-- MODULE 1 -->
+    <div class="screen" id="screen-m1">
+      <div class="lh"><div class="ltag">✦ Module 1 of 5</div><h2>What Is Curriculum Access?</h2><div class="lmeta"><span>📖 ~12 min</span><span>✦ Quiz required</span></div></div>
+      <div class="lb">
+        <h3>A Curriculum Built for Learners with Diverse Needs</h3>
+        <p>Curriculum Access (CA) is The Autism Helper's comprehensive, ready-to-use curriculum platform designed specifically for learners with autism and other special needs. It is used in thousands of classrooms worldwide and is equally well-suited to homeschool and micro-school settings like HLPP.</p>
+        <p>The key insight behind CA is that many learners with autism have <strong>scattered skills</strong> — they may be advanced in one area and significantly behind in another. Traditional grade-level curricula don't account for this. CA solves that problem by placing students <em>at their skill level, not their grade level</em>, and providing a clear, structured path forward across multiple subject areas simultaneously.</p>
+
+        <h3>What Makes Curriculum Access Different</h3>
+        <div class="ig">
+          <div class="ic"><div class="ic-label">Structured & Routine-Based</div><p>Every lesson follows the same format. Predictable routines reduce anxiety, build independence, and free cognitive load for learning.</p></div>
+          <div class="ic"><div class="ic-label">Skill-Level Placement</div><p>Students are placed based on what they know, not their age or grade. A 10-year-old might work at Level 2 in Language Arts and Level 4 in Math.</p></div>
+          <div class="ic"><div class="ic-label">Data Embedded</div><p>Every unit includes pre/post assessments and rubrics. Data collection is built into the lesson — not an add-on.</p></div>
+          <div class="ic"><div class="ic-label">Differentiation Built In</div><p>Up to 6 levels per subject, plus behavior and communication supports, visual supports, and extension activities.</p></div>
+          <div class="ic"><div class="ic-label">Easy to Use</div><p>Implementation guides, built-in training videos, and ready-to-use materials mean less prep time and more instructional time.</p></div>
+          <div class="ic"><div class="ic-label">Evidence-Based</div><p>Rooted in ABA principles, structured teaching, and other evidence-based practices for autism education.</p></div>
+        </div>
+
+        <h3>Who Uses Curriculum Access?</h3>
+        <p>CA was originally designed for special education classrooms but has expanded to serve a wide range of settings. In the HLPP model, CA is used for learners who need more structure, visual support, and skill-level differentiation than a typical literature-based curriculum like MBTP provides.</p>
+        <div class="callout"><strong>In your micro-school:</strong> A learner might use Curriculum Access <em>instead of</em> MBTP as their primary curriculum, or alongside MBTP for specific subject areas where they need more structured support. Your role as a guide is the same — structured 1:1 instruction during Teacher blocks.</div>
+      </div>
+      <div class="qs">
+        <div class="qh"><div class="qi">✏️</div><div><h3>Module 1 Checkpoint</h3><p>Score 3 of 4 correct to unlock Module 2</p></div></div>
+        <div id="quiz-m1">
+          <div class="qq" id="m1q1"><div class="qn">Q1 of 4</div><div class="qt">Why does Curriculum Access place students at "skill level" rather than "grade level"?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m1q1',false)"><div class="od"></div>Because grade levels are only used in public schools</div>
+            <div class="opt" onclick="sel(this,'m1q1',true)"><div class="od"></div>Because learners with autism often have scattered skills — advanced in some areas and behind in others</div>
+            <div class="opt" onclick="sel(this,'m1q1',false)"><div class="od"></div>To avoid state testing requirements</div>
+            <div class="opt" onclick="sel(this,'m1q1',false)"><div class="od"></div>Because it offers fewer levels than standard curricula</div>
+          </div><div class="qfb" id="fb-m1q1"></div></div>
+
+          <div class="qq" id="m1q2"><div class="qn">Q2 of 4</div><div class="qt">What is one benefit of CA's routine-based, structured lesson format for autistic learners?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m1q2',true)"><div class="od"></div>Predictable routines reduce anxiety and free cognitive load for learning</div>
+            <div class="opt" onclick="sel(this,'m1q2',false)"><div class="od"></div>It makes lessons shorter so learners can take more breaks</div>
+            <div class="opt" onclick="sel(this,'m1q2',false)"><div class="od"></div>It eliminates the need for any direct instruction from the guide</div>
+            <div class="opt" onclick="sel(this,'m1q2',false)"><div class="od"></div>It allows all learners to follow the same lesson regardless of level</div>
+          </div><div class="qfb" id="fb-m1q2"></div></div>
+
+          <div class="qq" id="m1q3"><div class="qn">Q3 of 4</div><div class="qt">In the HLPP model, when would a guide use Curriculum Access instead of MBTP?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m1q3',false)"><div class="od"></div>When the MBTP materials have not arrived yet</div>
+            <div class="opt" onclick="sel(this,'m1q3',false)"><div class="od"></div>Only for math and science — never for language arts</div>
+            <div class="opt" onclick="sel(this,'m1q3',true)"><div class="od"></div>When a learner needs more structure, visual support, and skill-level differentiation than MBTP provides</div>
+            <div class="opt" onclick="sel(this,'m1q3',false)"><div class="od"></div>CA and MBTP are never used at the same time — they serve completely different ages</div>
+          </div><div class="qfb" id="fb-m1q3"></div></div>
+
+          <div class="qq" id="m1q4"><div class="qn">Q4 of 4</div><div class="qt">Which of these is a feature that is built INTO Curriculum Access — not an add-on?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m1q4',false)"><div class="od"></div>Lexia Core5 phonics modules</div>
+            <div class="opt" onclick="sel(this,'m1q4',false)"><div class="od"></div>LittleLit independent reading levels</div>
+            <div class="opt" onclick="sel(this,'m1q4',true)"><div class="od"></div>Pre/post assessments and data collection rubrics</div>
+            <div class="opt" onclick="sel(this,'m1q4',false)"><div class="od"></div>MBTP literature-based discussion prompts</div>
+          </div><div class="qfb" id="fb-m1q4"></div></div>
+        </div>
+        <div id="result-m1" class="qr"><div class="rs" id="score-m1"></div><div class="rm" id="msg-m1"></div><div class="rsub" id="sub-m1"></div><button class="btn btn-ok btn-lg" id="next-m1" onclick="unlock('m2')" style="display:none">Continue to Module 2 →</button><button class="btn btn-s" id="retry-m1" onclick="retry('m1')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:18px;display:flex;justify-content:flex-end;"><button class="btn btn-p" id="submit-m1" onclick="submit('m1',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="ln"><button class="btn btn-s" onclick="show('welcome')">← Home</button></div>
+    </div>
+
+    <!-- MODULE 2 -->
+    <div class="screen" id="screen-m2">
+      <div class="lh"><div class="ltag">✦ Module 2 of 5</div><h2>Levels, Subjects & Placement</h2><div class="lmeta"><span>📖 ~14 min</span><span>✦ Quiz required</span></div></div>
+      <div class="lb">
+        <h3>The 6 Levels</h3>
+        <p>Curriculum Access offers up to 6 levels per subject. Levels do not correspond to grade levels — they represent a skill progression from foundational to more complex within that subject area. A learner might be at Level 1 in Language Arts and Level 3 in Math at the same time.</p>
+        <div class="level-strip">
+          <div class="lv lv1">Level 1<br><span style="font-weight:400;font-size:10px;">Foundational</span></div>
+          <div class="lv lv2">Level 2<br><span style="font-weight:400;font-size:10px;">Emerging</span></div>
+          <div class="lv lv3">Level 3<br><span style="font-weight:400;font-size:10px;">Developing</span></div>
+          <div class="lv lv4">Level 4<br><span style="font-weight:400;font-size:10px;">Expanding</span></div>
+          <div class="lv lv5">Level 5<br><span style="font-weight:400;font-size:10px;">Advanced</span></div>
+          <div class="lv lv6">Level 6<br><span style="font-weight:400;font-size:10px;">Complex</span></div>
+        </div>
+
+        <h3>The 9 Subject Areas</h3>
+        <table class="ctable">
+          <tr><th>Core Subjects</th><th>What It Covers</th></tr>
+          <tr><td>Language Arts</td><td>Reading, writing, listening, and speaking skills aligned with academic standards</td></tr>
+          <tr><td>Math</td><td>Number sense, operations, measurement, geometry — academic math sequence</td></tr>
+          <tr><td>Phonics</td><td>Systematic phonics instruction — decoding, letter-sound relationships, word families</td></tr>
+          <tr><td>Reading Comprehension</td><td>Literal and inferential comprehension of texts, including adapted books</td></tr>
+          <tr><td>Science</td><td>Life, earth, and physical science concepts with adapted, visual-rich content</td></tr>
+          <tr><td>Social Studies</td><td>Community, culture, history, and geography content at accessible levels</td></tr>
+        </table>
+        <table class="ctable" style="margin-top:12px;">
+          <tr><th>Functional Subjects</th><th>What It Covers</th></tr>
+          <tr><td>Life Skills</td><td>Daily living, self-care, community navigation, functional routines</td></tr>
+          <tr><td>Functional Math</td><td>Money, time, measurement — math skills used in daily life</td></tr>
+          <tr><td>Functional Literacy</td><td>Reading and writing for daily life — signs, forms, directions, labels</td></tr>
+        </table>
+
+        <h3>How Placement Works</h3>
+        <div class="steps">
+          <div class="step"><div class="sn">1</div><div class="sc"><h4>Use the Skills Matrix</h4><p>The Autism Helper provides a Skills Matrix for each subject. This is a pre-assessment tool that identifies which skills the learner has and which are emerging. Complete this before starting any subject.</p></div></div>
+          <div class="step"><div class="sn">2</div><div class="sc"><h4>Identify the Starting Level</h4><p>Based on Skills Matrix results, identify the level where the learner has partial mastery — not where they fail everything, and not where they know everything already. The goal is productive challenge.</p></div></div>
+          <div class="step"><div class="sn">3</div><div class="sc"><h4>Place Each Subject Independently</h4><p>A learner may be at different levels in different subjects. This is expected and normal. Document each subject's placement level in your planning notes.</p></div></div>
+          <div class="step"><div class="sn">4</div><div class="sc"><h4>Reassess Regularly</h4><p>Each unit includes a post-test. When a learner passes a post-test with strong performance, they advance to the next level in that subject.</p></div></div>
+        </div>
+        <div class="callout"><strong>Key principle:</strong> Meet the learner where they are, not where you think they should be. It is always better to start slightly lower and build confidence than to start too high and create frustration.</div>
+      </div>
+      <div class="qs">
+        <div class="qh"><div class="qi">✏️</div><div><h3>Module 2 Checkpoint</h3><p>Score 3 of 4 correct to unlock Module 3</p></div></div>
+        <div id="quiz-m2">
+          <div class="qq" id="m2q1"><div class="qn">Q1 of 4</div><div class="qt">If a learner is Level 2 in Language Arts and Level 4 in Math, what does this mean?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m2q1',false)"><div class="od"></div>There is an error — all subjects must be at the same level</div>
+            <div class="opt" onclick="sel(this,'m2q1',true)"><div class="od"></div>This is normal — learners with autism often have scattered skills across subject areas</div>
+            <div class="opt" onclick="sel(this,'m2q1',false)"><div class="od"></div>The learner needs to be moved to Level 3 in both to create balance</div>
+            <div class="opt" onclick="sel(this,'m2q1',false)"><div class="od"></div>Language Arts should always match Math level</div>
+          </div><div class="qfb" id="fb-m2q1"></div></div>
+
+          <div class="qq" id="m2q2"><div class="qn">Q2 of 4</div><div class="qt">What tool does The Autism Helper provide to determine a learner's starting level in each subject?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m2q2',false)"><div class="od"></div>A standardized IQ test</div>
+            <div class="opt" onclick="sel(this,'m2q2',true)"><div class="od"></div>A Skills Matrix — a pre-assessment tool for each subject</div>
+            <div class="opt" onclick="sel(this,'m2q2',false)"><div class="od"></div>The learner's most recent school report card</div>
+            <div class="opt" onclick="sel(this,'m2q2',false)"><div class="od"></div>A parent interview about the learner's favorite topics</div>
+          </div><div class="qfb" id="fb-m2q2"></div></div>
+
+          <div class="qq" id="m2q3"><div class="qn">Q3 of 4</div><div class="qt">Which of these is a FUNCTIONAL subject in Curriculum Access?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m2q3',false)"><div class="od"></div>Language Arts</div>
+            <div class="opt" onclick="sel(this,'m2q3',false)"><div class="od"></div>Science</div>
+            <div class="opt" onclick="sel(this,'m2q3',true)"><div class="od"></div>Life Skills</div>
+            <div class="opt" onclick="sel(this,'m2q3',false)"><div class="od"></div>Phonics</div>
+          </div><div class="qfb" id="fb-m2q3"></div></div>
+
+          <div class="qq" id="m2q4"><div class="qn">Q4 of 4</div><div class="qt">When placing a learner in a subject, you should target the level where:</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m2q4',false)"><div class="od"></div>The learner fails every item — so they have maximum room to grow</div>
+            <div class="opt" onclick="sel(this,'m2q4',false)"><div class="od"></div>The learner passes everything easily — to build confidence first</div>
+            <div class="opt" onclick="sel(this,'m2q4',true)"><div class="od"></div>The learner has partial mastery — productive challenge without overwhelming frustration</div>
+            <div class="opt" onclick="sel(this,'m2q4',false)"><div class="od"></div>The learner's age matches the typical grade-level content</div>
+          </div><div class="qfb" id="fb-m2q4"></div></div>
+        </div>
+        <div id="result-m2" class="qr"><div class="rs" id="score-m2"></div><div class="rm" id="msg-m2"></div><div class="rsub" id="sub-m2"></div><button class="btn btn-ok btn-lg" id="next-m2" onclick="unlock('m3')" style="display:none">Continue to Module 3 →</button><button class="btn btn-s" id="retry-m2" onclick="retry('m2')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:18px;display:flex;justify-content:flex-end;"><button class="btn btn-p" id="submit-m2" onclick="submit('m2',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="ln"><button class="btn btn-s" onclick="show('m1')">← Module 1</button></div>
+    </div>
+
+    <!-- MODULE 3 -->
+    <div class="screen" id="screen-m3">
+      <div class="lh"><div class="ltag">✦ Module 3 of 5</div><h2>Running a Lesson</h2><div class="lmeta"><span>📖 ~13 min</span><span>✦ Quiz required</span></div></div>
+      <div class="lb">
+        <h3>The Instructional Routine</h3>
+        <p>Every Curriculum Access lesson follows the same sequence. This consistency is not accidental — it is one of the program's core strengths. When the routine is predictable, learners can focus their energy on the content rather than figuring out what comes next. Guides should follow this routine every session.</p>
+        <div class="steps">
+          <div class="step"><div class="sn">1</div><div class="sc"><h4>Preview / Anchor Chart</h4><p>Open with the unit's anchor chart or key vocabulary. Briefly review what was covered in the previous session. Keep this to 2–3 minutes. The goal is to activate prior knowledge — not re-teach everything.</p></div></div>
+          <div class="step"><div class="sn">2</div><div class="sc"><h4>Model the Skill</h4><p>Show the learner exactly how to complete today's task before asking them to try. Use the implementation guide language: "Watch me first." Do one complete example. This is Explicit Instruction — a core ABA-aligned practice.</p></div></div>
+          <div class="step"><div class="sn">3</div><div class="sc"><h4>Guided Practice</h4><p>Do 1–2 examples together with the learner, providing prompts and support as needed. Fade prompts as the learner shows understanding. Note the level of prompting needed — this is data.</p></div></div>
+          <div class="step"><div class="sn">4</div><div class="sc"><h4>Independent Practice</h4><p>The learner completes the lesson activity independently while you observe and collect data. Avoid over-helping — let them show you what they know. Use the lesson's data sheet.</p></div></div>
+          <div class="step"><div class="sn">5</div><div class="sc"><h4>Review & Correct</h4><p>Go over responses together. Correct errors immediately with the correct answer and a brief re-model. Error correction is instructional — not a punishment or a setback.</p></div></div>
+          <div class="step"><div class="sn">6</div><div class="sc"><h4>Record & Wrap Up</h4><p>Record data on the lesson's rubric or data sheet. Note accuracy rate, prompting level, and any errors. End with a positive close: "You worked hard today."</p></div></div>
+        </div>
+
+        <h3>What's in Each Lesson Package</h3>
+        <div class="ig">
+          <div class="ic"><div class="ic-label">Implementation Guide</div><p>Step-by-step instructions for running the lesson. Follow this during the session — especially when you're new to a unit.</p></div>
+          <div class="ic"><div class="ic-label">Student Materials</div><p>Worksheets, adapted books, file folders, or task cards for the learner. Print or prepare these before the session.</p></div>
+          <div class="ic"><div class="ic-label">Anchor Chart / Visuals</div><p>Key vocabulary and concept visuals to post or display during instruction. These become familiar reference points across the unit.</p></div>
+          <div class="ic"><div class="ic-label">Data Sheet</div><p>Pre-made data collection form. Record accuracy, errors, and prompting level. Required — not optional.</p></div>
+        </div>
+
+        <div class="callout"><strong>Prep before you teach:</strong> Read the implementation guide, print student materials, and have the data sheet ready BEFORE the session begins. Scrambling during instruction undermines the structured routine learners depend on.</p></div>
+      </div>
+      <div class="qs">
+        <div class="qh"><div class="qi">✏️</div><div><h3>Module 3 Checkpoint</h3><p>Score 3 of 4 correct to unlock Module 4</p></div></div>
+        <div id="quiz-m3">
+          <div class="qq" id="m3q1"><div class="qn">Q1 of 4</div><div class="qt">Why is it important for every CA lesson to follow the same routine structure?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m3q1',false)"><div class="od"></div>It makes lesson preparation faster for the guide</div>
+            <div class="opt" onclick="sel(this,'m3q1',true)"><div class="od"></div>Predictable routines help learners focus on content rather than figuring out what comes next</div>
+            <div class="opt" onclick="sel(this,'m3q1',false)"><div class="od"></div>It is required by state education standards</div>
+            <div class="opt" onclick="sel(this,'m3q1',false)"><div class="od"></div>It ensures all learners complete the same amount of work</div>
+          </div><div class="qfb" id="fb-m3q1"></div></div>
+
+          <div class="qq" id="m3q2"><div class="qn">Q2 of 4</div><div class="qt">During "Guided Practice," what should the guide be tracking as data?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m3q2',false)"><div class="od"></div>How much the learner enjoyed the activity</div>
+            <div class="opt" onclick="sel(this,'m3q2',true)"><div class="od"></div>The level of prompting the learner needed to complete the task</div>
+            <div class="opt" onclick="sel(this,'m3q2',false)"><div class="od"></div>The amount of time the session took</div>
+            <div class="opt" onclick="sel(this,'m3q2',false)"><div class="od"></div>Whether the materials were printed correctly</div>
+          </div><div class="qfb" id="fb-m3q2"></div></div>
+
+          <div class="qq" id="m3q3"><div class="qn">Q3 of 4</div><div class="qt">When the learner makes an error during review, the guide should:</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m3q3',false)"><div class="od"></div>Stop the session and re-teach the entire lesson</div>
+            <div class="opt" onclick="sel(this,'m3q3',false)"><div class="od"></div>Mark the item wrong and move on without comment</div>
+            <div class="opt" onclick="sel(this,'m3q3',true)"><div class="od"></div>Correct the error immediately with the right answer and a brief re-model</div>
+            <div class="opt" onclick="sel(this,'m3q3',false)"><div class="od"></div>Ask the learner to keep trying until they get it right independently</div>
+          </div><div class="qfb" id="fb-m3q3"></div></div>
+
+          <div class="qq" id="m3q4"><div class="qn">Q4 of 4</div><div class="qt">What is the correct approach to Independent Practice in CA?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m3q4',false)"><div class="od"></div>Sit next to the learner and help them complete each item together</div>
+            <div class="opt" onclick="sel(this,'m3q4',false)"><div class="od"></div>Leave the room so the learner feels fully independent</div>
+            <div class="opt" onclick="sel(this,'m3q4',true)"><div class="od"></div>Observe while the learner works independently, collect data, and avoid over-helping</div>
+            <div class="opt" onclick="sel(this,'m3q4',false)"><div class="od"></div>Only use Independent Practice once a week as a review activity</div>
+          </div><div class="qfb" id="fb-m3q4"></div></div>
+        </div>
+        <div id="result-m3" class="qr"><div class="rs" id="score-m3"></div><div class="rm" id="msg-m3"></div><div class="rsub" id="sub-m3"></div><button class="btn btn-ok btn-lg" id="next-m3" onclick="unlock('m4')" style="display:none">Continue to Module 4 →</button><button class="btn btn-s" id="retry-m3" onclick="retry('m3')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:18px;display:flex;justify-content:flex-end;"><button class="btn btn-p" id="submit-m3" onclick="submit('m3',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="ln"><button class="btn btn-s" onclick="show('m2')">← Module 2</button></div>
+    </div>
+
+    <!-- MODULE 4 -->
+    <div class="screen" id="screen-m4">
+      <div class="lh"><div class="ltag">✦ Module 4 of 5</div><h2>Data Collection & Progress</h2><div class="lmeta"><span>📖 ~11 min</span><span>✦ Quiz required</span></div></div>
+      <div class="lb">
+        <h3>Why Data Matters More Here</h3>
+        <p>In a standard classroom, a teacher might intuitively know how 25 students are doing. In a 1:1 or micro-school setting, data is how you demonstrate progress, make instructional decisions, and communicate with families. CA makes this easy by including pre-made data sheets with every lesson.</p>
+
+        <h3>The Three Data Points to Collect Every Session</h3>
+        <table class="ctable">
+          <tr><th>Data Point</th><th>What to Record</th><th>Why It Matters</th></tr>
+          <tr><td>Accuracy Rate</td><td>% of items correct during independent practice (e.g., 7/10 = 70%)</td><td>Tells you if the learner is ready to advance or needs more practice</td></tr>
+          <tr><td>Prompt Level</td><td>How much support was needed: Independent / Verbal / Gestural / Physical</td><td>Tracks growing independence — goal is always to fade prompts</td></tr>
+          <tr><td>Error Patterns</td><td>Which specific items were missed — note the type of error</td><td>Informs what to re-teach and whether a different approach is needed</td></tr>
+        </table>
+
+        <h3>Pre-Tests, Post-Tests & Level Advancement</h3>
+        <div class="steps">
+          <div class="step"><div class="sn">1</div><div class="sc"><h4>Pre-Test Before Each Unit</h4><p>Give the unit pre-test before starting any lessons. This confirms the placement level is correct and identifies specific skills the learner already knows (these can be skipped or taught quickly).</p></div></div>
+          <div class="step"><div class="sn">2</div><div class="sc"><h4>Collect Daily Data</h4><p>Use the provided data sheet every session. Record accuracy and prompting. Never rely on memory — even experienced guides lose track of details without a data system.</p></div></div>
+          <div class="step"><div class="sn">3</div><div class="sc"><h4>Post-Test at Unit End</h4><p>Administer the unit post-test when all lessons are complete. Compare to the pre-test. Strong post-test performance (80%+) signals readiness to advance to the next level in this subject.</p></div></div>
+          <div class="step"><div class="sn">4</div><div class="sc"><h4>Make Data-Based Decisions</h4><p>If a learner scores below 70% on multiple lessons in a row, the level may be too high — consider dropping one level or re-teaching the unit's foundational lessons. If they're consistently above 90% with no prompting, consider advancing.</p></div></div>
+        </div>
+
+        <div class="callout"><strong>The 80% rule applies here too:</strong> Any skill area below 80% accuracy for two or more consecutive sessions should trigger re-teaching, not just more practice of the same material.</div>
+
+        <h3>Using Data in Parent Reports</h3>
+        <p>Your CA data directly feeds the parent report you generate in the Daily Planning tool. When you document accuracy scores and prompt levels, you are creating the evidence base for everything you communicate to families. This data is what separates a professional learning guide from a babysitter — use it every session.</p>
+      </div>
+      <div class="qs">
+        <div class="qh"><div class="qi">✏️</div><div><h3>Module 4 Checkpoint</h3><p>Score 3 of 4 correct to unlock the final module</p></div></div>
+        <div id="quiz-m4">
+          <div class="qq" id="m4q1"><div class="qn">Q1 of 4</div><div class="qt">What do the three data points — accuracy rate, prompt level, and error patterns — together tell you?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m4q1',false)"><div class="od"></div>Only how long the session took</div>
+            <div class="opt" onclick="sel(this,'m4q1',true)"><div class="od"></div>Whether the learner is ready to advance, how independent they are, and what to re-teach</div>
+            <div class="opt" onclick="sel(this,'m4q1',false)"><div class="od"></div>Which materials to order next</div>
+            <div class="opt" onclick="sel(this,'m4q1',false)"><div class="od"></div>The learner's grade-level equivalency</div>
+          </div><div class="qfb" id="fb-m4q1"></div></div>
+
+          <div class="qq" id="m4q2"><div class="qn">Q2 of 4</div><div class="qt">A learner scores below 70% on three consecutive CA lessons. What should the guide consider?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m4q2',false)"><div class="od"></div>Continue — they just need more time at this level</div>
+            <div class="opt" onclick="sel(this,'m4q2',true)"><div class="od"></div>The level may be too high — drop one level or re-teach foundational lessons</div>
+            <div class="opt" onclick="sel(this,'m4q2',false)"><div class="od"></div>Skip to the next unit since this one is not working</div>
+            <div class="opt" onclick="sel(this,'m4q2',false)"><div class="od"></div>Replace CA with a different curriculum</div>
+          </div><div class="qfb" id="fb-m4q2"></div></div>
+
+          <div class="qq" id="m4q3"><div class="qn">Q3 of 4</div><div class="qt">What score on the post-test signals readiness to advance to the next level?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m4q3',false)"><div class="od"></div>50%+</div>
+            <div class="opt" onclick="sel(this,'m4q3',false)"><div class="od"></div>70%+</div>
+            <div class="opt" onclick="sel(this,'m4q3',true)"><div class="od"></div>80%+</div>
+            <div class="opt" onclick="sel(this,'m4q3',false)"><div class="od"></div>100% only</div>
+          </div><div class="qfb" id="fb-m4q3"></div></div>
+
+          <div class="qq" id="m4q4"><div class="qn">Q4 of 4</div><div class="qt">Why is collecting data every session more important than relying on memory?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m4q4',false)"><div class="od"></div>It is required by law in all educational settings</div>
+            <div class="opt" onclick="sel(this,'m4q4',false)"><div class="od"></div>It makes sessions feel more formal and professional</div>
+            <div class="opt" onclick="sel(this,'m4q4',true)"><div class="od"></div>Even experienced guides lose track of details — data is what enables accurate instructional decisions and family communication</div>
+            <div class="opt" onclick="sel(this,'m4q4',false)"><div class="od"></div>Data only matters during IEP meetings, not daily sessions</div>
+          </div><div class="qfb" id="fb-m4q4"></div></div>
+        </div>
+        <div id="result-m4" class="qr"><div class="rs" id="score-m4"></div><div class="rm" id="msg-m4"></div><div class="rsub" id="sub-m4"></div><button class="btn btn-ok btn-lg" id="next-m4" onclick="unlock('m5')" style="display:none">Continue to Module 5 →</button><button class="btn btn-s" id="retry-m4" onclick="retry('m4')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:18px;display:flex;justify-content:flex-end;"><button class="btn btn-p" id="submit-m4" onclick="submit('m4',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="ln"><button class="btn btn-s" onclick="show('m3')">← Module 3</button></div>
+    </div>
+
+    <!-- MODULE 5 -->
+    <div class="screen" id="screen-m5">
+      <div class="lh"><div class="ltag">✦ Module 5 of 5</div><h2>Curriculum Access in the HLPP Model</h2><div class="lmeta"><span>📖 ~10 min</span><span>✦ Final quiz</span></div></div>
+      <div class="lb">
+        <h3>Where CA Fits in the Rotation</h3>
+        <p>Just like MBTP, Curriculum Access happens during the <strong>Teacher 1:1 block</strong> in the HLPP rotation. CA is never an independent station — it requires your active instruction, prompting, and data collection. Each learner using CA should receive their two Teacher blocks per day dedicated to CA lessons (or a mix of CA subjects).</p>
+
+        <table class="ctable">
+          <tr><th></th><th>MBTP</th><th>Curriculum Access</th></tr>
+          <tr><td>Delivery</td><td>Guide-led 1:1 instruction</td><td>Guide-led 1:1 instruction</td></tr>
+          <tr><td>Best for</td><td>Learners ready for literature-based, discussion-driven learning</td><td>Learners who need more structure, visual support, skill-level differentiation</td></tr>
+          <tr><td>Subjects</td><td>Language Arts, Science, Social Studies (thematic)</td><td>9 subjects including Functional Math, Life Skills, Functional Literacy</td></tr>
+          <tr><td>Data system</td><td>Mastery rubric (Explores→Integrates)</td><td>Pre/post tests, accuracy rates, prompt levels</td></tr>
+          <tr><td>Schedule slot</td><td>Teacher 1:1 blocks</td><td>Teacher 1:1 blocks</td></tr>
+        </table>
+
+        <h3>When to Use CA Instead of MBTP</h3>
+        <div class="steps">
+          <div class="step"><div class="sn">1</div><div class="sc"><h4>Learner needs more structure than MBTP provides</h4><p>MBTP assumes a certain level of language and discussion ability. If a learner struggles to engage with discussion-based instruction, CA's explicit instruction model is a better fit.</p></div></div>
+          <div class="step"><div class="sn">2</div><div class="sc"><h4>Learner needs functional skills alongside academics</h4><p>CA's Life Skills, Functional Math, and Functional Literacy subjects address real-world independence. MBTP does not cover these areas.</p></div></div>
+          <div class="step"><div class="sn">3</div><div class="sc"><h4>Learner benefits from visual supports built into the curriculum</h4><p>CA includes anchor charts, visual supports, and adapted materials by default. MBTP requires the guide to adapt materials separately.</p></div></div>
+        </div>
+
+        <div class="hlbox">
+          <h4>Using CA and Core5 + LittleLit Together</h4>
+          <ul>
+            <li>CA's <strong>Phonics subject</strong> and Lexia Core5 are complementary — both target decoding. CA Phonics is guide-led; Core5 is the independent digital reinforcement. Use both for learners who need strong phonics scaffolding.</li>
+            <li>CA's <strong>Reading Comprehension</strong> and LittleLit overlap in purpose but approach it differently. CA RC uses adapted texts with more scaffold; LittleLit uses leveled independent reading. Both can run simultaneously.</li>
+            <li>The <strong>daily schedule remains the same:</strong> Core5 first → LittleLit independent station → CA 1:1 with guide (in Teacher block).</li>
+            <li>Document CA data in the Daily Planning tool just as you would MBTP — in the "MBTP / Curriculum" section.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="qs">
+        <div class="qh"><div class="qi">🏆</div><div><h3>Final Checkpoint — Module 5</h3><p>Score 3 of 4 correct to complete the course</p></div></div>
+        <div id="quiz-m5">
+          <div class="qq" id="m5q1"><div class="qn">Q1 of 4</div><div class="qt">In the HLPP daily rotation, where does a CA session take place?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m5q1',false)"><div class="od"></div>During the independent work station</div>
+            <div class="opt" onclick="sel(this,'m5q1',true)"><div class="od"></div>During the Teacher 1:1 instruction block</div>
+            <div class="opt" onclick="sel(this,'m5q1',false)"><div class="od"></div>During the LittleLit digital station</div>
+            <div class="opt" onclick="sel(this,'m5q1',false)"><div class="od"></div>During whole-group enrichment time</div>
+          </div><div class="qfb" id="fb-m5q1"></div></div>
+
+          <div class="qq" id="m5q2"><div class="qn">Q2 of 4</div><div class="qt">Which of these is a reason to use Curriculum Access INSTEAD of MBTP for a learner?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m5q2',false)"><div class="od"></div>The learner loves reading chapter books independently</div>
+            <div class="opt" onclick="sel(this,'m5q2',false)"><div class="od"></div>MBTP materials haven't arrived yet</div>
+            <div class="opt" onclick="sel(this,'m5q2',true)"><div class="od"></div>The learner needs functional life skills instruction alongside academics</div>
+            <div class="opt" onclick="sel(this,'m5q2',false)"><div class="od"></div>The learner is above Level 4 in all subject areas</div>
+          </div><div class="qfb" id="fb-m5q2"></div></div>
+
+          <div class="qq" id="m5q3"><div class="qn">Q3 of 4</div><div class="qt">How does CA's Phonics subject relate to Lexia Core5 in the daily schedule?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m5q3',false)"><div class="od"></div>CA Phonics replaces Core5 — you only need one</div>
+            <div class="opt" onclick="sel(this,'m5q3',false)"><div class="od"></div>They cover completely different skills and should never be used together</div>
+            <div class="opt" onclick="sel(this,'m5q3',true)"><div class="od"></div>They are complementary — CA Phonics is guide-led instruction; Core5 is the independent digital reinforcement</div>
+            <div class="opt" onclick="sel(this,'m5q3',false)"><div class="od"></div>Core5 is used for older learners and CA Phonics for younger ones only</div>
+          </div><div class="qfb" id="fb-m5q3"></div></div>
+
+          <div class="qq" id="m5q4"><div class="qn">Q4 of 4</div><div class="qt">When logging a CA session in the HLPP Daily Planning tool, you should record it in which section?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m5q4',false)"><div class="od"></div>The Lexia Core5 section</div>
+            <div class="opt" onclick="sel(this,'m5q4',false)"><div class="od"></div>The LittleLit section</div>
+            <div class="opt" onclick="sel(this,'m5q4',true)"><div class="od"></div>The MBTP / Curriculum section</div>
+            <div class="opt" onclick="sel(this,'m5q4',false)"><div class="od"></div>It does not need to be logged in the daily planning tool</div>
+          </div><div class="qfb" id="fb-m5q4"></div></div>
+        </div>
+        <div id="result-m5" class="qr"><div class="rs" id="score-m5"></div><div class="rm" id="msg-m5"></div><div class="rsub" id="sub-m5"></div><button class="btn btn-ok btn-lg" id="next-m5" onclick="unlock('complete')" style="display:none">🎉 Complete Course →</button><button class="btn btn-s" id="retry-m5" onclick="retry('m5')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:18px;display:flex;justify-content:flex-end;"><button class="btn btn-p" id="submit-m5" onclick="submit('m5',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="ln"><button class="btn btn-s" onclick="show('m4')">← Module 4</button></div>
+    </div>
+
+    <!-- COMPLETE -->
+    <div class="screen" id="screen-complete">
+      <div class="comp-wrap">
+        <div class="comp-badge">🧩</div>
+        <h2>Course Complete!</h2>
+        <p>You're ready to use Curriculum Access effectively in your Helon Universe micro-school — place learners correctly, run structured lessons, collect meaningful data, and integrate CA with Core5 and LittleLit.</p>
+        <div class="chips">
+          <div class="chip">✓ What Is Curriculum Access?</div>
+          <div class="chip">✓ Levels, Subjects & Placement</div>
+          <div class="chip">✓ Running a Lesson</div>
+          <div class="chip">✓ Data Collection & Progress</div>
+          <div class="chip">✓ CA in the HLPP Model</div>
+        </div>
+        <div style="display:flex;gap:13px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-p btn-lg" onclick="show('welcome')">← Back to Home</button>
+          <button class="btn btn-s btn-lg" onclick="window.print()">🖨 Print Certificate</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="ti">✓</span><span id="tm"></span></div>
+
+<script>
+const MODS=['m1','m2','m3','m4','m5'];
+const state={unlocked:new Set(['welcome','m1']),completed:new Set(),answers:{},submitted:new Set()};
+const NAMES={welcome:'Course Home',m1:'Module 1',m2:'Module 2',m3:'Module 3',m4:'Module 4',m5:'Module 5',complete:'Certificate'};
+const ICONS=['🧩','📊','📋','📈','🔗'];
+function go(id){if(!state.unlocked.has(id)){toast('🔒','Complete the previous quiz to unlock.','locked-msg');return;}show(id);}
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  const nav=document.getElementById('nav-'+id);if(nav)nav.classList.add('active');
+  document.getElementById('cur').textContent=NAMES[id]||id;
+  updateUI();window.scrollTo(0,0);
+}
+function unlock(next){state.unlocked.add(next);updateUI();show(next);}
+function updateUI(){
+  MODS.forEach((m,i)=>{
+    const nav=document.getElementById('nav-'+m),card=document.getElementById('card-'+m);
+    if(!nav)return;
+    nav.classList.remove('locked','completed');
+    if(state.completed.has(m)){nav.classList.add('completed');nav.querySelector('.ni-ic').textContent='✓';nav.querySelector('.nbadge').textContent='✓';if(card){card.classList.remove('locked');card.classList.add('completed');card.querySelector('.mc-s').textContent='✓';}}
+    else if(!state.unlocked.has(m)){nav.classList.add('locked');nav.querySelector('.ni-ic').textContent='🔒';if(card){card.classList.add('locked');card.querySelector('.mc-s').textContent='🔒';}}
+    else{nav.querySelector('.ni-ic').textContent=ICONS[i];if(card){card.classList.remove('locked','completed');card.querySelector('.mc-s').textContent='→';}}
+  });
+  const cn=document.getElementById('nav-complete');if(state.unlocked.has('complete')){cn.classList.remove('locked');cn.querySelector('.ni-ic').textContent='🏆';}
+  const pct=Math.round(state.completed.size/MODS.length*100);
+  document.getElementById('pf').style.width=pct+'%';document.getElementById('pt').textContent=pct+'%';
+}
+function sel(el,qid,correct){
+  if(state.submitted.has(qid.slice(0,2)))return;
+  el.closest('.qopts').querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');state.answers[qid]=correct;
+  const mod=qid.slice(0,2);
+  document.getElementById('submit-'+mod).disabled=![...document.querySelectorAll('#quiz-'+mod+' .qq')].every(q=>state.answers[q.id]!==undefined);
+}
+function submit(mod,total){
+  if(state.submitted.has(mod))return;state.submitted.add(mod);
+  let correct=0;
+  document.querySelectorAll('#quiz-'+mod+' .qq').forEach(q=>{
+    const ok=state.answers[q.id];if(ok)correct++;
+    q.querySelectorAll('.opt').forEach(o=>{o.classList.add('disabled');if(o.getAttribute('onclick')?.includes('true'))o.classList.add('correct-ans');else if(o.classList.contains('selected'))o.classList.add('wrong-ans');});
+    const fb=document.getElementById('fb-'+q.id);
+    if(ok){q.classList.add('correct');fb.textContent='✓ Correct!';fb.className='qfb show correct';}
+    else{q.classList.add('wrong');fb.textContent='✗ Not quite — the highlighted option is correct.';fb.className='qfb show wrong';}
+  });
+  const pct=Math.round(correct/total*100),passed=pct>=75;
+  const r=document.getElementById('result-'+mod);r.classList.add('show',passed?'passed':'failed');
+  document.getElementById('score-'+mod).textContent=pct+'%';
+  document.getElementById('score-'+mod).className='rs '+(passed?'pass':'fail');
+  document.getElementById('msg-'+mod).textContent=passed?'🎉 Passed!':'Not quite — try again';
+  document.getElementById('sub-'+mod).textContent=passed?`${correct} of ${total} correct — module complete!`:`${correct} of ${total} — need 3+ to pass.`;
+  document.getElementById('submit-'+mod).style.display='none';
+  if(passed){state.completed.add(mod);document.getElementById('next-'+mod).style.display='inline-flex';updateUI();toast('✓','Module complete!','success');}
+  else document.getElementById('retry-'+mod).style.display='inline-flex';
+}
+function retry(mod){
+  state.submitted.delete(mod);Object.keys(state.answers).filter(k=>k.startsWith(mod)).forEach(k=>delete state.answers[k]);
+  document.querySelectorAll('#quiz-'+mod+' .qq').forEach(q=>{q.classList.remove('correct','wrong');q.querySelectorAll('.opt').forEach(o=>o.classList.remove('selected','correct-ans','wrong-ans','disabled'));const fb=document.getElementById('fb-'+q.id);if(fb){fb.className='qfb';fb.textContent='';}});
+  const r=document.getElementById('result-'+mod);r.classList.remove('show','passed','failed');
+  document.getElementById('retry-'+mod).style.display='none';document.getElementById('next-'+mod).style.display='none';
+  const sb=document.getElementById('submit-'+mod);sb.style.display='inline-flex';sb.disabled=true;
+}
+let tt;function toast(icon,msg,type=''){const t=document.getElementById('toast');document.getElementById('ti').textContent=icon;document.getElementById('tm').textContent=msg;t.className='toast show '+type;clearTimeout(tt);tt=setTimeout(()=>t.className='toast',3200);}
+updateUI();
+</script>
+</body>
+</html>

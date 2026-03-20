@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Supporting Autistic Learners | Training Course</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Fraunces:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --coral:#E05C3A;--coral2:#F07A5A;--coral-l:#FEF0EB;--coral-m:#FCCBA0;
+  --warm:#F5A623;--warm-l:#FEF8E6;
+  --teal:#2A7F6F;--teal-l:#E0F4F0;
+  --slate:#2C3E50;--slate2:#34495E;--slategray:#7F8C8D;--muted:#A0AEB5;
+  --pass:#1E7E4E;--pass-l:#D4EDDA;
+  --fail:#C0392B;--fail-l:#FDEDEC;
+  --bg:#FAF9F7;--card:#FFFFFF;--rule:#E8E4DF;--rule2:#F5F3F0;
+  --dark:#1A1008;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--slate);min-height:100vh;}
+
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:270px;background:var(--dark);display:flex;flex-direction:column;z-index:100;overflow-y:auto;}
+.sb-brand{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.07);}
+.sb-logo{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.sb-ic{width:38px;height:38px;background:linear-gradient(135deg,#F47B20,#FDB913);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;}
+.sb-brand h1{font-size:14px;font-weight:700;color:white;line-height:1.3;}
+.sb-brand span{font-size:10px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:#FDB913;}
+.sb-prog{padding:12px 20px;border-bottom:1px solid rgba(255,255,255,.05);}
+.sb-prog-top{display:flex;justify-content:space-between;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:6px;}
+.sb-prog-top span{color:#FDB913;}
+.pb{height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;}
+.pf{height:100%;background:linear-gradient(90deg,#F47B20,#FDB913);transition:width .6s ease;}
+.sb-sec{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.sb-sec-title{padding:5px 20px 7px;font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.2);}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 20px;cursor:pointer;transition:background .15s;position:relative;}
+.ni:hover{background:rgba(255,255,255,.05);}
+.ni.active{background:rgba(244,123,32,.2);}
+.ni.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#F47B20;}
+.ni.locked{opacity:.38;cursor:not-allowed;}
+.ni-ic{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;background:rgba(255,255,255,.07);}
+.ni.active .ni-ic{background:#F47B20;}
+.ni.completed .ni-ic{background:var(--teal);}
+.ni-t{font-size:12px;font-weight:600;color:rgba(255,255,255,.82);flex:1;line-height:1.3;}
+.ni.locked .ni-t{color:rgba(255,255,255,.28);}
+.ni-sub{font-size:10px;color:rgba(255,255,255,.28);margin-top:1px;}
+.nbadge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.3);}
+.ni.completed .nbadge{background:var(--teal);color:white;}
+
+.main{margin-left:270px;min-height:100vh;padding-bottom:80px;}
+.topbar{background:var(--card);border-bottom:1px solid var(--rule);padding:13px 42px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.tb-crumb{font-size:12px;color:var(--muted);}
+.tb-crumb .cur{color:var(--slate);font-weight:700;}
+.tb-badge{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 11px;border-radius:20px;background:#FEF3EA;color:#F47B20;border:1px solid #FDDBB8;}
+.content{max-width:800px;margin:0 auto;padding:42px 42px 0;}
+.screen{display:none;}
+.screen.active{display:block;animation:fu .3s ease;}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.hero{background:linear-gradient(135deg,#2D2D2D 0%,#F47B20 100%);border-radius:18px;padding:50px 46px;margin-bottom:26px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-60px;right:-60px;width:260px;height:260px;background:radial-gradient(circle,rgba(253,185,19,.15) 0%,transparent 70%);}
+.hero-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--coral-m);margin-bottom:12px;}
+.hero h2{font-family:'Fraunces',serif;font-size:38px;line-height:1.2;color:white;margin-bottom:10px;}
+.hero h2 em{font-style:normal;color:#FDD;}
+.hero p{font-size:15px;color:rgba(255,255,255,.6);line-height:1.7;max-width:480px;margin-bottom:26px;}
+.hero-stats{display:flex;gap:26px;margin-bottom:26px;}
+.hs-n{font-family:'Fraunces',serif;font-size:30px;font-weight:600;color:white;}
+.hs-l{font-size:11px;color:rgba(255,255,255,.38);text-transform:uppercase;letter-spacing:.07em;}
+.mod-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:26px;}
+.mc{background:var(--card);border-radius:13px;padding:17px;border:1px solid var(--rule);cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.mc:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.06);}
+.mc.locked{opacity:.5;cursor:not-allowed;}
+.mc.locked:hover{transform:none;box-shadow:none;}
+.mc.completed{border-color:var(--teal);}
+.mc-num{font-family:'Fraunces',serif;font-size:34px;font-weight:600;color:#EEE;line-height:1;margin-bottom:6px;}
+.mc.completed .mc-num{color:var(--teal);opacity:.35;}
+.mc h3{font-size:13px;font-weight:700;color:var(--slate);margin-bottom:3px;line-height:1.35;}
+.mc p{font-size:11px;color:var(--muted);line-height:1.5;}
+.mc-s{position:absolute;top:13px;right:13px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;}
+.mc.completed .mc-s{background:var(--teal);color:white;}
+.mc.locked .mc-s{background:#EEE;color:#AAA;}
+.mc:not(.locked):not(.completed) .mc-s{background:#F47B20;color:white;}
+
+.lh{margin-bottom:30px;}
+.ltag{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#F47B20;background:#FEF3EA;padding:4px 11px;border-radius:20px;margin-bottom:11px;}
+.lh h2{font-family:'Fraunces',serif;font-size:34px;line-height:1.2;color:var(--slate);margin-bottom:8px;}
+.lmeta{display:flex;align-items:center;gap:16px;font-size:12px;color:var(--muted);}
+.lb{font-size:15px;line-height:1.75;color:var(--slate2);}
+.lb h3{font-family:'Fraunces',serif;font-size:21px;color:var(--slate);margin:30px 0 11px;padding-top:30px;border-top:1px solid var(--rule);}
+.lb h3:first-of-type{margin-top:0;padding-top:0;border-top:none;}
+.lb p{margin-bottom:13px;}
+.callout{background:var(--warm-l);border-left:4px solid #F47B20;padding:13px 17px;border-radius:0 10px 10px 0;margin:17px 0;font-size:14px;color:var(--slate);font-style:italic;}
+.callout strong{font-style:normal;color:var(--coral);}
+.ig{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:17px 0;}
+.ic{background:var(--card);border:1px solid var(--rule);border-radius:11px;padding:15px;}
+.ic-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#F47B20;margin-bottom:5px;}
+.ic p{font-size:13px;color:var(--slate2);margin:0;line-height:1.55;}
+.steps{margin:17px 0;}
+.step{display:flex;gap:13px;margin-bottom:13px;align-items:flex-start;}
+.sn{width:30px;height:30px;border-radius:50%;background:#F47B20;color:white;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sc h4{font-size:14px;font-weight:700;color:var(--slate);margin-bottom:3px;}
+.sc p{font-size:13px;color:var(--slate2);margin:0;line-height:1.55;}
+.ctable{width:100%;border-collapse:collapse;margin:17px 0;border-radius:11px;overflow:hidden;border:1px solid var(--rule);}
+.ctable th{background:#F47B20;color:white;padding:11px 14px;text-align:left;font-size:12px;font-weight:700;}
+.ctable td{padding:11px 14px;font-size:13px;color:var(--slate2);border-top:1px solid var(--rule);vertical-align:top;}
+.ctable tr:nth-child(odd) td{background:var(--rule2);}
+.ctable tr:nth-child(even) td{background:var(--card);}
+.ctable td:first-child{font-weight:700;color:var(--slate);}
+.hlbox{background:var(--dark);padding:20px 24px;border-radius:13px;margin:20px 0;}
+.hlbox h4{font-family:'Fraunces',serif;font-size:18px;color:var(--coral2);margin-bottom:9px;}
+.hlbox ul{padding-left:18px;}
+.hlbox ul li{font-size:13px;color:#ccc;margin-bottom:5px;line-height:1.55;}
+
+.qs{margin-top:50px;padding-top:34px;border-top:2px solid var(--rule);}
+.qh{display:flex;align-items:center;gap:12px;margin-bottom:24px;}
+.qi{width:44px;height:44px;background:#F47B20;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;color:white;flex-shrink:0;}
+.qh h3{font-family:'Fraunces',serif;font-size:22px;color:var(--slate);margin-bottom:3px;}
+.qh p{font-size:12px;color:var(--muted);}
+.qq{background:var(--card);border:1px solid var(--rule);border-radius:13px;padding:21px;margin-bottom:17px;}
+.qq.correct{border-color:var(--pass);background:var(--pass-l);}
+.qq.wrong{border-color:var(--fail);background:var(--fail-l);}
+.qn{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.qt{font-size:15px;font-weight:700;color:var(--slate);margin-bottom:15px;line-height:1.4;}
+.qopts{display:flex;flex-direction:column;gap:8px;}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-radius:9px;border:1.5px solid var(--rule);cursor:pointer;transition:all .15s;background:var(--card);font-size:13px;color:var(--slate2);line-height:1.4;}
+.opt:hover{border-color:#F47B20;background:#FEF3EA;}
+.opt.selected{border-color:#F47B20;background:#FEF3EA;color:var(--slate);}
+.opt.correct-ans{border-color:var(--pass);background:var(--pass-l);}
+.opt.wrong-ans{border-color:var(--fail);background:var(--fail-l);}
+.opt.disabled{pointer-events:none;}
+.od{width:17px;height:17px;border-radius:50%;border:2px solid #CCC;flex-shrink:0;margin-top:1px;}
+.opt.selected .od{border-color:var(--coral);background:#F47B20;}
+.opt.correct-ans .od{border-color:var(--pass);background:var(--pass);}
+.opt.wrong-ans .od{border-color:var(--fail);background:var(--fail);}
+.qfb{padding:11px 14px;border-radius:9px;font-size:13px;margin-top:9px;display:none;line-height:1.5;}
+.qfb.show{display:block;}
+.qfb.correct{background:var(--pass-l);color:#155724;border:1px solid var(--pass);}
+.qfb.wrong{background:var(--fail-l);color:#721c24;border:1px solid #e0a0a0;}
+.qr{background:var(--card);border-radius:14px;padding:30px;text-align:center;border:2px solid var(--rule);margin-top:20px;display:none;}
+.qr.show{display:block;animation:fu .4s ease;}
+.qr.passed{border-color:var(--pass);}
+.qr.failed{border-color:var(--fail);}
+.rs{font-family:'Fraunces',serif;font-size:60px;font-weight:600;line-height:1;margin-bottom:7px;}
+.rs.pass{color:var(--pass);}
+.rs.fail{color:var(--fail);}
+.rm{font-size:18px;font-weight:700;margin-bottom:7px;color:var(--slate);}
+.rsub{font-size:13px;color:var(--muted);margin-bottom:22px;}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:11px 24px;border-radius:9px;font-family:'Plus Jakarta Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;border:none;}
+.btn-p{background:#F47B20;color:white;}
+.btn-p:hover{background:#C85E10;transform:translateY(-1px);}
+.btn-ok{background:var(--teal);color:white;}
+.btn-ok:hover{background:#1f6b5c;}
+.btn-s{background:var(--card);color:var(--slate);border:1.5px solid var(--rule);}
+.btn-s:hover{border-color:var(--coral);color:var(--coral);}
+.btn-lg{padding:14px 30px;font-size:14px;border-radius:11px;}
+.btn:disabled{opacity:.4;cursor:not-allowed;pointer-events:none;}
+.ln{display:flex;align-items:center;justify-content:space-between;margin-top:42px;padding-top:26px;border-top:1px solid var(--rule);}
+.comp-wrap{text-align:center;padding:68px 40px;}
+.comp-badge{width:108px;height:108px;background:linear-gradient(135deg,#F47B20,#FDB913);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:46px;margin:0 auto 26px;box-shadow:0 14px 40px rgba(244,123,32,.3);}
+.comp-wrap h2{font-family:'Fraunces',serif;font-size:40px;color:var(--slate);margin-bottom:11px;}
+.comp-wrap p{font-size:16px;color:var(--slate2);max-width:440px;margin:0 auto 30px;line-height:1.7;}
+.chips{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-bottom:34px;}
+.chip{background:var(--pass-l);color:var(--pass);border:1px solid var(--pass);padding:5px 13px;border-radius:20px;font-size:12px;font-weight:700;}
+.toast{position:fixed;bottom:22px;right:22px;background:var(--dark);color:white;padding:13px 18px;border-radius:11px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:9px;transform:translateY(100px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:999;max-width:300px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-left:4px solid var(--teal);}
+.toast.locked-msg{border-left:4px solid #FDB913;}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo"><div class="sb-ic">❤️</div><div><h1>Supporting Autistic<br>Learners</h1></div></div>
+    <span>The Autism Helper · Guide Training</span>
+  </div>
+  <div class="sb-prog">
+    <div class="sb-prog-top">Progress <span id="pt">0%</span></div>
+    <div class="pb"><div class="pf" id="pf" style="width:0%"></div></div>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-sec-title">Modules</div>
+    <div class="ni active" onclick="show('welcome')" id="nav-welcome"><div class="ni-ic">🏠</div><div style="flex:1"><div class="ni-t">Course Home</div><div class="ni-sub">Overview</div></div></div>
+    <div class="ni" onclick="go('m1')" id="nav-m1"><div class="ni-ic">🧠</div><div style="flex:1"><div class="ni-t">Understanding Autism</div><div class="ni-sub">How autistic learners experience the world</div></div><div class="nbadge">Quiz</div></div>
+    <div class="ni locked" onclick="go('m2')" id="nav-m2"><div class="ni-ic">🔒</div><div style="flex:1"><div class="ni-t">Structured Environment</div><div class="ni-sub">Schedules, routines, physical setup</div></div><div class="nbadge">Quiz</div></div>
+    <div class="ni locked" onclick="go('m3')" id="nav-m3"><div class="ni-ic">🔒</div><div style="flex:1"><div class="ni-t">Visual Supports & Communication</div><div class="ni-sub">Tools that build independence</div></div><div class="nbadge">Quiz</div></div>
+    <div class="ni locked" onclick="go('m4')" id="nav-m4"><div class="ni-ic">🔒</div><div style="flex:1"><div class="ni-t">Behavior & Regulation</div><div class="ni-sub">Understanding and responding to behavior</div></div><div class="nbadge">Quiz</div></div>
+    <div class="ni locked" onclick="go('m5')" id="nav-m5"><div class="ni-ic">🔒</div><div style="flex:1"><div class="ni-t">Instructional Strategies</div><div class="ni-sub">How to teach autistic learners effectively</div></div><div class="nbadge">Quiz</div></div>
+    <div class="ni locked" onclick="go('complete')" id="nav-complete"><div class="ni-ic">🏆</div><div style="flex:1"><div class="ni-t">Certificate</div></div></div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div class="tb-crumb">Supporting Autistic Learners › <span class="cur" id="cur">Course Home</span></div>
+    <div class="tb-badge">Guide Training</div>
+  </div>
+  <div class="content">
+
+    <!-- WELCOME -->
+    <div class="screen active" id="screen-welcome">
+      <div class="hero">
+        <div class="hero-tag">✦ Learning Guide Training</div>
+        <h2>Supporting<br><em>Autistic Learners</em></h2>
+        <p>Build the understanding and practical skills you need to create a structured, supportive, and effective learning environment for autistic learners in your Helon Universe micro-school.</p>
+        <div class="hero-stats">
+          <div><div class="hs-n">5</div><div class="hs-l">Modules</div></div>
+          <div><div class="hs-n">~80</div><div class="hs-l">Minutes</div></div>
+          <div><div class="hs-n">75%</div><div class="hs-l">Pass score</div></div>
+        </div>
+        <button class="btn btn-p btn-lg" onclick="go('m1')">Start Course →</button>
+      </div>
+      <div class="mod-grid">
+        <div class="mc" onclick="go('m1')" id="card-m1"><div class="mc-num">01</div><div class="mc-s">→</div><h3>Understanding Autism</h3><p>How autistic learners experience the world and what that means for your classroom</p></div>
+        <div class="mc locked" onclick="go('m2')" id="card-m2"><div class="mc-num">02</div><div class="mc-s">🔒</div><h3>Structured Environment</h3><p>Schedules, physical setup, routines, and predictability</p></div>
+        <div class="mc locked" onclick="go('m3')" id="card-m3"><div class="mc-num">03</div><div class="mc-s">🔒</div><h3>Visual Supports & Communication</h3><p>Visual schedules, anchor charts, AAC, and communication strategies</p></div>
+        <div class="mc locked" onclick="go('m4')" id="card-m4"><div class="mc-num">04</div><div class="mc-s">🔒</div><h3>Behavior & Regulation</h3><p>Understanding behavior as communication, de-escalation, and prevention</p></div>
+        <div class="mc locked" onclick="go('m5')" id="card-m5"><div class="mc-num">05</div><div class="mc-s">🔒</div><h3>Instructional Strategies</h3><p>Explicit instruction, prompting hierarchies, reinforcement, and error correction</p></div>
+      </div>
+      <div class="callout"><strong>Approach:</strong> This course is grounded in The Autism Helper's framework and evidence-based practices. Each module ends with a 4-question quiz — score 75%+ (3 of 4) to advance. Unlimited retakes.</div>
+    </div>
+
+    <!-- MODULE 1 -->
+    <div class="screen" id="screen-m1">
+      <div class="lh"><div class="ltag">✦ Module 1 of 5</div><h2>Understanding Autism</h2><div class="lmeta"><span>📖 ~14 min</span><span>✦ Quiz required</span></div></div>
+      <div class="lb">
+        <h3>A Different Way of Processing the World</h3>
+        <p>Autism Spectrum Disorder (ASD) is a neurodevelopmental condition that affects how a person processes sensory information, communicates, forms relationships, and experiences the world. It is a spectrum — meaning the range of strengths, challenges, and support needs varies enormously from person to person.</p>
+        <p>The key shift for any guide working with autistic learners is moving from thinking "what's wrong with this learner?" to "how does this learner experience the world, and how can I set up the environment to support them?" This is the foundation of The Autism Helper's approach.</p>
+
+        <h3>Core Characteristics to Understand</h3>
+        <div class="ig">
+          <div class="ic"><div class="ic-label">Sensory Processing Differences</div><p>Many autistic learners are hyper- or hypo-sensitive to sensory input — sounds, lights, textures, touch. What feels normal to you may be painful or overwhelming to them. Or certain inputs may not register at all.</p></div>
+          <div class="ic"><div class="ic-label">Predictability & Routine</div><p>Unexpected changes can be highly distressing. Autistic learners often depend on predictable routines to feel safe. Transitions between activities are especially challenging.</p></div>
+          <div class="ic"><div class="ic-label">Social Communication</div><p>Reading social cues, understanding implied meaning, and engaging in back-and-forth conversation may be difficult. This is neurological, not willful rudeness or lack of effort.</p></div>
+          <div class="ic"><div class="ic-label">Intense Focused Interests</div><p>Many autistic learners have deep, passionate interests in specific topics. These can be powerful motivational tools and entry points for instruction.</p></div>
+          <div class="ic"><div class="ic-label">Uneven Skill Profiles</div><p>An autistic learner may be highly advanced in one area and significantly behind in another. Never assume ability based on deficit — or deficit based on ability.</p></div>
+          <div class="ic"><div class="ic-label">Behavioral Communication</div><p>Challenging behaviors are often communication. Before interpreting a behavior as defiance, ask: what is this learner trying to tell me? What need is going unmet?</p></div>
+        </div>
+
+        <h3>Strengths to Build On</h3>
+        <p>Autistic learners often bring remarkable strengths to the learning environment — exceptional memory, strong visual processing, deep commitment to fairness and rule-following, creative thinking, and intense expertise in their areas of interest. Effective guides identify and build on these strengths rather than focusing exclusively on deficits.</p>
+
+        <div class="callout"><strong>The most important thing you can do</strong> before working with any autistic learner: learn about <em>this specific person</em>. Talk to their family. Read any assessments or profiles. Find out what they love, what helps them feel calm, what overwhelms them. Autism looks different in every person.</div>
+      </div>
+      <div class="qs">
+        <div class="qh"><div class="qi">✏️</div><div><h3>Module 1 Checkpoint</h3><p>Score 3 of 4 correct to unlock Module 2</p></div></div>
+        <div id="quiz-m1">
+          <div class="qq" id="m1q1"><div class="qn">Q1 of 4</div><div class="qt">What is the most important mindset shift for a guide working with autistic learners?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m1q1',false)"><div class="od"></div>Focus on identifying and correcting all skill deficits as quickly as possible</div>
+            <div class="opt" onclick="sel(this,'m1q1',true)"><div class="od"></div>Ask "how does this learner experience the world?" and set up the environment to support them</div>
+            <div class="opt" onclick="sel(this,'m1q1',false)"><div class="od"></div>Treat autistic learners exactly like any other learner — don't make adjustments</div>
+            <div class="opt" onclick="sel(this,'m1q1',false)"><div class="od"></div>Focus only on the areas where the learner is strongest</div>
+          </div><div class="qfb" id="fb-m1q1"></div></div>
+
+          <div class="qq" id="m1q2"><div class="qn">Q2 of 4</div><div class="qt">When an autistic learner engages in a challenging behavior, the guide's first question should be:</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m1q2',false)"><div class="od"></div>"How do I stop this behavior immediately?"</div>
+            <div class="opt" onclick="sel(this,'m1q2',true)"><div class="od"></div>"What is this learner trying to communicate? What need is going unmet?"</div>
+            <div class="opt" onclick="sel(this,'m1q2',false)"><div class="od"></div>"Is this behavior caused by the learner's autism or something else?"</div>
+            <div class="opt" onclick="sel(this,'m1q2',false)"><div class="od"></div>"Should I remove the learner from the session?"</div>
+          </div><div class="qfb" id="fb-m1q2"></div></div>
+
+          <div class="qq" id="m1q3"><div class="qn">Q3 of 4</div><div class="qt">Why might an autistic learner struggle with transitions between activities?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m1q3',false)"><div class="od"></div>They are being defiant or testing boundaries</div>
+            <div class="opt" onclick="sel(this,'m1q3',true)"><div class="od"></div>Autistic learners often depend on predictable routines to feel safe — unexpected changes are distressing</div>
+            <div class="opt" onclick="sel(this,'m1q3',false)"><div class="od"></div>They haven't been taught the rules for transitioning</div>
+            <div class="opt" onclick="sel(this,'m1q3',false)"><div class="od"></div>They are not interested in the next activity</div>
+          </div><div class="qfb" id="fb-m1q3"></div></div>
+
+          <div class="qq" id="m1q4"><div class="qn">Q4 of 4</div><div class="qt">An autistic learner is excellent at math but struggles significantly with reading. This is an example of:</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m1q4',false)"><div class="od"></div>A placement error — they should be at the same level in all subjects</div>
+            <div class="opt" onclick="sel(this,'m1q4',true)"><div class="od"></div>An uneven skill profile — common in autism and why Curriculum Access uses skill-level rather than grade-level placement</div>
+            <div class="opt" onclick="sel(this,'m1q4',false)"><div class="od"></div>A sign that the learner needs to be evaluated for a different diagnosis</div>
+            <div class="opt" onclick="sel(this,'m1q4',false)"><div class="od"></div>Evidence that the learner isn't trying hard enough in reading</div>
+          </div><div class="qfb" id="fb-m1q4"></div></div>
+        </div>
+        <div id="result-m1" class="qr"><div class="rs" id="score-m1"></div><div class="rm" id="msg-m1"></div><div class="rsub" id="sub-m1"></div><button class="btn btn-ok btn-lg" id="next-m1" onclick="unlock('m2')" style="display:none">Continue to Module 2 →</button><button class="btn btn-s" id="retry-m1" onclick="retry('m1')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:18px;display:flex;justify-content:flex-end;"><button class="btn btn-p" id="submit-m1" onclick="submit('m1',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="ln"><button class="btn btn-s" onclick="show('welcome')">← Home</button></div>
+    </div>
+
+    <!-- MODULE 2 -->
+    <div class="screen" id="screen-m2">
+      <div class="lh"><div class="ltag">✦ Module 2 of 5</div><h2>Structured Environment</h2><div class="lmeta"><span>📖 ~14 min</span><span>✦ Quiz required</span></div></div>
+      <div class="lb">
+        <h3>Structure Is a Support, Not a Restriction</h3>
+        <p>One of the most powerful things you can do for an autistic learner is create a highly structured, predictable environment. Structure reduces anxiety, supports self-regulation, and frees cognitive resources for learning. This is not about rigid control — it's about creating the conditions where learning becomes possible.</p>
+
+        <h3>The Four Elements of a Structured Environment</h3>
+        <div class="steps">
+          <div class="step"><div class="sn">1</div><div class="sc"><h4>Physical Structure</h4><p>The physical space should be organized and consistent. Materials are in predictable places. The workspace is clearly defined. Distracting items are stored away. For sensory-sensitive learners, consider lighting, noise level, and the proximity of other learners.</p></div></div>
+          <div class="step"><div class="sn">2</div><div class="sc"><h4>Consistent Daily Schedule</h4><p>The daily schedule should be posted visually and followed consistently. In the HLPP model, the 8-block rotation IS this schedule — use it reliably every day. When changes must occur, preview them in advance using the visual schedule.</p></div></div>
+          <div class="step"><div class="sn">3</div><div class="sc"><h4>Work System</h4><p>A "work system" answers the learner's four questions: What do I do? How much? How do I know when I'm done? What happens after? This can be a task box, a checklist, or a mini-schedule. Work systems build independence by reducing the need for verbal direction.</p></div></div>
+          <div class="step"><div class="sn">4</div><div class="sc"><h4>Transition Supports</h4><p>Transitions are often the hardest moments for autistic learners. Use transition warnings (2-minute and 1-minute reminders), visual timers, and consistent transition routines (e.g., always clean up first, then check the schedule).</p></div></div>
+        </div>
+
+        <h3>How This Connects to HLPP</h3>
+        <p>The HLPP rotation model is itself a structural support — the same 8-block schedule every day, the same stations, the same expectations. For autistic learners in your micro-school, the consistency of the rotation is one of the most powerful accommodations you provide. Do not deviate from the schedule casually — when you must change it, prepare your learner in advance.</p>
+
+        <div class="callout"><strong>Practical tip:</strong> Post a visual schedule at the learner's eye level showing today's station rotation with pictures or icons. At each transition, point to the schedule together before moving: "We just finished Core5. Next is reading time." This takes 15 seconds and dramatically reduces transition resistance.</div>
+      </div>
+      <div class="qs">
+        <div class="qh"><div class="qi">✏️</div><div><h3>Module 2 Checkpoint</h3><p>Score 3 of 4 correct to unlock Module 3</p></div></div>
+        <div id="quiz-m2">
+          <div class="qq" id="m2q1"><div class="qn">Q1 of 4</div><div class="qt">Why is a structured environment particularly important for autistic learners?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m2q1',false)"><div class="od"></div>To ensure they follow rules without question</div>
+            <div class="opt" onclick="sel(this,'m2q1',true)"><div class="od"></div>Structure reduces anxiety, supports self-regulation, and frees cognitive resources for learning</div>
+            <div class="opt" onclick="sel(this,'m2q1',false)"><div class="od"></div>To make lesson planning easier for the guide</div>
+            <div class="opt" onclick="sel(this,'m2q1',false)"><div class="od"></div>Because autistic learners cannot work in unstructured environments under any circumstances</div>
+          </div><div class="qfb" id="fb-m2q1"></div></div>
+
+          <div class="qq" id="m2q2"><div class="qn">Q2 of 4</div><div class="qt">What four questions does a "work system" answer for the learner?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m2q2',false)"><div class="od"></div>Who teaches me? When do I eat? Where do I sit? Who helps me?</div>
+            <div class="opt" onclick="sel(this,'m2q2',true)"><div class="od"></div>What do I do? How much? How do I know when I'm done? What happens after?</div>
+            <div class="opt" onclick="sel(this,'m2q2',false)"><div class="od"></div>What subject is this? What level am I on? What time is it? Is this graded?</div>
+            <div class="opt" onclick="sel(this,'m2q2',false)"><div class="od"></div>Do I like this? Is it hard? Will I get a reward? Can I stop early?</div>
+          </div><div class="qfb" id="fb-m2q2"></div></div>
+
+          <div class="qq" id="m2q3"><div class="qn">Q3 of 4</div><div class="qt">A learner resists every transition between stations. What is the FIRST thing to try?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m2q3',false)"><div class="od"></div>Eliminate transitions by keeping the learner at one station all day</div>
+            <div class="opt" onclick="sel(this,'m2q3',false)"><div class="od"></div>Require the learner to transition immediately without warning</div>
+            <div class="opt" onclick="sel(this,'m2q3',true)"><div class="od"></div>Use transition warnings (2-minute and 1-minute reminders) and a consistent transition routine with the visual schedule</div>
+            <div class="opt" onclick="sel(this,'m2q3',false)"><div class="od"></div>Add more transition breaks throughout the day</div>
+          </div><div class="qfb" id="fb-m2q3"></div></div>
+
+          <div class="qq" id="m2q4"><div class="qn">Q4 of 4</div><div class="qt">How is the HLPP 8-block rotation itself a structural support for autistic learners?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m2q4',false)"><div class="od"></div>It limits instruction to the minimum time needed</div>
+            <div class="opt" onclick="sel(this,'m2q4',true)"><div class="od"></div>The same schedule every day creates the predictability and consistency that autistic learners depend on</div>
+            <div class="opt" onclick="sel(this,'m2q4',false)"><div class="od"></div>It rotates learners frequently to prevent boredom</div>
+            <div class="opt" onclick="sel(this,'m2q4',false)"><div class="od"></div>It ensures all learners follow the same curriculum</div>
+          </div><div class="qfb" id="fb-m2q4"></div></div>
+        </div>
+        <div id="result-m2" class="qr"><div class="rs" id="score-m2"></div><div class="rm" id="msg-m2"></div><div class="rsub" id="sub-m2"></div><button class="btn btn-ok btn-lg" id="next-m2" onclick="unlock('m3')" style="display:none">Continue to Module 3 →</button><button class="btn btn-s" id="retry-m2" onclick="retry('m2')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:18px;display:flex;justify-content:flex-end;"><button class="btn btn-p" id="submit-m2" onclick="submit('m2',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="ln"><button class="btn btn-s" onclick="show('m1')">← Module 1</button></div>
+    </div>
+
+    <!-- MODULE 3 -->
+    <div class="screen" id="screen-m3">
+      <div class="lh"><div class="ltag">✦ Module 3 of 5</div><h2>Visual Supports & Communication</h2><div class="lmeta"><span>📖 ~13 min</span><span>✦ Quiz required</span></div></div>
+      <div class="lb">
+        <h3>Why Visual Supports Work</h3>
+        <p>Many autistic learners are strong visual processors — they take in and retain information more effectively when it is presented visually rather than verbally. Visual supports also stay in the environment: a visual schedule doesn't forget to give reminders, a visual rule doesn't get tired of repeating itself. Visuals build independence by reducing the learner's reliance on verbal direction from an adult.</p>
+
+        <h3>Types of Visual Supports to Use</h3>
+        <table class="ctable">
+          <tr><th>Visual Support</th><th>Purpose</th><th>In Your Micro-School</th></tr>
+          <tr><td>Visual Schedule</td><td>Shows the sequence of activities for the day or session</td><td>Post the HLPP 8-block rotation with pictures/icons; check off completed blocks together</td></tr>
+          <tr><td>Anchor Charts</td><td>Key vocabulary, concepts, or steps displayed during a lesson</td><td>CA and MBTP both include these — post them and refer to them consistently</td></tr>
+          <tr><td>First-Then Board</td><td>"First [less preferred task], then [preferred activity]"</td><td>Use when motivating a learner through a challenging task: "First phonics, then computer time"</td></tr>
+          <tr><td>Timer (Visual)</td><td>Shows how much time remains in an activity</td><td>Time Timer or visual countdown — especially useful before transitions</td></tr>
+          <tr><td>Choice Board</td><td>Displays limited options for the learner to choose from</td><td>Use for reinforcer choice or to reduce decision paralysis during free moments</td></tr>
+          <tr><td>Task Strips / Checklists</td><td>Shows steps for completing an activity or routine</td><td>Use for independent station tasks, morning arrival, packing up</td></tr>
+        </table>
+
+        <h3>Supporting Communication</h3>
+        <p>Autistic learners have a wide range of communication abilities and styles. Some communicate verbally; others use AAC (Augmentative and Alternative Communication) devices, picture exchange, sign language, or a combination. As a guide, your role is to support whatever communication system the learner uses — never take it away, never require verbal speech as the only acceptable response.</p>
+        <div class="hlbox">
+          <h4>Communication Support Principles</h4>
+          <ul>
+            <li>Always assume the learner understands more than they express. Communicate respectfully regardless of expressive output.</li>
+            <li>Give processing time — wait at least 5–10 seconds after asking a question before prompting again. Rushing creates anxiety, not faster responses.</li>
+            <li>If the learner uses AAC, model using it yourself. Point to symbols as you speak. Never say "use your words" to an AAC user.</li>
+            <li>Accept all forms of communication — pointing, picture exchange, device, gesture, vocalization, and written communication are all valid.</li>
+            <li>Reduce your verbal output. Shorter, clearer instructions. More visuals. Less narration. Autistic learners often process verbal language more slowly.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="qs">
+        <div class="qh"><div class="qi">✏️</div><div><h3>Module 3 Checkpoint</h3><p>Score 3 of 4 correct to unlock Module 4</p></div></div>
+        <div id="quiz-m3">
+          <div class="qq" id="m3q1"><div class="qn">Q1 of 4</div><div class="qt">Why are visual supports especially effective for many autistic learners?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m3q1',false)"><div class="od"></div>They are easier to make than verbal instructions</div>
+            <div class="opt" onclick="sel(this,'m3q1',true)"><div class="od"></div>Many autistic learners are strong visual processors, and visuals stay in the environment to build independence</div>
+            <div class="opt" onclick="sel(this,'m3q1',false)"><div class="od"></div>They eliminate the need for any verbal communication from the guide</div>
+            <div class="opt" onclick="sel(this,'m3q1',false)"><div class="od"></div>They are required by law for autistic learners</div>
+          </div><div class="qfb" id="fb-m3q1"></div></div>
+
+          <div class="qq" id="m3q2"><div class="qn">Q2 of 4</div><div class="qt">A learner resists starting their phonics session. Which visual support would be most helpful to motivate them?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m3q2',false)"><div class="od"></div>A detailed visual schedule of the whole school day</div>
+            <div class="opt" onclick="sel(this,'m3q2',true)"><div class="od"></div>A First-Then board: "First phonics, then computer time"</div>
+            <div class="opt" onclick="sel(this,'m3q2',false)"><div class="od"></div>An anchor chart showing all the phonics rules</div>
+            <div class="opt" onclick="sel(this,'m3q2',false)"><div class="od"></div>A task strip showing all the steps in the lesson</div>
+          </div><div class="qfb" id="fb-m3q2"></div></div>
+
+          <div class="qq" id="m3q3"><div class="qn">Q3 of 4</div><div class="qt">A learner uses an AAC device to communicate. The guide should:</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m3q3',false)"><div class="od"></div>Encourage the learner to use spoken words instead of the device when possible</div>
+            <div class="opt" onclick="sel(this,'m3q3',false)"><div class="od"></div>Only allow AAC use during free time — instruction should use verbal responses</div>
+            <div class="opt" onclick="sel(this,'m3q3',true)"><div class="od"></div>Model using the AAC device themselves, accept all device responses, and never require spoken speech instead</div>
+            <div class="opt" onclick="sel(this,'m3q3',false)"><div class="od"></div>Set a goal for the learner to phase out the AAC device as quickly as possible</div>
+          </div><div class="qfb" id="fb-m3q3"></div></div>
+
+          <div class="qq" id="m3q4"><div class="qn">Q4 of 4</div><div class="qt">After asking an autistic learner a question, how long should you wait before prompting again?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m3q4',false)"><div class="od"></div>1–2 seconds — prompt quickly to keep the session moving</div>
+            <div class="opt" onclick="sel(this,'m3q4',false)"><div class="od"></div>Immediately repeat the question if there is no response</div>
+            <div class="opt" onclick="sel(this,'m3q4',true)"><div class="od"></div>At least 5–10 seconds — autistic learners often process verbal language more slowly, and rushing creates anxiety</div>
+            <div class="opt" onclick="sel(this,'m3q4',false)"><div class="od"></div>30+ seconds — always wait at least half a minute</div>
+          </div><div class="qfb" id="fb-m3q4"></div></div>
+        </div>
+        <div id="result-m3" class="qr"><div class="rs" id="score-m3"></div><div class="rm" id="msg-m3"></div><div class="rsub" id="sub-m3"></div><button class="btn btn-ok btn-lg" id="next-m3" onclick="unlock('m4')" style="display:none">Continue to Module 4 →</button><button class="btn btn-s" id="retry-m3" onclick="retry('m3')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:18px;display:flex;justify-content:flex-end;"><button class="btn btn-p" id="submit-m3" onclick="submit('m3',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="ln"><button class="btn btn-s" onclick="show('m2')">← Module 2</button></div>
+    </div>
+
+    <!-- MODULE 4 -->
+    <div class="screen" id="screen-m4">
+      <div class="lh"><div class="ltag">✦ Module 4 of 5</div><h2>Behavior & Regulation</h2><div class="lmeta"><span>📖 ~13 min</span><span>✦ Quiz required</span></div></div>
+      <div class="lb">
+        <h3>Behavior Is Communication</h3>
+        <p>Every behavior serves a function. Before responding to a challenging behavior, ask: what is this behavior communicating? The Autism Helper framework — rooted in Applied Behavior Analysis (ABA) — identifies four main functions of behavior:</p>
+        <div class="ig">
+          <div class="ic"><div class="ic-label">Escape / Avoidance</div><p>The learner wants to get away from a demand, task, person, or sensory input. Example: throwing materials when asked to work.</p></div>
+          <div class="ic"><div class="ic-label">Attention</div><p>The learner wants connection or a response from someone. Example: calling out or making sounds during independent work.</p></div>
+          <div class="ic"><div class="ic-label">Access to Tangibles</div><p>The learner wants something — an object, activity, or preferred item. Example: grabbing materials from another learner.</p></div>
+          <div class="ic"><div class="ic-label">Sensory / Automatic</div><p>The behavior feels good or provides sensory input the learner needs. Example: rocking, hand-flapping, or making repetitive sounds. This may not need to be eliminated — only redirected if it interferes with learning.</p></div>
+        </div>
+
+        <h3>Prevention First</h3>
+        <p>The most effective behavior support is preventing the behavior before it occurs. Ask yourself: when does this behavior happen? What was happening right before (the antecedent)? What need was unmet? Then address that proactively.</p>
+        <div class="steps">
+          <div class="step"><div class="sn">1</div><div class="sc"><h4>Antecedent Strategies</h4><p>Modify the environment or demands before the behavior happens. Offer choices, pre-teach transitions, reduce demand difficulty, use visual supports, schedule sensory breaks before the learner reaches a dysregulation threshold.</p></div></div>
+          <div class="step"><div class="sn">2</div><div class="sc"><h4>Teach Replacement Behaviors</h4><p>Instead of just trying to stop the behavior, teach the learner a more appropriate way to meet the same need. If a learner throws materials to escape a task, teach them to use a "break" card instead.</p></div></div>
+          <div class="step"><div class="sn">3</div><div class="sc"><h4>Respond Calmly & Consistently</h4><p>Your reaction to behavior teaches the learner what happens next. Stay calm. Use minimal language. Avoid showing frustration. Follow through consistently — if you said "finish two more problems then take a break," do exactly that.</p></div></div>
+        </div>
+
+        <div class="callout"><strong>De-escalation rule:</strong> When a learner is in a heightened state, your first job is co-regulation — not instruction. Get calm yourself first. Reduce demands temporarily. Offer sensory support if needed. Once the learner is regulated, you can return to instruction. Trying to teach through a crisis always escalates, never resolves.</div>
+      </div>
+      <div class="qs">
+        <div class="qh"><div class="qi">✏️</div><div><h3>Module 4 Checkpoint</h3><p>Score 3 of 4 correct to unlock the final module</p></div></div>
+        <div id="quiz-m4">
+          <div class="qq" id="m4q1"><div class="qn">Q1 of 4</div><div class="qt">What are the four main functions of behavior according to the ABA framework?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m4q1',false)"><div class="od"></div>Anger, sadness, boredom, and excitement</div>
+            <div class="opt" onclick="sel(this,'m4q1',true)"><div class="od"></div>Escape/avoidance, attention, access to tangibles, and sensory/automatic</div>
+            <div class="opt" onclick="sel(this,'m4q1',false)"><div class="od"></div>Communication, learning, social, and academic functions</div>
+            <div class="opt" onclick="sel(this,'m4q1',false)"><div class="od"></div>Defiance, compliance, anxiety, and regulation</div>
+          </div><div class="qfb" id="fb-m4q1"></div></div>
+
+          <div class="qq" id="m4q2"><div class="qn">Q2 of 4</div><div class="qt">A learner throws materials every time a writing task is introduced. This is most likely a behavior function of:</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m4q2',true)"><div class="od"></div>Escape / Avoidance — the learner wants to get away from the writing demand</div>
+            <div class="opt" onclick="sel(this,'m4q2',false)"><div class="od"></div>Attention — the learner wants a reaction from the guide</div>
+            <div class="opt" onclick="sel(this,'m4q2',false)"><div class="od"></div>Sensory — the learner enjoys the feeling of throwing</div>
+            <div class="opt" onclick="sel(this,'m4q2',false)"><div class="od"></div>Access to tangibles — the learner wants different materials</div>
+          </div><div class="qfb" id="fb-m4q2"></div></div>
+
+          <div class="qq" id="m4q3"><div class="qn">Q3 of 4</div><div class="qt">Instead of just trying to stop a challenging behavior, the guide should:</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m4q3',false)"><div class="od"></div>Increase the consequence for the behavior each time it occurs</div>
+            <div class="opt" onclick="sel(this,'m4q3',false)"><div class="od"></div>Ignore the behavior completely until it stops on its own</div>
+            <div class="opt" onclick="sel(this,'m4q3',true)"><div class="od"></div>Teach a replacement behavior that meets the same need in a more appropriate way</div>
+            <div class="opt" onclick="sel(this,'m4q3',false)"><div class="od"></div>Remove the learner from the session every time the behavior occurs</div>
+          </div><div class="qfb" id="fb-m4q3"></div></div>
+
+          <div class="qq" id="m4q4"><div class="qn">Q4 of 4</div><div class="qt">When a learner is in a highly dysregulated state, what is the guide's FIRST priority?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m4q4',false)"><div class="od"></div>Complete the lesson — the learner needs to learn that behavior doesn't cancel instruction</div>
+            <div class="opt" onclick="sel(this,'m4q4',false)"><div class="od"></div>Immediately contact the parent</div>
+            <div class="opt" onclick="sel(this,'m4q4',true)"><div class="od"></div>Co-regulation — get calm yourself, reduce demands, offer sensory support, and wait until the learner is regulated before returning to instruction</div>
+            <div class="opt" onclick="sel(this,'m4q4',false)"><div class="od"></div>Offer a reward to get the learner back on task</div>
+          </div><div class="qfb" id="fb-m4q4"></div></div>
+        </div>
+        <div id="result-m4" class="qr"><div class="rs" id="score-m4"></div><div class="rm" id="msg-m4"></div><div class="rsub" id="sub-m4"></div><button class="btn btn-ok btn-lg" id="next-m4" onclick="unlock('m5')" style="display:none">Continue to Module 5 →</button><button class="btn btn-s" id="retry-m4" onclick="retry('m4')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:18px;display:flex;justify-content:flex-end;"><button class="btn btn-p" id="submit-m4" onclick="submit('m4',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="ln"><button class="btn btn-s" onclick="show('m3')">← Module 3</button></div>
+    </div>
+
+    <!-- MODULE 5 -->
+    <div class="screen" id="screen-m5">
+      <div class="lh"><div class="ltag">✦ Module 5 of 5</div><h2>Instructional Strategies</h2><div class="lmeta"><span>📖 ~12 min</span><span>✦ Final quiz</span></div></div>
+      <div class="lb">
+        <h3>How to Teach — Not Just What to Teach</h3>
+        <p>The best curriculum in the world fails if the instructional delivery is wrong. These strategies are evidence-based practices that The Autism Helper and ABA research have consistently shown to be effective for autistic learners.</p>
+
+        <h3>Explicit Instruction</h3>
+        <p>Never assume a learner will figure something out through discovery alone. Every new skill should be <strong>directly taught</strong>: you model it, you practice it together, then the learner does it independently. This is the "I do — We do — You do" structure built into every Curriculum Access lesson.</p>
+
+        <h3>The Prompting Hierarchy</h3>
+        <p>Prompts are supports that help a learner respond correctly. The goal is always to use the <em>least intrusive prompt needed</em> — and to fade prompts as quickly as possible. More prompting than necessary creates prompt dependency.</p>
+        <table class="ctable">
+          <tr><th>Prompt Level</th><th>Description</th><th>When to Use</th></tr>
+          <tr><td>Independent (No Prompt)</td><td>Learner responds without any support</td><td>Goal — always work toward this</td></tr>
+          <tr><td>Indirect Verbal</td><td>A hint: "What do you do first?"</td><td>When the learner needs a nudge</td></tr>
+          <tr><td>Direct Verbal</td><td>Explicit instruction: "Point to the letter A"</td><td>When the learner needs clear direction</td></tr>
+          <tr><td>Gestural</td><td>Pointing, nodding, tapping the page</td><td>When you can cue without speaking</td></tr>
+          <tr><td>Model</td><td>Show the learner exactly what to do</td><td>Before independent practice on new skills</td></tr>
+          <tr><td>Physical</td><td>Hand-over-hand guidance</td><td>Only when other prompts haven't worked; use minimally</td></tr>
+        </table>
+
+        <h3>Reinforcement</h3>
+        <p>Reinforcement is anything that increases the likelihood that a behavior will happen again. Effective reinforcement is specific, immediate, and meaningful to <em>this learner</em>. "Good job" is weak reinforcement. "You sounded out that whole word yourself — that was hard and you did it!" is strong reinforcement.</p>
+
+        <h3>Error Correction</h3>
+        <p>When a learner makes an error, use a simple 4-step error correction:</p>
+        <div class="steps">
+          <div class="step"><div class="sn">1</div><div class="sc"><h4>No reaction</h4><p>Stay neutral — no "oops," no "no," no sigh. This avoids reinforcing the error through attention.</p></div></div>
+          <div class="step"><div class="sn">2</div><div class="sc"><h4>Model the correct response</h4><p>"This one is B." Show the correct answer clearly.</p></div></div>
+          <div class="step"><div class="sn">3</div><div class="sc"><h4>Prompt the learner to do it correctly</h4><p>"Your turn — what is this?" Guide them to the correct response with minimal prompting.</p></div></div>
+          <div class="step"><div class="sn">4</div><div class="sc"><h4>Reinforce the correct response</h4><p>Celebrate when they get it right: "Yes! B!"</p></div></div>
+        </div>
+        <div class="callout"><strong>Remember:</strong> Data collection, structured routines, visual supports, and these instructional strategies all work together. No single strategy is a silver bullet. Your consistency across all of these is what creates the environment where autistic learners can truly thrive.</div>
+      </div>
+      <div class="qs">
+        <div class="qh"><div class="qi">🏆</div><div><h3>Final Checkpoint — Module 5</h3><p>Score 3 of 4 correct to complete the course</p></div></div>
+        <div id="quiz-m5">
+          <div class="qq" id="m5q1"><div class="qn">Q1 of 4</div><div class="qt">What does "I do — We do — You do" describe?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m5q1',false)"><div class="od"></div>A behavior management contract between guide and learner</div>
+            <div class="opt" onclick="sel(this,'m5q1',true)"><div class="od"></div>Explicit instruction — model, guided practice, then independent practice</div>
+            <div class="opt" onclick="sel(this,'m5q1',false)"><div class="od"></div>A sharing activity used during enrichment time</div>
+            <div class="opt" onclick="sel(this,'m5q1',false)"><div class="od"></div>A data collection method for three learners</div>
+          </div><div class="qfb" id="fb-m5q1"></div></div>
+
+          <div class="qq" id="m5q2"><div class="qn">Q2 of 4</div><div class="qt">When using the prompting hierarchy, the guide should always aim to use:</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m5q2',false)"><div class="od"></div>Physical prompting — it is the most reliable</div>
+            <div class="opt" onclick="sel(this,'m5q2',true)"><div class="od"></div>The least intrusive prompt needed — and fade prompts as quickly as possible</div>
+            <div class="opt" onclick="sel(this,'m5q2',false)"><div class="od"></div>The same prompt level for every task regardless of difficulty</div>
+            <div class="opt" onclick="sel(this,'m5q2',false)"><div class="od"></div>Verbal prompts only — physical prompts are never appropriate</div>
+          </div><div class="qfb" id="fb-m5q2"></div></div>
+
+          <div class="qq" id="m5q3"><div class="qn">Q3 of 4</div><div class="qt">What is the first step in the 4-step error correction procedure?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m5q3',false)"><div class="od"></div>Say "no" clearly so the learner knows the answer was wrong</div>
+            <div class="opt" onclick="sel(this,'m5q3',true)"><div class="od"></div>No reaction — stay neutral to avoid reinforcing the error with attention</div>
+            <div class="opt" onclick="sel(this,'m5q3',false)"><div class="od"></div>Ask the learner to try again</div>
+            <div class="opt" onclick="sel(this,'m5q3',false)"><div class="od"></div>Give a verbal prompt to help the learner self-correct</div>
+          </div><div class="qfb" id="fb-m5q3"></div></div>
+
+          <div class="qq" id="m5q4"><div class="qn">Q4 of 4</div><div class="qt">Compared to "Good job!", which is an example of STRONG specific reinforcement?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m5q4',false)"><div class="od"></div>"Okay, next question."</div>
+            <div class="opt" onclick="sel(this,'m5q4',false)"><div class="od"></div>"You're doing great today!"</div>
+            <div class="opt" onclick="sel(this,'m5q4',true)"><div class="od"></div>"You sounded out that whole word yourself — that was hard and you did it!"</div>
+            <div class="opt" onclick="sel(this,'m5q4',false)"><div class="od"></div>"That's correct."</div>
+          </div><div class="qfb" id="fb-m5q4"></div></div>
+        </div>
+        <div id="result-m5" class="qr"><div class="rs" id="score-m5"></div><div class="rm" id="msg-m5"></div><div class="rsub" id="sub-m5"></div><button class="btn btn-ok btn-lg" id="next-m5" onclick="unlock('complete')" style="display:none">🎉 Complete Course →</button><button class="btn btn-s" id="retry-m5" onclick="retry('m5')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:18px;display:flex;justify-content:flex-end;"><button class="btn btn-p" id="submit-m5" onclick="submit('m5',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="ln"><button class="btn btn-s" onclick="show('m4')">← Module 4</button></div>
+    </div>
+
+    <!-- COMPLETE -->
+    <div class="screen" id="screen-complete">
+      <div class="comp-wrap">
+        <div class="comp-badge">❤️</div>
+        <h2>Course Complete!</h2>
+        <p>You've built the foundational knowledge to support autistic learners with confidence, compassion, and evidence-based practice in your Helon Universe micro-school.</p>
+        <div class="chips">
+          <div class="chip">✓ Understanding Autism</div>
+          <div class="chip">✓ Structured Environment</div>
+          <div class="chip">✓ Visual Supports & Communication</div>
+          <div class="chip">✓ Behavior & Regulation</div>
+          <div class="chip">✓ Instructional Strategies</div>
+        </div>
+        <div style="display:flex;gap:13px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-p btn-lg" onclick="show('welcome')">← Back to Home</button>
+          <button class="btn btn-s btn-lg" onclick="window.print()">🖨 Print Certificate</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="ti">✓</span><span id="tm"></span></div>
+<script>
+const MODS=['m1','m2','m3','m4','m5'];
+const state={unlocked:new Set(['welcome','m1']),completed:new Set(),answers:{},submitted:new Set()};
+const NAMES={welcome:'Course Home',m1:'Module 1',m2:'Module 2',m3:'Module 3',m4:'Module 4',m5:'Module 5',complete:'Certificate'};
+const ICONS=['🧠','🏛️','🖼️','💙','📋'];
+function go(id){if(!state.unlocked.has(id)){toast('🔒','Complete the previous quiz to unlock.','locked-msg');return;}show(id);}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+id).classList.add('active');document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));const nav=document.getElementById('nav-'+id);if(nav)nav.classList.add('active');document.getElementById('cur').textContent=NAMES[id]||id;updateUI();window.scrollTo(0,0);}
+function unlock(next){state.unlocked.add(next);updateUI();show(next);}
+function updateUI(){MODS.forEach((m,i)=>{const nav=document.getElementById('nav-'+m),card=document.getElementById('card-'+m);if(!nav)return;nav.classList.remove('locked','completed');if(state.completed.has(m)){nav.classList.add('completed');nav.querySelector('.ni-ic').textContent='✓';nav.querySelector('.nbadge').textContent='✓';if(card){card.classList.remove('locked');card.classList.add('completed');card.querySelector('.mc-s').textContent='✓';}}else if(!state.unlocked.has(m)){nav.classList.add('locked');nav.querySelector('.ni-ic').textContent='🔒';if(card){card.classList.add('locked');card.querySelector('.mc-s').textContent='🔒';}}else{nav.querySelector('.ni-ic').textContent=ICONS[i];if(card){card.classList.remove('locked','completed');card.querySelector('.mc-s').textContent='→';}}});const cn=document.getElementById('nav-complete');if(state.unlocked.has('complete')){cn.classList.remove('locked');cn.querySelector('.ni-ic').textContent='🏆';}const pct=Math.round(state.completed.size/MODS.length*100);document.getElementById('pf').style.width=pct+'%';document.getElementById('pt').textContent=pct+'%';}
+function sel(el,qid,correct){if(state.submitted.has(qid.slice(0,2)))return;el.closest('.qopts').querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');state.answers[qid]=correct;const mod=qid.slice(0,2);document.getElementById('submit-'+mod).disabled=![...document.querySelectorAll('#quiz-'+mod+' .qq')].every(q=>state.answers[q.id]!==undefined);}
+function submit(mod,total){if(state.submitted.has(mod))return;state.submitted.add(mod);let correct=0;document.querySelectorAll('#quiz-'+mod+' .qq').forEach(q=>{const ok=state.answers[q.id];if(ok)correct++;q.querySelectorAll('.opt').forEach(o=>{o.classList.add('disabled');if(o.getAttribute('onclick')?.includes('true'))o.classList.add('correct-ans');else if(o.classList.contains('selected'))o.classList.add('wrong-ans');});const fb=document.getElementById('fb-'+q.id);if(ok){q.classList.add('correct');fb.textContent='✓ Correct!';fb.className='qfb show correct';}else{q.classList.add('wrong');fb.textContent='✗ Not quite — the highlighted option is correct.';fb.className='qfb show wrong';}});const pct=Math.round(correct/total*100),passed=pct>=75;const r=document.getElementById('result-'+mod);r.classList.add('show',passed?'passed':'failed');document.getElementById('score-'+mod).textContent=pct+'%';document.getElementById('score-'+mod).className='rs '+(passed?'pass':'fail');document.getElementById('msg-'+mod).textContent=passed?'🎉 Passed!':'Not quite — try again';document.getElementById('sub-'+mod).textContent=passed?`${correct} of ${total} correct — module complete!`:`${correct} of ${total} — need 3+ to pass.`;document.getElementById('submit-'+mod).style.display='none';if(passed){state.completed.add(mod);document.getElementById('next-'+mod).style.display='inline-flex';updateUI();toast('✓','Module complete!','success');}else document.getElementById('retry-'+mod).style.display='inline-flex';}
+function retry(mod){state.submitted.delete(mod);Object.keys(state.answers).filter(k=>k.startsWith(mod)).forEach(k=>delete state.answers[k]);document.querySelectorAll('#quiz-'+mod+' .qq').forEach(q=>{q.classList.remove('correct','wrong');q.querySelectorAll('.opt').forEach(o=>o.classList.remove('selected','correct-ans','wrong-ans','disabled'));const fb=document.getElementById('fb-'+q.id);if(fb){fb.className='qfb';fb.textContent='';}});const r=document.getElementById('result-'+mod);r.classList.remove('show','passed','failed');document.getElementById('retry-'+mod).style.display='none';document.getElementById('next-'+mod).style.display='none';const sb=document.getElementById('submit-'+mod);sb.style.display='inline-flex';sb.disabled=true;}
+let tt;function toast(icon,msg,type=''){const t=document.getElementById('toast');document.getElementById('ti').textContent=icon;document.getElementById('tm').textContent=msg;t.className='toast show '+type;clearTimeout(tt);tt=setTimeout(()=>t.className='toast',3200);}
+updateUI();
+</script>
+</body>
+</html>

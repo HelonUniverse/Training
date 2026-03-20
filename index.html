@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Helon Universe Training Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --orange:#F47B20;--yellow:#FDB913;--dark:#2D2D2D;
+  --orange-l:#FEF3EA;--orange-m:#FDDBB8;
+  --yellow-l:#FFFBEA;--yellow-m:#FEE89A;
+  --ink:#2D2D2D;--gray:#555555;--muted:#999999;
+  --bg:#FAFAFA;--card:#FFFFFF;--rule:#EBEBEB;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;}
+
+.header{background:var(--dark);padding:60px 28px 50px;text-align:center;position:relative;overflow:hidden;}
+.header::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(253,185,19,.12) 0%,transparent 60%),radial-gradient(ellipse at 70% 50%,rgba(244,123,32,.1) 0%,transparent 60%);}
+.header-inner{position:relative;z-index:1;max-width:620px;margin:0 auto;}
+.hu-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(244,123,32,.15);border:1px solid rgba(244,123,32,.35);color:var(--yellow);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;padding:5px 14px;border-radius:20px;margin-bottom:22px;}
+.header h1{font-family:'Playfair Display',serif;font-size:clamp(32px,5vw,52px);line-height:1.15;color:white;margin-bottom:14px;}
+.header h1 em{font-style:italic;color:var(--yellow);}
+.header p{font-size:15px;color:rgba(255,255,255,.5);line-height:1.7;max-width:460px;margin:0 auto 32px;}
+.header-stats{display:flex;justify-content:center;gap:40px;}
+.hs-n{font-family:'Playfair Display',serif;font-size:30px;color:white;line-height:1;}
+.hs-l{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-top:3px;}
+
+.main{max-width:860px;margin:0 auto;padding:50px 24px 80px;}
+.section-label{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:18px;display:flex;align-items:center;gap:10px;}
+.section-label::after{content:'';flex:1;height:1px;background:var(--rule);}
+
+.featured{background:var(--dark);border-radius:16px;padding:30px 32px;margin-bottom:12px;display:flex;align-items:center;gap:24px;text-decoration:none;transition:transform .18s,box-shadow .18s;position:relative;overflow:hidden;}
+.featured::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 50%,rgba(253,185,19,.1) 0%,transparent 60%);}
+.featured:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(0,0,0,.25);}
+.feat-icon{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--orange),var(--yellow));display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;position:relative;z-index:1;}
+.feat-body{flex:1;position:relative;z-index:1;}
+.feat-tag{font-size:9px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--yellow);margin-bottom:5px;}
+.feat-body h3{font-family:'Playfair Display',serif;font-size:20px;color:white;margin-bottom:4px;}
+.feat-body p{font-size:13px;color:rgba(255,255,255,.45);line-height:1.5;}
+.feat-arrow{font-size:20px;color:var(--yellow);position:relative;z-index:1;flex-shrink:0;}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:40px;}
+@media(max-width:580px){.grid{grid-template-columns:1fr;}}
+
+.course-card{background:var(--card);border:1.5px solid var(--rule);border-radius:14px;padding:22px;text-decoration:none;transition:all .18s;display:flex;flex-direction:column;}
+.course-card:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(0,0,0,.08);border-color:var(--orange-m);}
+.cc-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;}
+.cc-icon{width:42px;height:42px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.cc-meta{display:flex;gap:6px;flex-wrap:wrap;}
+.cc-tag{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:3px 9px;border-radius:10px;}
+.tag-req{background:var(--orange-l);color:var(--orange);}
+.tag-prog{background:var(--yellow-l);color:#B08000;}
+.cc-title{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:5px;line-height:1.3;}
+.cc-desc{font-size:12px;color:var(--muted);line-height:1.55;flex:1;}
+.cc-footer{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding-top:12px;border-top:1px solid var(--rule);}
+.cc-mins{font-size:11px;font-weight:600;color:var(--muted);}
+.cc-go{font-size:11px;font-weight:700;color:var(--orange);display:flex;align-items:center;gap:4px;}
+
+.note{background:var(--orange-l);border:1px solid var(--orange-m);border-radius:12px;padding:18px 22px;font-size:13px;color:var(--gray);line-height:1.65;margin-top:8px;}
+.note strong{color:var(--orange);font-weight:700;}
+.footer{text-align:center;padding:30px;font-size:12px;color:var(--muted);border-top:1px solid var(--rule);}
+
+/* Asterisk logo mark */
+.logo-mark{display:inline-block;width:10px;height:10px;background:linear-gradient(135deg,var(--orange),var(--yellow));border-radius:2px;margin:0 1px;vertical-align:middle;}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="hu-badge">✦ Helonium Innovations</div>
+    <h1>Helon Universe<br><em>Training Hub</em></h1>
+    <p>Complete all required courses before your first day. Start with the onboarding course, then work through each program training in order.</p>
+    <div class="header-stats">
+      <div><div class="hs-n">7</div><div class="hs-l">Courses</div></div>
+      <div><div class="hs-n">~8</div><div class="hs-l">Hours total</div></div>
+      <div><div class="hs-n">75%</div><div class="hs-l">Pass score</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="section-label">Start here</div>
+  <a class="featured" href="guide_onboarding_course.html">
+    <div class="feat-icon">🌟</div>
+    <div class="feat-body">
+      <div class="feat-tag">✦ Complete first · ~80 min</div>
+      <h3>Learning Guide Onboarding</h3>
+      <p>Your role, the Helon Universe system, all programs at a glance, the daily data loop, and first-week preparation.</p>
+    </div>
+    <div class="feat-arrow">→</div>
+  </a>
+
+  <div class="section-label" style="margin-top:36px;">Required for all guides</div>
+  <div class="grid">
+    <a class="course-card" href="lexia_course.html">
+      <div class="cc-top"><div class="cc-icon" style="background:#EBF5FB;">📖</div><div class="cc-meta"><span class="cc-tag tag-req">Required</span></div></div>
+      <div class="cc-title">Lexia Core5 Training</div>
+      <div class="cc-desc">How Core5 works, reading the data, skill alerts, and your role as guide during phonics sessions.</div>
+      <div class="cc-footer"><span class="cc-mins">⏱ ~60 min</span><span class="cc-go">Start course →</span></div>
+    </a>
+    <a class="course-card" href="littlelit_course.html">
+      <div class="cc-top"><div class="cc-icon" style="background:#E4F2ED;">📚</div><div class="cc-meta"><span class="cc-tag tag-req">Required</span></div></div>
+      <div class="cc-title">LittleLit Training</div>
+      <div class="cc-desc">Independent reading, guiding discussion, comprehension data, and connecting LittleLit to MBTP and Core5.</div>
+      <div class="cc-footer"><span class="cc-mins">⏱ ~60 min</span><span class="cc-go">Start course →</span></div>
+    </a>
+    <a class="course-card" href="autism_helper_course.html">
+      <div class="cc-top"><div class="cc-icon" style="background:#FEF0EB;">❤️</div><div class="cc-meta"><span class="cc-tag tag-req">Required</span></div></div>
+      <div class="cc-title">Supporting Autistic Learners</div>
+      <div class="cc-desc">Structured environments, visual supports, behavior as communication, and evidence-based instructional strategies.</div>
+      <div class="cc-footer"><span class="cc-mins">⏱ ~80 min</span><span class="cc-go">Start course →</span></div>
+    </a>
+    <a class="course-card" href="brightwheel_course.html">
+      <div class="cc-top"><div class="cc-icon" style="background:#EBF5FB;">💙</div><div class="cc-meta"><span class="cc-tag tag-req">Required</span></div></div>
+      <div class="cc-title">Brightwheel Training</div>
+      <div class="cc-desc">Daily logs, check-in, family communication, assessment observations, and how Brightwheel fits your daily loop.</div>
+      <div class="cc-footer"><span class="cc-mins">⏱ ~60 min</span><span class="cc-go">Start course →</span></div>
+    </a>
+  </div>
+
+  <div class="section-label">Based on your learners</div>
+  <div class="grid">
+    <a class="course-card" href="learning_guide_course.html">
+      <div class="cc-top"><div class="cc-icon" style="background:#FEF3EA;">📘</div><div class="cc-meta"><span class="cc-tag tag-prog">If using MBTP</span></div></div>
+      <div class="cc-title">MBTP Training</div>
+      <div class="cc-desc">Moving Beyond the Page — literature-based instruction, lesson structure, discussion strategies, and mastery tracking.</div>
+      <div class="cc-footer"><span class="cc-mins">⏱ ~70 min</span><span class="cc-go">Start course →</span></div>
+    </a>
+    <a class="course-card" href="curriculum_access_course.html">
+      <div class="cc-top"><div class="cc-icon" style="background:#FFF8E8;">🧩</div><div class="cc-meta"><span class="cc-tag tag-prog">If using CA</span></div></div>
+      <div class="cc-title">Curriculum Access Training</div>
+      <div class="cc-desc">The Autism Helper platform — levels, placement, structured lesson routine, and data collection across 9 subject areas.</div>
+      <div class="cc-footer"><span class="cc-mins">⏱ ~70 min</span><span class="cc-go">Start course →</span></div>
+    </a>
+  </div>
+
+  <div class="note"><strong>Not sure which curriculum course to take?</strong> If any of your learners uses Moving Beyond the Page, complete the MBTP Training. If any learner uses Curriculum Access, complete that training. If you have learners using both — complete both. When in doubt, ask your program director.</div>
+</div>
+
+<div class="footer">© Helonium Innovations · Helon Universe Training Hub · All courses self-paced</div>
+</body>
+</html>

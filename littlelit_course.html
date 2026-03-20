@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LittleLit Training | Self-Paced Course</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --green:   #2D6A4F;
+  --green2:  #40916C;
+  --green3:  #74C69D;
+  --lime:    #B7E4C7;
+  --bg:      #F8FAF8;
+  --bg2:     #EEF5EE;
+  --dark:    #1B2E1E;
+  --gray:    #4A6741;
+  --muted:   #8FAE8A;
+  --white:   #FFFFFF;
+  --amber:   #E76F51;
+  --amber-l: #FEF0EB;
+  --gold:    #D4A017;
+  --gold-l:  #FEF8E6;
+  --pass:    #2D6A4F;
+  --pass-l:  #D8F3DC;
+  --fail:    #C1440E;
+  --fail-l:  #FDEAE3;
+  --navy:    #1B2E1E;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--dark);min-height:100vh;}
+
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:272px;background:var(--dark);display:flex;flex-direction:column;z-index:100;overflow-y:auto;}
+.sb-brand{padding:26px 22px 18px;border-bottom:1px solid rgba(255,255,255,0.07);}
+.sb-logo{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.sb-icon{width:38px;height:38px;background:linear-gradient(135deg,var(--green),var(--green3));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;}
+.sb-brand h1{font-size:16px;font-weight:800;color:var(--white);line-height:1.3;}
+.sb-brand span{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--green3);}
+.sb-prog{padding:14px 22px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.sb-prog-top{display:flex;justify-content:space-between;font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:7px;}
+.sb-prog-top span{color:var(--green3);}
+.pb{height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;}
+.pf{height:100%;background:linear-gradient(90deg,var(--green),var(--green3));transition:width .6s ease;}
+.sb-section{padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.sb-sec-title{padding:5px 22px 8px;font-size:9px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.2);}
+.ni{display:flex;align-items:center;gap:11px;padding:9px 22px;cursor:pointer;transition:background .15s;position:relative;}
+.ni:hover{background:rgba(255,255,255,.05);}
+.ni.active{background:rgba(45,106,79,.25);}
+.ni.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--green3);}
+.ni.locked{opacity:.38;cursor:not-allowed;}
+.ni-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;background:rgba(255,255,255,.07);}
+.ni.active .ni-icon{background:var(--green);}
+.ni.completed .ni-icon{background:var(--green2);}
+.ni-title{font-size:12px;font-weight:700;color:rgba(255,255,255,.82);flex:1;line-height:1.3;}
+.ni.locked .ni-title{color:rgba(255,255,255,.28);}
+.ni-sub{font-size:10px;color:rgba(255,255,255,.28);margin-top:1px;}
+.nbadge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.3);}
+.ni.completed .nbadge{background:var(--green2);color:white;}
+
+.main{margin-left:272px;min-height:100vh;padding-bottom:80px;}
+.topbar{background:var(--white);border-bottom:1px solid #DDE8DD;padding:14px 44px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.tb-crumb{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:5px;}
+.tb-crumb .cur{color:var(--dark);font-weight:700;}
+.tb-badge{font-size:10px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;padding:4px 11px;border-radius:20px;background:var(--bg2);color:var(--green);border:1px solid var(--lime);}
+.content{max-width:800px;margin:0 auto;padding:44px 44px 0;}
+.screen{display:none;}
+.screen.active{display:block;animation:fadein .3s ease;}
+@keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.hero{background:linear-gradient(135deg,var(--dark) 0%,var(--green) 100%);border-radius:20px;padding:52px 48px;margin-bottom:28px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-60px;right:-60px;width:280px;height:280px;background:radial-gradient(circle,rgba(116,198,157,.2) 0%,transparent 70%);}
+.hero-tag{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.15em;text-transform:uppercase;color:var(--green3);margin-bottom:14px;}
+.hero h2{font-family:'Crimson Pro',serif;font-size:42px;line-height:1.2;color:var(--white);margin-bottom:12px;}
+.hero h2 em{font-style:normal;color:var(--green3);}
+.hero p{font-size:15px;color:rgba(255,255,255,.6);line-height:1.7;max-width:500px;margin-bottom:28px;}
+.hero-stats{display:flex;gap:28px;margin-bottom:28px;}
+.sn{font-family:'Crimson Pro',serif;font-size:32px;font-weight:600;color:white;}
+.sl{font-size:11px;color:rgba(255,255,255,.38);text-transform:uppercase;letter-spacing:.07em;}
+.mod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:28px;}
+.mc{background:white;border-radius:13px;padding:18px;border:1px solid #DDE8DD;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.mc:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.06);}
+.mc.locked{opacity:.5;cursor:not-allowed;}
+.mc.locked:hover{transform:none;box-shadow:none;}
+.mc.completed{border-color:var(--green2);}
+.mc-num{font-family:'Crimson Pro',serif;font-size:36px;font-weight:600;color:#DDE8DD;line-height:1;margin-bottom:7px;}
+.mc.completed .mc-num{color:var(--green3);opacity:.5;}
+.mc h3{font-size:13px;font-weight:800;color:var(--dark);margin-bottom:3px;line-height:1.35;}
+.mc p{font-size:11px;color:var(--muted);line-height:1.5;}
+.mc-s{position:absolute;top:14px;right:14px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;}
+.mc.completed .mc-s{background:var(--green2);color:white;}
+.mc.locked .mc-s{background:#EEE;color:#AAA;}
+.mc:not(.locked):not(.completed) .mc-s{background:var(--green);color:white;}
+
+.lh{margin-bottom:32px;}
+.ltag{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--green);background:var(--bg2);padding:4px 11px;border-radius:20px;margin-bottom:12px;}
+.lh h2{font-family:'Crimson Pro',serif;font-size:36px;line-height:1.2;color:var(--dark);margin-bottom:9px;}
+.lmeta{display:flex;align-items:center;gap:18px;font-size:12px;color:var(--muted);}
+.lb{font-size:15px;line-height:1.75;color:var(--gray);}
+.lb h3{font-family:'Crimson Pro',serif;font-size:22px;color:var(--dark);margin:32px 0 12px;padding-top:32px;border-top:1px solid #DDE8DD;}
+.lb h3:first-of-type{margin-top:0;padding-top:0;border-top:none;}
+.lb p{margin-bottom:14px;}
+.callout{background:var(--gold-l);border-left:4px solid var(--gold);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0;font-size:14px;color:var(--dark);font-style:italic;}
+.callout strong{font-style:normal;color:var(--green);}
+.ig{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:18px 0;}
+.ic{background:white;border:1px solid #DDE8DD;border-radius:11px;padding:16px;}
+.ic-label{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--green);margin-bottom:5px;}
+.ic p{font-size:13px;color:var(--gray);margin:0;line-height:1.55;}
+.steps{margin:18px 0;}
+.step{display:flex;gap:14px;margin-bottom:14px;align-items:flex-start;}
+.step-n{width:30px;height:30px;border-radius:50%;background:var(--green);color:white;font-weight:800;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.step-c h4{font-size:14px;font-weight:800;color:var(--dark);margin-bottom:3px;}
+.step-c p{font-size:13px;color:var(--gray);margin:0;line-height:1.55;}
+.ctable{width:100%;border-collapse:collapse;margin:18px 0;border-radius:11px;overflow:hidden;border:1px solid #DDE8DD;}
+.ctable th{background:var(--green);color:white;padding:11px 15px;text-align:left;font-size:12px;font-weight:700;}
+.ctable td{padding:11px 15px;font-size:13px;color:var(--gray);border-top:1px solid #DDE8DD;vertical-align:top;}
+.ctable tr:nth-child(odd) td{background:var(--bg2);}
+.ctable tr:nth-child(even) td{background:white;}
+.ctable td:first-child{font-weight:700;color:var(--dark);}
+.hlbox{background:var(--dark);padding:22px 26px;border-radius:13px;margin:22px 0;}
+.hlbox h4{font-family:'Crimson Pro',serif;font-size:19px;color:var(--green3);margin-bottom:10px;}
+.hlbox ul{padding-left:18px;}
+.hlbox ul li{font-size:13px;color:#ccc;margin-bottom:5px;line-height:1.55;}
+
+/* QUIZ */
+.qs{margin-top:52px;padding-top:36px;border-top:2px solid #DDE8DD;}
+.qh{display:flex;align-items:center;gap:13px;margin-bottom:26px;}
+.qi{width:44px;height:44px;background:var(--green);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;color:white;flex-shrink:0;}
+.qh h3{font-family:'Crimson Pro',serif;font-size:22px;color:var(--dark);margin-bottom:3px;}
+.qh p{font-size:12px;color:var(--muted);}
+.qq{background:white;border:1px solid #DDE8DD;border-radius:13px;padding:22px;margin-bottom:18px;transition:all .2s;}
+.qq.correct{border-color:var(--pass);background:var(--pass-l);}
+.qq.wrong{border-color:var(--fail);background:var(--fail-l);}
+.qn{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.qt{font-size:15px;font-weight:700;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.qopts{display:flex;flex-direction:column;gap:9px;}
+.opt{display:flex;align-items:flex-start;gap:11px;padding:11px 15px;border-radius:9px;border:1.5px solid #DDE8DD;cursor:pointer;transition:all .15s;background:white;font-size:13px;color:var(--gray);line-height:1.4;}
+.opt:hover{border-color:var(--green);background:var(--bg2);}
+.opt.selected{border-color:var(--green);background:var(--lime);color:var(--dark);}
+.opt.correct-ans{border-color:var(--pass);background:var(--pass-l);}
+.opt.wrong-ans{border-color:var(--fail);background:var(--fail-l);}
+.opt.disabled{pointer-events:none;}
+.od{width:17px;height:17px;border-radius:50%;border:2px solid #CCC;flex-shrink:0;margin-top:1px;transition:all .15s;}
+.opt.selected .od{border-color:var(--green);background:var(--green);}
+.opt.correct-ans .od{border-color:var(--pass);background:var(--pass);}
+.opt.wrong-ans .od{border-color:var(--fail);background:var(--fail);}
+.qfb{padding:11px 15px;border-radius:9px;font-size:13px;margin-top:10px;display:none;line-height:1.5;}
+.qfb.show{display:block;}
+.qfb.correct{background:var(--pass-l);color:#1a5c35;border:1px solid var(--pass);}
+.qfb.wrong{background:var(--fail-l);color:#8b1a1a;border:1px solid #e0a0a0;}
+.qr{background:white;border-radius:15px;padding:32px;text-align:center;border:2px solid #DDE8DD;margin-top:22px;display:none;}
+.qr.show{display:block;animation:fadein .4s ease;}
+.qr.passed{border-color:var(--pass);}
+.qr.failed{border-color:var(--fail);}
+.rscore{font-family:'Crimson Pro',serif;font-size:62px;font-weight:600;line-height:1;margin-bottom:7px;}
+.rscore.pass{color:var(--pass);}
+.rscore.fail{color:var(--fail);}
+.rmsg{font-size:19px;font-weight:800;margin-bottom:7px;color:var(--dark);}
+.rsub{font-size:13px;color:var(--muted);margin-bottom:24px;}
+
+.btn{display:inline-flex;align-items:center;gap:7px;padding:12px 26px;border-radius:9px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;border:none;}
+.btn-p{background:var(--green);color:white;}
+.btn-p:hover{background:#C85E10;transform:translateY(-1px);}
+.btn-s{background:white;color:var(--dark);border:1.5px solid #DDD;}
+.btn-s:hover{border-color:var(--green);color:var(--green);}
+.btn-ok{background:var(--green2);color:white;}
+.btn-ok:hover{background:var(--green);}
+.btn-lg{padding:15px 32px;font-size:14px;border-radius:11px;}
+.btn:disabled{opacity:.4;cursor:not-allowed;pointer-events:none;}
+.ln{display:flex;align-items:center;justify-content:space-between;margin-top:44px;padding-top:28px;border-top:1px solid #DDE8DD;}
+
+.comp-wrap{text-align:center;padding:70px 40px;}
+.comp-badge{width:110px;height:110px;background:linear-gradient(135deg,var(--green),var(--green3));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:48px;margin:0 auto 28px;box-shadow:0 14px 40px rgba(45,106,79,.3);}
+.comp-wrap h2{font-family:'Crimson Pro',serif;font-size:44px;color:var(--dark);margin-bottom:12px;}
+.comp-wrap p{font-size:16px;color:var(--gray);max-width:440px;margin:0 auto 32px;line-height:1.7;}
+.chips{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:36px;}
+.chip{background:var(--pass-l);color:var(--pass);border:1px solid var(--pass);padding:5px 14px;border-radius:20px;font-size:12px;font-weight:700;}
+
+.toast{position:fixed;bottom:22px;right:22px;background:var(--dark);color:white;padding:13px 18px;border-radius:11px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:9px;transform:translateY(100px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:999;max-width:300px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-left:4px solid var(--green3);}
+.toast.locked-msg{border-left:4px solid #F47B20;}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo">
+      <div class="sb-icon">📚</div>
+      <div><h1>LittleLit<br>Training</h1></div>
+    </div>
+    <span>Self-Paced Course</span>
+  </div>
+  <div class="sb-prog">
+    <div class="sb-prog-top">Progress <span id="pt">0%</span></div>
+    <div class="pb"><div class="pf" id="pf" style="width:0%"></div></div>
+  </div>
+  <div class="sb-section">
+    <div class="sb-sec-title">Modules</div>
+    <div class="ni active" onclick="show('welcome')" id="nav-welcome"><div class="ni-icon">🏠</div><div style="flex:1"><div class="ni-title">Course Home</div><div class="ni-sub">Overview</div></div></div>
+    <div class="ni" onclick="go('m1')" id="nav-m1"><div class="ni-icon">📗</div><div style="flex:1"><div class="ni-title">What Is LittleLit?</div><div class="ni-sub">Purpose & design</div></div><div class="nbadge">Quiz</div></div>
+    <div class="ni locked" onclick="go('m2')" id="nav-m2"><div class="ni-icon">🔒</div><div style="flex:1"><div class="ni-title">How LittleLit Works</div><div class="ni-sub">Sessions & activities</div></div><div class="nbadge">Quiz</div></div>
+    <div class="ni locked" onclick="go('m3')" id="nav-m3"><div class="ni-icon">🔒</div><div style="flex:1"><div class="ni-title">Guiding Discussion</div><div class="ni-sub">Socratic method & questions</div></div><div class="nbadge">Quiz</div></div>
+    <div class="ni locked" onclick="go('m4')" id="nav-m4"><div class="ni-icon">🔒</div><div style="flex:1"><div class="ni-title">Reading the Progress Data</div><div class="ni-sub">Reports & interventions</div></div><div class="nbadge">Quiz</div></div>
+    <div class="ni locked" onclick="go('m5')" id="nav-m5"><div class="ni-icon">🔒</div><div style="flex:1"><div class="ni-title">LittleLit + MBTP + Core5</div><div class="ni-sub">The full picture</div></div><div class="nbadge">Quiz</div></div>
+    <div class="ni locked" onclick="go('complete')" id="nav-complete"><div class="ni-icon">🏆</div><div style="flex:1"><div class="ni-title">Certificate</div></div></div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div class="tb-crumb">LittleLit Training › <span class="cur" id="cur">Course Home</span></div>
+    <div class="tb-badge">Self-Paced</div>
+  </div>
+  <div class="content">
+
+    <!-- WELCOME -->
+    <div class="screen active" id="screen-welcome">
+      <div class="hero">
+        <div class="hero-tag">✦ Self-Paced Course</div>
+        <h2>Mastering<br><em>LittleLit</em></h2>
+        <p>Understand how LittleLit builds independent reading habits, how to guide rich book discussions, how to use progress data, and how it fits alongside MBTP and Core5.</p>
+        <div class="hero-stats">
+          <div><div class="sn">5</div><div class="sl">Modules</div></div>
+          <div><div class="sn">~75</div><div class="sl">Minutes</div></div>
+          <div><div class="sn">75%</div><div class="sl">Pass score</div></div>
+        </div>
+        <button class="btn btn-p btn-lg" onclick="go('m1')">Start Course →</button>
+      </div>
+      <div class="mod-grid">
+        <div class="mc" onclick="go('m1')" id="card-m1"><div class="mc-num">01</div><div class="mc-s">→</div><h3>What Is LittleLit?</h3><p>Purpose, design philosophy, and who it serves</p></div>
+        <div class="mc locked" onclick="go('m2')" id="card-m2"><div class="mc-num">02</div><div class="mc-s">🔒</div><h3>How LittleLit Works</h3><p>Session structure, activities, and book levels</p></div>
+        <div class="mc locked" onclick="go('m3')" id="card-m3"><div class="mc-num">03</div><div class="mc-s">🔒</div><h3>Guiding Discussion</h3><p>Socratic questioning and literary thinking</p></div>
+        <div class="mc locked" onclick="go('m4')" id="card-m4"><div class="mc-num">04</div><div class="mc-s">🔒</div><h3>Reading the Progress Data</h3><p>Reports, completion rates, and interventions</p></div>
+        <div class="mc locked" onclick="go('m5')" id="card-m5"><div class="mc-num">05</div><div class="mc-s">🔒</div><h3>LittleLit + MBTP + Core5</h3><p>Weaving all three programs together</p></div>
+      </div>
+      <div class="callout"><strong>Checkpoint rule:</strong> Each module ends with a 4-question quiz. Score 75%+ (3 of 4 correct) to unlock the next module. Unlimited retakes.</div>
+    </div>
+
+    <!-- MODULE 1 -->
+    <div class="screen" id="screen-m1">
+      <div class="lh"><div class="ltag">✦ Module 1 of 5</div><h2>What Is LittleLit?</h2><div class="lmeta"><span>📖 ~12 min</span><span>✦ Quiz required</span></div></div>
+      <div class="lb">
+        <h3>A Program Built Around Independent Reading</h3>
+        <p>LittleLit is a research-backed digital reading platform that builds independent reading skills, comprehension, and a love of books for learners in PreK through Grade 5. Unlike Core5, which focuses on decoding and phonics mechanics, LittleLit focuses on what happens after decoding — helping learners think deeply about what they read, respond to literature, and develop their reading identity.</p>
+        <p>Sessions in LittleLit pair a carefully leveled book with structured activities — response prompts, vocabulary exploration, comprehension questions, and creative extensions. The program is designed to be used independently by the learner while a guide is available for support and discussion.</p>
+
+        <h3>What LittleLit Builds</h3>
+        <div class="ig">
+          <div class="ic"><div class="ic-label">Reading Stamina</div><p>Time reading independently in a focused, low-distraction environment with a real book — not a test.</p></div>
+          <div class="ic"><div class="ic-label">Comprehension</div><p>Inferencing, main idea, character analysis, cause and effect — the skills that separate word-callers from true readers.</p></div>
+          <div class="ic"><div class="ic-label">Vocabulary in Context</div><p>Words encountered naturally in books, with supported definition work that builds word knowledge alongside real reading.</p></div>
+          <div class="ic"><div class="ic-label">Reader Identity</div><p>When learners read books they choose and respond to meaningfully, they begin to see themselves as readers. This is LittleLit's deepest goal.</p></div>
+          <div class="ic"><div class="ic-label">Written Response</div><p>Short, structured written responses to reading — building the habit of articulating thinking about text.</p></div>
+          <div class="ic"><div class="ic-label">Discussion Skills</div><p>Preparing learners for the literary conversations that MBTP's discussion-based sessions depend on.</p></div>
+        </div>
+
+        <h3>Leveled Reading — How It Works</h3>
+        <p>LittleLit assigns books based on the learner's reading level, using a leveling system (typically letter-based A–Z or equivalent). Learners are placed at a level where they can read with 90–95% accuracy — challenging enough to grow, accessible enough to succeed. As learners demonstrate comprehension and complete activities successfully, they advance through levels.</p>
+        <div class="callout"><strong>Key distinction:</strong> LittleLit is NOT a phonics program and is NOT a substitute for Core5. A learner who cannot yet decode fluently will struggle with LittleLit. Make sure Core5 sessions happen first — LittleLit assumes basic decoding is in place.</div>
+      </div>
+      <div class="qs">
+        <div class="qh"><div class="qi">✏️</div><div><h3>Module 1 Checkpoint</h3><p>Score 3 of 4 correct to unlock Module 2</p></div></div>
+        <div id="quiz-m1">
+          <div class="qq" id="m1q1"><div class="qn">Q1 of 4</div><div class="qt">What is LittleLit's primary focus?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m1q1',false)"><div class="od"></div>Systematic phonics and decoding instruction</div>
+            <div class="opt" onclick="sel(this,'m1q1',true)"><div class="od"></div>Independent reading, comprehension, and literary thinking after decoding</div>
+            <div class="opt" onclick="sel(this,'m1q1',false)"><div class="od"></div>Handwriting and spelling practice</div>
+            <div class="opt" onclick="sel(this,'m1q1',false)"><div class="od"></div>Test preparation and benchmark assessment</div>
+          </div><div class="qfb" id="fb-m1q1"></div></div>
+
+          <div class="qq" id="m1q2"><div class="qn">Q2 of 4</div><div class="qt">At what accuracy level should a learner be able to read their assigned LittleLit books?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m1q2',false)"><div class="od"></div>60–70% — struggle is the best teacher</div>
+            <div class="opt" onclick="sel(this,'m1q2',false)"><div class="od"></div>100% — only books they can read perfectly</div>
+            <div class="opt" onclick="sel(this,'m1q2',true)"><div class="od"></div>90–95% — challenging enough to grow, accessible enough to succeed</div>
+            <div class="opt" onclick="sel(this,'m1q2',false)"><div class="od"></div>50% — maximum challenge to accelerate growth</div>
+          </div><div class="qfb" id="fb-m1q2"></div></div>
+
+          <div class="qq" id="m1q3"><div class="qn">Q3 of 4</div><div class="qt">Which of the following is NOT something LittleLit is designed to build?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m1q3',false)"><div class="od"></div>Reading stamina</div>
+            <div class="opt" onclick="sel(this,'m1q3',false)"><div class="od"></div>Reader identity</div>
+            <div class="opt" onclick="sel(this,'m1q3',true)"><div class="od"></div>Phoneme segmentation and blending skills</div>
+            <div class="opt" onclick="sel(this,'m1q3',false)"><div class="od"></div>Vocabulary in context</div>
+          </div><div class="qfb" id="fb-m1q3"></div></div>
+
+          <div class="qq" id="m1q4"><div class="qn">Q4 of 4</div><div class="qt">Why must Core5 sessions happen BEFORE LittleLit for beginning readers?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m1q4',false)"><div class="od"></div>LittleLit requires Core5 login credentials to function</div>
+            <div class="opt" onclick="sel(this,'m1q4',true)"><div class="od"></div>LittleLit assumes basic decoding is in place — learners who can't decode will struggle with it</div>
+            <div class="opt" onclick="sel(this,'m1q4',false)"><div class="od"></div>Core5 assigns LittleLit book levels automatically</div>
+            <div class="opt" onclick="sel(this,'m1q4',false)"><div class="od"></div>There is no required order — they are completely independent</div>
+          </div><div class="qfb" id="fb-m1q4"></div></div>
+        </div>
+        <div id="result-m1" class="qr"><div class="rscore" id="score-m1"></div><div class="rmsg" id="msg-m1"></div><div class="rsub" id="sub-m1"></div><button class="btn btn-ok btn-lg" id="next-m1" onclick="unlock('m2')" style="display:none">Continue to Module 2 →</button><button class="btn btn-s" id="retry-m1" onclick="retry('m1')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:20px;display:flex;justify-content:flex-end;"><button class="btn btn-p" id="submit-m1" onclick="submit('m1',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="ln"><button class="btn btn-s" onclick="show('welcome')">← Home</button></div>
+    </div>
+
+    <!-- MODULE 2 -->
+    <div class="screen" id="screen-m2">
+      <div class="lh"><div class="ltag">✦ Module 2 of 5</div><h2>How LittleLit Works</h2><div class="lmeta"><span>📖 ~12 min</span><span>✦ Quiz required</span></div></div>
+      <div class="lb">
+        <h3>The Structure of a LittleLit Session</h3>
+        <p>Each LittleLit session follows a consistent structure that learners internalize over time. This predictability is intentional — it builds routine, reduces cognitive load, and lets learners focus on the reading itself rather than figuring out what to do next.</p>
+        <div class="steps">
+          <div class="step"><div class="step-n">1</div><div class="step-c"><h4>Book Selection or Assignment</h4><p>The learner opens their assigned book (or selects from leveled options). The book is appropriately leveled to their current reading level.</p></div></div>
+          <div class="step"><div class="step-n">2</div><div class="step-c"><h4>Independent Reading</h4><p>The learner reads the assigned pages or chapters independently. For younger/beginning readers, guides may read alongside. Audio support may be available for accessibility.</p></div></div>
+          <div class="step"><div class="step-n">3</div><div class="step-c"><h4>Comprehension Check</h4><p>Questions about the text — literal, inferential, evaluative. These help the program assess understanding and identify where comprehension is breaking down.</p></div></div>
+          <div class="step"><div class="step-n">4</div><div class="step-c"><h4>Vocabulary Activity</h4><p>Key words from the text are explored in context. The learner encounters definitions, uses words in sentences, and builds word knowledge naturally.</p></div></div>
+          <div class="step"><div class="step-n">5</div><div class="step-c"><h4>Written or Creative Response</h4><p>A short response prompt asks the learner to think beyond the literal text — predict, connect, evaluate, or imagine. This is the highest-order thinking in the session.</p></div></div>
+        </div>
+
+        <h3>Session Length & Frequency</h3>
+        <div class="callout"><strong>Recommended:</strong> 20–30 minutes per LittleLit session, 3–4 days per week. This sits within the HLPP schedule as the independent station — learners work on LittleLit while the guide works 1:1 with another learner.</div>
+
+        <h3>Book Levels Explained</h3>
+        <p>LittleLit uses a progressive leveling system. Key things to know:</p>
+        <div class="ig">
+          <div class="ic"><div class="ic-label">On-Level Books</div><p>Books the learner can read with 90–95% accuracy. Most daily reading should be at this level.</p></div>
+          <div class="ic"><div class="ic-label">Challenge Books</div><p>Slightly above level — with guide support. Not for independent reading. Good for read-aloud discussion.</p></div>
+          <div class="ic"><div class="ic-label">Comfort Books</div><p>Below level — easy, fluent reading. Good for building stamina and confidence. Use occasionally, not daily.</p></div>
+          <div class="ic"><div class="ic-label">Level Up Triggers</div><p>When a learner achieves consistent 85%+ comprehension scores across multiple books, they advance to the next level.</p></div>
+        </div>
+      </div>
+      <div class="qs">
+        <div class="qh"><div class="qi">✏️</div><div><h3>Module 2 Checkpoint</h3><p>Score 3 of 4 correct to unlock Module 3</p></div></div>
+        <div id="quiz-m2">
+          <div class="qq" id="m2q1"><div class="qn">Q1 of 4</div><div class="qt">In the HLPP schedule, when does a learner typically complete LittleLit?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m2q1',false)"><div class="od"></div>During 1:1 instruction time with the guide</div>
+            <div class="opt" onclick="sel(this,'m2q1',true)"><div class="od"></div>During the independent station while the guide works with another learner</div>
+            <div class="opt" onclick="sel(this,'m2q1',false)"><div class="od"></div>Only during whole-group enrichment time</div>
+            <div class="opt" onclick="sel(this,'m2q1',false)"><div class="od"></div>As homework to complete at home with parents</div>
+          </div><div class="qfb" id="fb-m2q1"></div></div>
+
+          <div class="qq" id="m2q2"><div class="qn">Q2 of 4</div><div class="qt">What is the highest-order thinking task in a LittleLit session?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m2q2',false)"><div class="od"></div>Reading the assigned pages independently</div>
+            <div class="opt" onclick="sel(this,'m2q2',false)"><div class="od"></div>Answering literal comprehension questions</div>
+            <div class="opt" onclick="sel(this,'m2q2',false)"><div class="od"></div>Looking up vocabulary definitions</div>
+            <div class="opt" onclick="sel(this,'m2q2',true)"><div class="od"></div>The written/creative response prompt requiring prediction, connection, or evaluation</div>
+          </div><div class="qfb" id="fb-m2q2"></div></div>
+
+          <div class="qq" id="m2q3"><div class="qn">Q3 of 4</div><div class="qt">When does a learner advance to the next LittleLit level?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m2q3',false)"><div class="od"></div>After completing any 5 books at the current level</div>
+            <div class="opt" onclick="sel(this,'m2q3',false)"><div class="od"></div>When the guide decides they are ready based on observation</div>
+            <div class="opt" onclick="sel(this,'m2q3',true)"><div class="od"></div>When they achieve consistent 85%+ comprehension scores across multiple books</div>
+            <div class="opt" onclick="sel(this,'m2q3',false)"><div class="od"></div>At the start of each new MBTP unit</div>
+          </div><div class="qfb" id="fb-m2q3"></div></div>
+
+          <div class="qq" id="m2q4"><div class="qn">Q4 of 4</div><div class="qt">What are "comfort books" in LittleLit used for?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m2q4',false)"><div class="od"></div>They are the primary daily reading material at the learner's exact level</div>
+            <div class="opt" onclick="sel(this,'m2q4',true)"><div class="od"></div>Below-level books used occasionally to build stamina and confidence</div>
+            <div class="opt" onclick="sel(this,'m2q4',false)"><div class="od"></div>Books used for guided reading with the teacher every session</div>
+            <div class="opt" onclick="sel(this,'m2q4',false)"><div class="od"></div>Books assigned when a learner is being assessed for level advancement</div>
+          </div><div class="qfb" id="fb-m2q4"></div></div>
+        </div>
+        <div id="result-m2" class="qr"><div class="rscore" id="score-m2"></div><div class="rmsg" id="msg-m2"></div><div class="rsub" id="sub-m2"></div><button class="btn btn-ok btn-lg" id="next-m2" onclick="unlock('m3')" style="display:none">Continue to Module 3 →</button><button class="btn btn-s" id="retry-m2" onclick="retry('m2')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:20px;display:flex;justify-content:flex-end;"><button class="btn btn-p" id="submit-m2" onclick="submit('m2',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="ln"><button class="btn btn-s" onclick="show('m1')">← Module 1</button></div>
+    </div>
+
+    <!-- MODULE 3 -->
+    <div class="screen" id="screen-m3">
+      <div class="lh"><div class="ltag">✦ Module 3 of 5</div><h2>Guiding Discussion</h2><div class="lmeta"><span>📖 ~12 min</span><span>✦ Quiz required</span></div></div>
+      <div class="lb">
+        <h3>Why Discussion Matters</h3>
+        <p>LittleLit builds solo reading skills. But the richest comprehension growth happens in conversation. When guides ask genuine, open-ended questions after a reading session — and listen to the learner's thinking — they build the analytical skills that will carry the learner through MBTP and beyond.</p>
+        <p>The key is moving beyond "Did you understand it?" toward questions that reveal and deepen thinking. This is called the <strong>Socratic approach</strong> — asking questions not to test, but to extend and challenge thinking.</p>
+
+        <h3>Three Levels of Questions</h3>
+        <div class="steps">
+          <div class="step"><div class="step-n">1</div><div class="step-c"><h4>Literal Questions (What happened?)</h4><p>These confirm basic comprehension. Use sparingly — if a learner can't answer these, they need re-reading support, not higher-level discussion. Example: "What did the character do when she found the door?"</p></div></div>
+          <div class="step"><div class="step-n">2</div><div class="step-c"><h4>Inferential Questions (Why? How?)</h4><p>These require reading between the lines. The answer isn't stated directly — the learner must synthesize information. Example: "Why do you think the character hesitated before going inside?" This is the heart of literary discussion.</p></div></div>
+          <div class="step"><div class="step-n">3</div><div class="step-c"><h4>Evaluative Questions (What do you think?)</h4><p>These require judgment — the learner defends a view. Example: "Was the character right to keep the secret? Why or why not?" No single correct answer — the goal is reasoned thinking.</p></div></div>
+        </div>
+
+        <div class="callout"><strong>The guide's role in discussion:</strong> Ask. Listen. Follow up. Resist the urge to confirm or deny too quickly. When a learner gives an answer — whether right or wrong — ask "What makes you think that?" first. This habit develops intellectual independence.</div>
+
+        <h3>Discussion Moves to Use</h3>
+        <div class="ctable-wrap">
+        <table class="ctable">
+          <tr><th>Move</th><th>When to Use It</th><th>Example</th></tr>
+          <tr><td>Extend</td><td>Learner gives a thin answer</td><td>"Say more about that."</td></tr>
+          <tr><td>Evidence</td><td>Learner makes a claim</td><td>"What in the book makes you think that?"</td></tr>
+          <tr><td>Challenge</td><td>Learner gives an easy/obvious answer</td><td>"Could there be another explanation?"</td></tr>
+          <tr><td>Connect</td><td>Learner finishes a text</td><td>"Does this remind you of anything in your own life?"</td></tr>
+          <tr><td>Predict</td><td>Mid-book pause</td><td>"What do you think will happen next — and why?"</td></tr>
+        </table>
+        </div>
+      </div>
+      <div class="qs">
+        <div class="qh"><div class="qi">✏️</div><div><h3>Module 3 Checkpoint</h3><p>Score 3 of 4 correct to unlock Module 4</p></div></div>
+        <div id="quiz-m3">
+          <div class="qq" id="m3q1"><div class="qn">Q1 of 4</div><div class="qt">What type of question asks a learner to defend a judgment — with no single correct answer?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m3q1',false)"><div class="od"></div>Literal question</div>
+            <div class="opt" onclick="sel(this,'m3q1',false)"><div class="od"></div>Inferential question</div>
+            <div class="opt" onclick="sel(this,'m3q1',true)"><div class="od"></div>Evaluative question</div>
+            <div class="opt" onclick="sel(this,'m3q1',false)"><div class="od"></div>Recall question</div>
+          </div><div class="qfb" id="fb-m3q1"></div></div>
+
+          <div class="qq" id="m3q2"><div class="qn">Q2 of 4</div><div class="qt">After a learner gives any answer — right or wrong — what should the guide ask FIRST?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m3q2',false)"><div class="od"></div>"Is that your final answer?"</div>
+            <div class="opt" onclick="sel(this,'m3q2',false)"><div class="od"></div>"That's correct — well done!"</div>
+            <div class="opt" onclick="sel(this,'m3q2',true)"><div class="od"></div>"What makes you think that?"</div>
+            <div class="opt" onclick="sel(this,'m3q2',false)"><div class="od"></div>"Let me tell you the right answer."</div>
+          </div><div class="qfb" id="fb-m3q2"></div></div>
+
+          <div class="qq" id="m3q3"><div class="qn">Q3 of 4</div><div class="qt">Which discussion move would you use when a learner makes a claim you want them to support with evidence from the text?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m3q3',false)"><div class="od"></div>Connect</div>
+            <div class="opt" onclick="sel(this,'m3q3',false)"><div class="od"></div>Extend</div>
+            <div class="opt" onclick="sel(this,'m3q3',false)"><div class="od"></div>Predict</div>
+            <div class="opt" onclick="sel(this,'m3q3',true)"><div class="od"></div>Evidence</div>
+          </div><div class="qfb" id="fb-m3q3"></div></div>
+
+          <div class="qq" id="m3q4"><div class="qn">Q4 of 4</div><div class="qt">Inferential questions are considered "the heart of literary discussion" because:</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m3q4',false)"><div class="od"></div>They are easiest for learners to answer correctly</div>
+            <div class="opt" onclick="sel(this,'m3q4',true)"><div class="od"></div>They require synthesizing information not directly stated — reading between the lines</div>
+            <div class="opt" onclick="sel(this,'m3q4',false)"><div class="od"></div>They only have one correct answer, making assessment easy</div>
+            <div class="opt" onclick="sel(this,'m3q4',false)"><div class="od"></div>They confirm basic comprehension before moving on</div>
+          </div><div class="qfb" id="fb-m3q4"></div></div>
+        </div>
+        <div id="result-m3" class="qr"><div class="rscore" id="score-m3"></div><div class="rmsg" id="msg-m3"></div><div class="rsub" id="sub-m3"></div><button class="btn btn-ok btn-lg" id="next-m3" onclick="unlock('m4')" style="display:none">Continue to Module 4 →</button><button class="btn btn-s" id="retry-m3" onclick="retry('m3')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:20px;display:flex;justify-content:flex-end;"><button class="btn btn-p" id="submit-m3" onclick="submit('m3',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="ln"><button class="btn btn-s" onclick="show('m2')">← Module 2</button></div>
+    </div>
+
+    <!-- MODULE 4 -->
+    <div class="screen" id="screen-m4">
+      <div class="lh"><div class="ltag">✦ Module 4 of 5</div><h2>Reading the Progress Data</h2><div class="lmeta"><span>📖 ~10 min</span><span>✦ Quiz required</span></div></div>
+      <div class="lb">
+        <h3>What LittleLit Tracks</h3>
+        <p>LittleLit generates data on reading activity, comprehension scores, vocabulary performance, and time-on-task. As a guide, you use this data to understand where a learner is thriving, where they're stuck, and what to address in direct instruction or discussion.</p>
+
+        <div class="ig">
+          <div class="ic"><div class="ic-label">Books Completed</div><p>Total books read at each level. Low completion rate = learner may not be engaging with the station or struggling with the level.</p></div>
+          <div class="ic"><div class="ic-label">Comprehension Scores</div><p>% correct on comprehension questions per book. Below 70% = learner may be reading without understanding — level may be too high.</p></div>
+          <div class="ic"><div class="ic-label">Vocabulary Performance</div><p>Tracks which words have been mastered vs. still developing. Informs direct vocabulary instruction outside of LittleLit.</p></div>
+          <div class="ic"><div class="ic-label">Time on Task</div><p>Minutes spent reading per session. Short sessions = learner may be clicking through without reading.</p></div>
+        </div>
+
+        <h3>Key Thresholds to Watch</h3>
+        <table class="ctable">
+          <tr><th>Metric</th><th>Concern Threshold</th><th>Guide Response</th></tr>
+          <tr><td>Comprehension score</td><td>Below 70%</td><td>Level may be too high. Consider dropping a level. Add pre-reading vocabulary support.</td></tr>
+          <tr><td>Books completed</td><td>Fewer than 2/week</td><td>Check if learner is actually reading or skipping pages. Sit with them during part of the station.</td></tr>
+          <tr><td>Time on task</td><td>Under 10 min/session</td><td>Learner likely rushing. Establish a minimum reading time expectation.</td></tr>
+          <tr><td>Same level for 3+ weeks</td><td>No advancement</td><td>Review comprehension scores. Offer guided discussion to boost understanding.</td></tr>
+        </table>
+
+        <div class="callout"><strong>Remember the 80% rule:</strong> Any comprehension area consistently below 80% should be addressed through direct discussion and re-reading in addition to regular LittleLit sessions. Document in your daily planning log and mention in the parent report.</div>
+      </div>
+      <div class="qs">
+        <div class="qh"><div class="qi">✏️</div><div><h3>Module 4 Checkpoint</h3><p>Score 3 of 4 correct to unlock the final module</p></div></div>
+        <div id="quiz-m4">
+          <div class="qq" id="m4q1"><div class="qn">Q1 of 4</div><div class="qt">A learner's LittleLit comprehension score has been below 70% for two weeks. What should the guide consider?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m4q1',false)"><div class="od"></div>The learner needs more time — continue at the same level</div>
+            <div class="opt" onclick="sel(this,'m4q1',true)"><div class="od"></div>The level may be too high — consider dropping a level and adding pre-reading vocabulary support</div>
+            <div class="opt" onclick="sel(this,'m4q1',false)"><div class="od"></div>Remove LittleLit from the schedule temporarily</div>
+            <div class="opt" onclick="sel(this,'m4q1',false)"><div class="od"></div>Switch to a different reading program entirely</div>
+          </div><div class="qfb" id="fb-m4q1"></div></div>
+
+          <div class="qq" id="m4q2"><div class="qn">Q2 of 4</div><div class="qt">A learner is completing sessions in under 10 minutes. What does this likely indicate?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m4q2',false)"><div class="od"></div>The learner is an exceptionally fast reader at this level</div>
+            <div class="opt" onclick="sel(this,'m4q2',true)"><div class="od"></div>The learner is likely rushing — clicking through without actually reading</div>
+            <div class="opt" onclick="sel(this,'m4q2',false)"><div class="od"></div>The books are too easy and the level needs to advance immediately</div>
+            <div class="opt" onclick="sel(this,'m4q2',false)"><div class="od"></div>The session time in the schedule is not long enough</div>
+          </div><div class="qfb" id="fb-m4q2"></div></div>
+
+          <div class="qq" id="m4q3"><div class="qn">Q3 of 4</div><div class="qt">What does low "books completed" count likely signal?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m4q3',true)"><div class="od"></div>The learner may not be engaging with the station or is struggling with the level</div>
+            <div class="opt" onclick="sel(this,'m4q3',false)"><div class="od"></div>The learner is reading very carefully and thoroughly</div>
+            <div class="opt" onclick="sel(this,'m4q3',false)"><div class="od"></div>The books at this level are very long</div>
+            <div class="opt" onclick="sel(this,'m4q3',false)"><div class="od"></div>The learner has already read all available books</div>
+          </div><div class="qfb" id="fb-m4q3"></div></div>
+
+          <div class="qq" id="m4q4"><div class="qn">Q4 of 4</div><div class="qt">When a learner stays at the same LittleLit level for 3+ weeks without advancing, what should the guide do?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m4q4',false)"><div class="od"></div>Manually advance them to the next level to keep motivation high</div>
+            <div class="opt" onclick="sel(this,'m4q4',false)"><div class="od"></div>Remove LittleLit and replace with more Core5 sessions</div>
+            <div class="opt" onclick="sel(this,'m4q4',true)"><div class="od"></div>Review comprehension scores and offer guided discussion to deepen understanding</div>
+            <div class="opt" onclick="sel(this,'m4q4',false)"><div class="od"></div>Wait — the program will eventually advance them automatically</div>
+          </div><div class="qfb" id="fb-m4q4"></div></div>
+        </div>
+        <div id="result-m4" class="qr"><div class="rscore" id="score-m4"></div><div class="rmsg" id="msg-m4"></div><div class="rsub" id="sub-m4"></div><button class="btn btn-ok btn-lg" id="next-m4" onclick="unlock('m5')" style="display:none">Continue to Module 5 →</button><button class="btn btn-s" id="retry-m4" onclick="retry('m4')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:20px;display:flex;justify-content:flex-end;"><button class="btn btn-p" id="submit-m4" onclick="submit('m4',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="ln"><button class="btn btn-s" onclick="show('m3')">← Module 3</button></div>
+    </div>
+
+    <!-- MODULE 5 -->
+    <div class="screen" id="screen-m5">
+      <div class="lh"><div class="ltag">✦ Module 5 of 5</div><h2>LittleLit + MBTP + Core5</h2><div class="lmeta"><span>📖 ~10 min</span><span>✦ Final quiz</span></div></div>
+      <div class="lb">
+        <h3>The Complete Literacy Picture</h3>
+        <p>When LittleLit, Core5, and MBTP are used together intentionally, they address every dimension of literacy development. Understanding how they fit together helps you plan sessions that reinforce each other rather than feel disconnected.</p>
+
+        <table class="ctable">
+          <tr><th>Program</th><th>What It Builds</th><th>Station Type</th></tr>
+          <tr><td>Core5</td><td>Phonics, decoding, phonological awareness</td><td>Digital — semi-independent</td></tr>
+          <tr><td>LittleLit</td><td>Comprehension, vocabulary, reader identity</td><td>Digital — fully independent</td></tr>
+          <tr><td>MBTP</td><td>Literary analysis, writing, integrated subjects</td><td>Guide-led — 1:1 instruction</td></tr>
+        </table>
+
+        <h3>How to Weave All Three Together</h3>
+        <div class="steps">
+          <div class="step"><div class="step-n">1</div><div class="step-c"><h4>Core5 first in the day</h4><p>Phonics warm-up prepares the brain for reading. This is always the first literacy activity.</p></div></div>
+          <div class="step"><div class="step-n">2</div><div class="step-c"><h4>LittleLit during independent station</h4><p>While the guide works 1:1 on MBTP with another learner, this learner reads independently on LittleLit.</p></div></div>
+          <div class="step"><div class="step-n">3</div><div class="step-c"><h4>MBTP Language Arts with the guide</h4><p>Guide-led instruction on the unit book. Discussion, activities, writing. Now the learner has both decoded (Core5) and read independently (LittleLit) as preparation.</p></div></div>
+          <div class="step"><div class="step-n">4</div><div class="step-c"><h4>Bridge vocabulary across all three</h4><p>When a word appears in all three — in Core5 as a pattern, in LittleLit as a story word, in MBTP as a discussion term — point it out explicitly. These cross-program connections accelerate vocabulary acquisition.</p></div></div>
+        </div>
+
+        <div class="hlbox">
+          <h4>Your End-of-Day Checklist (All Three Programs)</h4>
+          <ul>
+            <li>Core5: How many minutes? Any skill alerts? Skill area score below 80%?</li>
+            <li>LittleLit: Book completed? Comprehension score? Response quality? Time on task?</li>
+            <li>MBTP: Which lesson? Option 1 or 2? Discussion quality? Mastery level?</li>
+            <li>Cross-program: Any vocabulary, concept, or skill that bridges all three to document?</li>
+            <li>Tomorrow: What needs reinforcement? What is ready to advance?</li>
+          </ul>
+        </div>
+      </div>
+      <div class="qs">
+        <div class="qh"><div class="qi">🏆</div><div><h3>Final Checkpoint — Module 5</h3><p>Score 3 of 4 correct to complete the course</p></div></div>
+        <div id="quiz-m5">
+          <div class="qq" id="m5q1"><div class="qn">Q1 of 4</div><div class="qt">In the daily schedule, which program always comes first?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m5q1',false)"><div class="od"></div>LittleLit — independent reading builds focus</div>
+            <div class="opt" onclick="sel(this,'m5q1',false)"><div class="od"></div>MBTP — the guide needs to be fresh for 1:1 instruction</div>
+            <div class="opt" onclick="sel(this,'m5q1',true)"><div class="od"></div>Core5 — phonics warm-up prepares the brain for reading</div>
+            <div class="opt" onclick="sel(this,'m5q1',false)"><div class="od"></div>The order doesn't matter — any program can go first</div>
+          </div><div class="qfb" id="fb-m5q1"></div></div>
+
+          <div class="qq" id="m5q2"><div class="qn">Q2 of 4</div><div class="qt">What type of station is LittleLit in the HLPP rotation?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m5q2',false)"><div class="od"></div>Guide-led 1:1 instruction</div>
+            <div class="opt" onclick="sel(this,'m5q2',true)"><div class="od"></div>Fully independent digital station</div>
+            <div class="opt" onclick="sel(this,'m5q2',false)"><div class="od"></div>Small group with two or more learners</div>
+            <div class="opt" onclick="sel(this,'m5q2',false)"><div class="od"></div>Whole-group enrichment activity</div>
+          </div><div class="qfb" id="fb-m5q2"></div></div>
+
+          <div class="qq" id="m5q3"><div class="qn">Q3 of 4</div><div class="qt">Why is it valuable to point out when a vocabulary word appears across all three programs?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m5q3',false)"><div class="od"></div>To save planning time by using the same lesson for all three subjects</div>
+            <div class="opt" onclick="sel(this,'m5q3',true)"><div class="od"></div>Cross-program vocabulary connections explicitly accelerate word learning and transfer</div>
+            <div class="opt" onclick="sel(this,'m5q3',false)"><div class="od"></div>It reduces the need for separate vocabulary instruction</div>
+            <div class="opt" onclick="sel(this,'m5q3',false)"><div class="od"></div>It satisfies the curriculum requirement for vocabulary documentation</div>
+          </div><div class="qfb" id="fb-m5q3"></div></div>
+
+          <div class="qq" id="m5q4"><div class="qn">Q4 of 4</div><div class="qt">Which program is guide-led and uses 1:1 instruction?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m5q4',false)"><div class="od"></div>Core5</div>
+            <div class="opt" onclick="sel(this,'m5q4',false)"><div class="od"></div>LittleLit</div>
+            <div class="opt" onclick="sel(this,'m5q4',true)"><div class="od"></div>MBTP</div>
+            <div class="opt" onclick="sel(this,'m5q4',false)"><div class="od"></div>All three equally</div>
+          </div><div class="qfb" id="fb-m5q4"></div></div>
+        </div>
+        <div id="result-m5" class="qr"><div class="rscore" id="score-m5"></div><div class="rmsg" id="msg-m5"></div><div class="rsub" id="sub-m5"></div><button class="btn btn-ok btn-lg" id="next-m5" onclick="unlock('complete')" style="display:none">🎉 Complete Course →</button><button class="btn btn-s" id="retry-m5" onclick="retry('m5')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:20px;display:flex;justify-content:flex-end;"><button class="btn btn-p" id="submit-m5" onclick="submit('m5',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="ln"><button class="btn btn-s" onclick="show('m4')">← Module 4</button></div>
+    </div>
+
+    <!-- COMPLETE -->
+    <div class="screen" id="screen-complete">
+      <div class="comp-wrap">
+        <div class="comp-badge">📚</div>
+        <h2>Course Complete!</h2>
+        <p>You've passed all 5 LittleLit modules and are ready to run independent reading stations, guide rich discussions, and connect LittleLit data to your daily planning.</p>
+        <div class="chips">
+          <div class="chip">✓ What Is LittleLit?</div>
+          <div class="chip">✓ How LittleLit Works</div>
+          <div class="chip">✓ Guiding Discussion</div>
+          <div class="chip">✓ Reading the Data</div>
+          <div class="chip">✓ LittleLit + MBTP + Core5</div>
+        </div>
+        <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-p btn-lg" onclick="show('welcome')">← Back to Home</button>
+          <button class="btn btn-s btn-lg" onclick="window.print()">🖨 Print Certificate</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="ti">📚</span><span id="tm"></span></div>
+
+<script>
+const MODS=['m1','m2','m3','m4','m5'];
+const state={unlocked:new Set(['welcome','m1']),completed:new Set(),answers:{},submitted:new Set()};
+const NAMES={welcome:'Course Home',m1:'Module 1',m2:'Module 2',m3:'Module 3',m4:'Module 4',m5:'Module 5',complete:'Certificate'};
+const ICONS=['📗','🔖','💬','📊','🌐'];
+
+function go(id){if(!state.unlocked.has(id)){toast('🔒','Complete the previous quiz to unlock.','locked-msg');return;}show(id);}
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));
+  const nav=document.getElementById('nav-'+id);if(nav)nav.classList.add('active');
+  document.getElementById('cur').textContent=NAMES[id]||id;
+  updateUI();window.scrollTo(0,0);
+}
+function unlock(next){state.unlocked.add(next);updateUI();show(next);}
+function updateUI(){
+  MODS.forEach((m,i)=>{
+    const nav=document.getElementById('nav-'+m),card=document.getElementById('card-'+m);
+    if(!nav)return;
+    nav.classList.remove('locked','completed');
+    if(state.completed.has(m)){
+      nav.classList.add('completed');nav.querySelector('.ni-icon').textContent='✓';nav.querySelector('.nbadge').textContent='✓';
+      if(card){card.classList.remove('locked');card.classList.add('completed');card.querySelector('.mc-s').textContent='✓';}
+    } else if(!state.unlocked.has(m)){
+      nav.classList.add('locked');nav.querySelector('.ni-icon').textContent='🔒';
+      if(card){card.classList.add('locked');card.querySelector('.mc-s').textContent='🔒';}
+    } else {
+      nav.querySelector('.ni-icon').textContent=ICONS[i];
+      if(card){card.classList.remove('locked','completed');card.querySelector('.mc-s').textContent='→';}
+    }
+  });
+  const cn=document.getElementById('nav-complete');
+  if(state.unlocked.has('complete')){cn.classList.remove('locked');cn.querySelector('.ni-icon').textContent='🏆';}
+  const pct=Math.round(state.completed.size/MODS.length*100);
+  document.getElementById('pf').style.width=pct+'%';document.getElementById('pt').textContent=pct+'%';
+}
+function sel(el,qid,correct){
+  if(state.submitted.has(qid.slice(0,2)))return;
+  el.closest('.qopts').querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');state.answers[qid]=correct;
+  const mod=qid.slice(0,2);
+  document.getElementById('submit-'+mod).disabled=![...document.querySelectorAll('#quiz-'+mod+' .qq')].every(q=>state.answers[q.id]!==undefined);
+}
+function submit(mod,total){
+  if(state.submitted.has(mod))return;state.submitted.add(mod);
+  let correct=0;
+  document.querySelectorAll('#quiz-'+mod+' .qq').forEach(q=>{
+    const ok=state.answers[q.id];if(ok)correct++;
+    q.querySelectorAll('.opt').forEach(o=>{
+      o.classList.add('disabled');
+      if(o.getAttribute('onclick')?.includes('true'))o.classList.add('correct-ans');
+      else if(o.classList.contains('selected'))o.classList.add('wrong-ans');
+    });
+    const fb=document.getElementById('fb-'+q.id);
+    if(ok){q.classList.add('correct');fb.textContent='✓ Correct!';fb.className='qfb show correct';}
+    else{q.classList.add('wrong');fb.textContent='✗ Not quite — the highlighted option is correct.';fb.className='qfb show wrong';}
+  });
+  const pct=Math.round(correct/total*100),passed=pct>=75;
+  const r=document.getElementById('result-'+mod);r.classList.add('show',passed?'passed':'failed');
+  document.getElementById('score-'+mod).textContent=pct+'%';
+  document.getElementById('score-'+mod).className='rscore '+(passed?'pass':'fail');
+  document.getElementById('msg-'+mod).textContent=passed?'🎉 Passed!':'Not quite — try again';
+  document.getElementById('sub-'+mod).textContent=passed?`${correct} of ${total} correct — module complete!`:`${correct} of ${total} — need 3+ to pass.`;
+  document.getElementById('submit-'+mod).style.display='none';
+  if(passed){state.completed.add(mod);document.getElementById('next-'+mod).style.display='inline-flex';updateUI();toast('✓','Module complete!','success');}
+  else document.getElementById('retry-'+mod).style.display='inline-flex';
+}
+function retry(mod){
+  state.submitted.delete(mod);
+  Object.keys(state.answers).filter(k=>k.startsWith(mod)).forEach(k=>delete state.answers[k]);
+  document.querySelectorAll('#quiz-'+mod+' .qq').forEach(q=>{
+    q.classList.remove('correct','wrong');
+    q.querySelectorAll('.opt').forEach(o=>o.classList.remove('selected','correct-ans','wrong-ans','disabled'));
+    const fb=document.getElementById('fb-'+q.id);if(fb){fb.className='qfb';fb.textContent='';}
+  });
+  const r=document.getElementById('result-'+mod);r.classList.remove('show','passed','failed');
+  document.getElementById('retry-'+mod).style.display='none';
+  document.getElementById('next-'+mod).style.display='none';
+  const sb=document.getElementById('submit-'+mod);sb.style.display='inline-flex';sb.disabled=true;
+}
+let tt;function toast(icon,msg,type=''){const t=document.getElementById('toast');document.getElementById('ti').textContent=icon;document.getElementById('tm').textContent=msg;t.className='toast show '+type;clearTimeout(tt);tt=setTimeout(()=>t.className='toast',3200);}
+updateUI();
+</script>
+</body>
+</html>

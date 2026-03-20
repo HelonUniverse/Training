@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brightwheel Training | Helon Universe</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{
+  --blue:#1A6EA4;--blue2:#2E86C8;--blue-l:#E8F4FC;--blue-m:#C0DEF5;
+  --sky:#0EA5E9;--sky-l:#F0F9FF;
+  --teal:#0D7A6B;--teal-l:#E0F5F1;
+  --amber:#C07A00;--amber-l:#FEF7E6;
+  --ink:#0D1B2A;--ink2:#1F3448;--gray:#4A6070;--muted:#8FA4B4;
+  --bg:#F5F8FB;--card:#FFFFFF;--rule:#DDE8F0;--rule2:#EEF4F9;
+  --pass:#0D7A6B;--pass-l:#D4EDDA;
+  --fail:#B83232;--fail-l:#FDEDEC;
+  --dark:#0D1B2A;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;}
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:272px;background:var(--dark);display:flex;flex-direction:column;z-index:100;overflow-y:auto;}
+.sb-brand{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.07);}
+.sb-logo{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.sb-ic{width:38px;height:38px;background:linear-gradient(135deg,var(--blue),var(--sky));border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;}
+.sb-brand h1{font-size:14px;font-weight:700;color:white;line-height:1.3;}
+.sb-brand span{font-size:10px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:#7EC8F0;}
+.sb-prog{padding:12px 20px;border-bottom:1px solid rgba(255,255,255,.05);}
+.sb-prog-top{display:flex;justify-content:space-between;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:6px;}
+.sb-prog-top span{color:#7EC8F0;}
+.pb{height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;}
+.pf{height:100%;background:linear-gradient(90deg,var(--blue),var(--sky));transition:width .6s ease;}
+.sb-sec{padding:8px 0;}
+.sb-sec-title{padding:5px 20px 7px;font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.2);}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 20px;cursor:pointer;transition:background .15s;position:relative;}
+.ni:hover{background:rgba(255,255,255,.05);}
+.ni.active{background:rgba(244,123,32,.2);}
+.ni.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#7EC8F0;}
+.ni.locked{opacity:.38;cursor:not-allowed;}
+.ni-ic{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;background:rgba(255,255,255,.07);}
+.ni.active .ni-ic{background:#F47B20;}
+.ni.completed .ni-ic{background:var(--teal);}
+.ni-t{font-size:12px;font-weight:600;color:rgba(255,255,255,.82);flex:1;line-height:1.3;}
+.ni.locked .ni-t{color:rgba(255,255,255,.28);}
+.ni-sub{font-size:10px;color:rgba(255,255,255,.28);margin-top:1px;}
+.nbadge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.3);}
+.ni.completed .nbadge{background:var(--teal);color:white;}
+.main{margin-left:272px;min-height:100vh;padding-bottom:80px;}
+.topbar{background:var(--card);border-bottom:1px solid var(--rule);padding:13px 42px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.tb-crumb{font-size:12px;color:var(--muted);}
+.tb-crumb .cur{color:var(--ink);font-weight:600;}
+.tb-badge{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 11px;border-radius:20px;background:#FEF3EA;color:#F47B20;border:1px solid #FDDBB8;}
+.content{max-width:800px;margin:0 auto;padding:42px 42px 0;}
+.screen{display:none;}
+.screen.active{display:block;animation:fu .3s ease;}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.hero{background:linear-gradient(135deg,var(--dark) 0%,#0A3A5E 100%);border-radius:18px;padding:50px 46px;margin-bottom:26px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-60px;right:-60px;width:280px;height:280px;background:radial-gradient(circle,rgba(14,165,233,.18) 0%,transparent 70%);}
+.hero-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#7EC8F0;margin-bottom:12px;}
+.hero h2{font-family:'DM Serif Display',serif;font-size:38px;line-height:1.2;color:white;margin-bottom:10px;}
+.hero h2 em{font-style:normal;color:#7EC8F0;}
+.hero p{font-size:15px;color:rgba(255,255,255,.6);line-height:1.7;max-width:480px;margin-bottom:26px;}
+.hero-stats{display:flex;gap:26px;margin-bottom:26px;}
+.hs-n{font-family:'DM Serif Display',serif;font-size:30px;color:white;}
+.hs-l{font-size:11px;color:rgba(255,255,255,.38);text-transform:uppercase;letter-spacing:.07em;}
+.mod-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:26px;}
+.mc{background:var(--card);border-radius:13px;padding:17px;border:1px solid var(--rule);cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.mc:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.07);}
+.mc.locked{opacity:.5;cursor:not-allowed;}
+.mc.locked:hover{transform:none;box-shadow:none;}
+.mc.completed{border-color:var(--teal);}
+.mc-num{font-family:'DM Serif Display',serif;font-size:34px;color:#EEE;line-height:1;margin-bottom:6px;}
+.mc.completed .mc-num{color:var(--teal);opacity:.35;}
+.mc h3{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px;line-height:1.35;}
+.mc p{font-size:11px;color:var(--muted);line-height:1.5;}
+.mc-s{position:absolute;top:13px;right:13px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;}
+.mc.completed .mc-s{background:var(--teal);color:white;}
+.mc.locked .mc-s{background:#EEE;color:#AAA;}
+.mc:not(.locked):not(.completed) .mc-s{background:#F47B20;color:white;}
+.lh{margin-bottom:30px;}
+.ltag{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#F47B20;background:#FEF3EA;padding:4px 11px;border-radius:20px;margin-bottom:11px;}
+.lh h2{font-family:'DM Serif Display',serif;font-size:34px;line-height:1.2;color:var(--ink);margin-bottom:8px;}
+.lmeta{display:flex;align-items:center;gap:16px;font-size:12px;color:var(--muted);}
+.lb{font-size:15px;line-height:1.75;color:var(--gray);}
+.lb h3{font-family:'DM Serif Display',serif;font-size:21px;color:var(--ink);margin:30px 0 11px;padding-top:30px;border-top:1px solid var(--rule);}
+.lb h3:first-of-type{margin-top:0;padding-top:0;border-top:none;}
+.lb p{margin-bottom:13px;}
+.callout{background:var(--amber-l);border-left:4px solid #F47B20;padding:13px 17px;border-radius:0 10px 10px 0;margin:17px 0;font-size:14px;color:var(--ink);font-style:italic;}
+.callout strong{font-style:normal;color:var(--blue);}
+.ig{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:17px 0;}
+.ic{background:var(--card);border:1px solid var(--rule);border-radius:11px;padding:15px;}
+.ic-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#F47B20;margin-bottom:5px;}
+.ic p{font-size:13px;color:var(--gray);margin:0;line-height:1.55;}
+.steps{margin:17px 0;}
+.step{display:flex;gap:13px;margin-bottom:13px;align-items:flex-start;}
+.sn{width:30px;height:30px;border-radius:50%;background:#F47B20;color:white;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sc h4{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.sc p{font-size:13px;color:var(--gray);margin:0;line-height:1.55;}
+.ctable{width:100%;border-collapse:collapse;margin:17px 0;border-radius:11px;overflow:hidden;border:1px solid var(--rule);}
+.ctable th{background:#F47B20;color:white;padding:11px 14px;text-align:left;font-size:12px;font-weight:700;}
+.ctable td{padding:11px 14px;font-size:13px;color:var(--gray);border-top:1px solid var(--rule);vertical-align:top;}
+.ctable tr:nth-child(odd) td{background:var(--rule2);}
+.ctable tr:nth-child(even) td{background:var(--card);}
+.ctable td:first-child{font-weight:700;color:var(--ink);}
+.hlbox{background:var(--dark);padding:20px 24px;border-radius:13px;margin:20px 0;}
+.hlbox h4{font-family:'DM Serif Display',serif;font-size:18px;color:#7EC8F0;margin-bottom:9px;}
+.hlbox ul{padding-left:18px;}
+.hlbox ul li{font-size:13px;color:#ccc;margin-bottom:5px;line-height:1.55;}
+.qs{margin-top:50px;padding-top:34px;border-top:2px solid var(--rule);}
+.qh{display:flex;align-items:center;gap:12px;margin-bottom:24px;}
+.qi{width:44px;height:44px;background:#F47B20;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;color:white;flex-shrink:0;}
+.qh h3{font-family:'DM Serif Display',serif;font-size:22px;color:var(--ink);margin-bottom:3px;}
+.qh p{font-size:12px;color:var(--muted);}
+.qq{background:var(--card);border:1px solid var(--rule);border-radius:13px;padding:21px;margin-bottom:17px;}
+.qq.correct{border-color:var(--pass);background:var(--pass-l);}
+.qq.wrong{border-color:var(--fail);background:var(--fail-l);}
+.qn{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.qt{font-size:15px;font-weight:700;color:var(--ink);margin-bottom:15px;line-height:1.4;}
+.qopts{display:flex;flex-direction:column;gap:8px;}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-radius:9px;border:1.5px solid var(--rule);cursor:pointer;transition:all .15s;background:var(--card);font-size:13px;color:var(--gray);line-height:1.4;}
+.opt:hover{border-color:var(--blue2);background:var(--blue-l);}
+.opt.selected{border-color:var(--blue2);background:var(--blue-l);color:var(--ink);}
+.opt.correct-ans{border-color:var(--pass);background:var(--pass-l);}
+.opt.wrong-ans{border-color:var(--fail);background:var(--fail-l);}
+.opt.disabled{pointer-events:none;}
+.od{width:17px;height:17px;border-radius:50%;border:2px solid #CCC;flex-shrink:0;margin-top:1px;}
+.opt.selected .od{border-color:var(--blue2);background:var(--blue2);}
+.opt.correct-ans .od{border-color:var(--pass);background:var(--pass);}
+.opt.wrong-ans .od{border-color:var(--fail);background:var(--fail);}
+.qfb{padding:11px 14px;border-radius:9px;font-size:13px;margin-top:9px;display:none;line-height:1.5;}
+.qfb.show{display:block;}
+.qfb.correct{background:var(--pass-l);color:#155724;border:1px solid var(--pass);}
+.qfb.wrong{background:var(--fail-l);color:#721c24;border:1px solid #e0a0a0;}
+.qr{background:var(--card);border-radius:14px;padding:30px;text-align:center;border:2px solid var(--rule);margin-top:20px;display:none;}
+.qr.show{display:block;animation:fu .4s ease;}
+.qr.passed{border-color:var(--pass);}
+.qr.failed{border-color:var(--fail);}
+.rs{font-family:'DM Serif Display',serif;font-size:60px;line-height:1;margin-bottom:7px;}
+.rs.pass{color:var(--pass);}
+.rs.fail{color:var(--fail);}
+.rm{font-size:18px;font-weight:700;margin-bottom:7px;color:var(--ink);}
+.rsub{font-size:13px;color:var(--muted);margin-bottom:22px;}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:11px 24px;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;border:none;}
+.btn-p{background:#F47B20;color:white;}
+.btn-p:hover{background:#0e4f7a;transform:translateY(-1px);}
+.btn-ok{background:var(--teal);color:white;}
+.btn-ok:hover{background:#085c50;}
+.btn-s{background:var(--card);color:var(--ink);border:1.5px solid var(--rule);}
+.btn-s:hover{border-color:var(--blue2);color:var(--blue);}
+.btn-lg{padding:14px 30px;font-size:14px;border-radius:11px;}
+.btn:disabled{opacity:.4;cursor:not-allowed;pointer-events:none;}
+.ln{display:flex;align-items:center;justify-content:space-between;margin-top:42px;padding-top:26px;border-top:1px solid var(--rule);}
+.comp-wrap{text-align:center;padding:68px 40px;}
+.comp-badge{width:108px;height:108px;background:linear-gradient(135deg,var(--blue),var(--sky));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:46px;margin:0 auto 26px;box-shadow:0 14px 40px rgba(244,123,32,.3);}
+.comp-wrap h2{font-family:'DM Serif Display',serif;font-size:40px;color:var(--ink);margin-bottom:11px;}
+.comp-wrap p{font-size:16px;color:var(--gray);max-width:440px;margin:0 auto 30px;line-height:1.7;}
+.chips{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-bottom:34px;}
+.chip{background:var(--pass-l);color:var(--pass);border:1px solid var(--pass);padding:5px 13px;border-radius:20px;font-size:12px;font-weight:700;}
+.toast{position:fixed;bottom:22px;right:22px;background:var(--dark);color:white;padding:13px 18px;border-radius:11px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:9px;transform:translateY(100px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:999;max-width:300px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-left:4px solid var(--teal);}
+.toast.locked-msg{border-left:4px solid #7EC8F0;}
+</style>
+</head>
+<body>
+<nav class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo"><div class="sb-ic">💡</div><div><h1>Brightwheel<br>Training</h1></div></div>
+    <span>Helon Universe · Guide Tools</span>
+  </div>
+  <div class="sb-prog">
+    <div class="sb-prog-top">Progress <span id="pt">0%</span></div>
+    <div class="pb"><div class="pf" id="pf" style="width:0%"></div></div>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-sec-title">Modules</div>
+    <div class="ni active" onclick="show('welcome')" id="nav-welcome"><div class="ni-ic">🏠</div><div style="flex:1"><div class="ni-t">Course Home</div><div class="ni-sub">Overview</div></div></div>
+    <div class="ni" onclick="go('m1')" id="nav-m1"><div class="ni-ic">💡</div><div style="flex:1"><div class="ni-t">What Is Brightwheel?</div><div class="ni-sub">Platform overview & your role</div></div><div class="nbadge">Quiz</div></div>
+    <div class="ni locked" onclick="go('m2')" id="nav-m2"><div class="ni-ic">🔒</div><div style="flex:1"><div class="ni-t">Daily Reporting & Activities</div><div class="ni-sub">Logging the day in real time</div></div><div class="nbadge">Quiz</div></div>
+    <div class="ni locked" onclick="go('m3')" id="nav-m3"><div class="ni-ic">🔒</div><div style="flex:1"><div class="ni-t">Family Communication</div><div class="ni-sub">Messaging, photos & updates</div></div><div class="nbadge">Quiz</div></div>
+    <div class="ni locked" onclick="go('m4')" id="nav-m4"><div class="ni-ic">🔒</div><div style="flex:1"><div class="ni-t">Attendance & Check-In</div><div class="ni-sub">Arrivals, departures & safety</div></div><div class="nbadge">Quiz</div></div>
+    <div class="ni locked" onclick="go('m5')" id="nav-m5"><div class="ni-ic">🔒</div><div style="flex:1"><div class="ni-t">Brightwheel at Helon Universe</div><div class="ni-sub">Our specific workflow & daily routine</div></div><div class="nbadge">Quiz</div></div>
+    <div class="ni locked" onclick="go('complete')" id="nav-complete"><div class="ni-ic">🏆</div><div style="flex:1"><div class="ni-t">Certificate</div></div></div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div class="tb-crumb">Brightwheel Training › <span class="cur" id="cur">Course Home</span></div>
+    <div class="tb-badge">Guide Tools</div>
+  </div>
+  <div class="content">
+
+    <!-- WELCOME -->
+    <div class="screen active" id="screen-welcome">
+      <div class="hero">
+        <div class="hero-tag">✦ Guide Tools Training</div>
+        <h2>Using<br><em>Brightwheel</em></h2>
+        <p>Learn to use Brightwheel — Helon Universe's platform for daily activity logging, family communication, attendance, and documentation. Everything that happens in your sessions gets recorded here.</p>
+        <div class="hero-stats">
+          <div><div class="hs-n">5</div><div class="hs-l">Modules</div></div>
+          <div><div class="hs-n">~60</div><div class="hs-l">Minutes</div></div>
+          <div><div class="hs-n">75%</div><div class="hs-l">Pass score</div></div>
+        </div>
+        <button class="btn btn-p btn-lg" onclick="go('m1')">Start Course →</button>
+      </div>
+      <div class="mod-grid">
+        <div class="mc" onclick="go('m1')" id="card-m1"><div class="mc-num">01</div><div class="mc-s">→</div><h3>What Is Brightwheel?</h3><p>Platform overview, what guides use it for, and how it connects to families</p></div>
+        <div class="mc locked" onclick="go('m2')" id="card-m2"><div class="mc-num">02</div><div class="mc-s">🔒</div><h3>Daily Reporting & Activities</h3><p>Logging sessions, activities, meals, and observations in real time</p></div>
+        <div class="mc locked" onclick="go('m3')" id="card-m3"><div class="mc-num">03</div><div class="mc-s">🔒</div><h3>Family Communication</h3><p>Sending messages, photos, updates, and daily summaries to families</p></div>
+        <div class="mc locked" onclick="go('m4')" id="card-m4"><div class="mc-num">04</div><div class="mc-s">🔒</div><h3>Attendance & Check-In</h3><p>Digital sign-in/out, tracking arrivals, departures, and authorized pickup</p></div>
+        <div class="mc locked" onclick="go('m5')" id="card-m5"><div class="mc-num">05</div><div class="mc-s">🔒</div><h3>Brightwheel at Helon Universe</h3><p>Our specific workflows — what to log, when, and how it connects to the daily planning tool</p></div>
+      </div>
+      <div class="callout"><strong>Checkpoint rule:</strong> Each module ends with a 4-question quiz. Score 75%+ (3 of 4) to unlock the next module. Unlimited retakes.</div>
+    </div>
+
+    <!-- MODULE 1 -->
+    <div class="screen" id="screen-m1">
+      <div class="lh"><div class="ltag">✦ Module 1 of 5</div><h2>What Is Brightwheel?</h2><div class="lmeta"><span>📖 ~11 min</span><span>✦ Quiz required</span></div></div>
+      <div class="lb">
+        <h3>All-in-One Education Management</h3>
+        <p>Brightwheel is an all-in-one platform that brings together everything a learning program needs to document, communicate, and run smoothly — daily activity logs, family messaging, attendance tracking, photos, learning notes, and more. It is used by thousands of early education programs and micro-schools across the US.</p>
+        <p>At Helon Universe, Brightwheel is the <strong>primary tool for documentation and family communication</strong>. Every session you deliver, every observation you make, and every photo you take lives in Brightwheel. Families access their child's updates through the Brightwheel parent app in real time — as the day happens.</p>
+
+        <h3>What Brightwheel Replaces</h3>
+        <div class="ig">
+          <div class="ic"><div class="ic-label">Paper Daily Reports</div><p>No more handwritten notes at the end of the day. Activities, meals, and observations are logged directly in the app as they happen.</p></div>
+          <div class="ic"><div class="ic-label">Text Message Updates</div><p>No more texting individual parents. All family communication goes through Brightwheel's secure, documented messaging system.</p></div>
+          <div class="ic"><div class="ic-label">Sign-In Sheets</div><p>No clipboards at the door. Digital check-in tracks arrivals, departures, and who is authorized to pick up — with a timestamp.</p></div>
+          <div class="ic"><div class="ic-label">Scattered Photos</div><p>No emailing photos or using personal phones. Photos are taken and shared directly through the Brightwheel app — securely and with parental permission.</p></div>
+        </div>
+
+        <h3>Who Uses Brightwheel at Helon Universe</h3>
+        <table class="ctable">
+          <tr><th>Role</th><th>What They Use Brightwheel For</th></tr>
+          <tr><td>Learning Guide</td><td>Log daily activities, send messages, share photos, mark attendance, document observations after every session</td></tr>
+          <tr><td>Program Director</td><td>Oversee all learner records, review guide activity, manage enrollment, run reports, and monitor family communication</td></tr>
+          <tr><td>Families</td><td>View real-time updates on their child's day, receive photos, message the guide, see daily summaries — all from the parent app</td></tr>
+        </table>
+
+        <h3>Accessing Brightwheel</h3>
+        <p>Brightwheel is available as a mobile app (iOS and Android) and via browser at <strong>mybrightwheel.com</strong>. You will receive login credentials from your program director. Always use the <strong>mobile app during sessions</strong> — it is faster and designed for in-the-moment logging. The browser version is best for reviewing detailed reports or completing end-of-day write-ups.</p>
+
+        <div class="callout"><strong>Your job:</strong> As a guide, Brightwheel is not optional — it is the official record of your work with each learner. Families depend on it. The program depends on it. Log consistently, log accurately, and log every session.</div>
+      </div>
+      <div class="qs">
+        <div class="qh"><div class="qi">✏️</div><div><h3>Module 1 Checkpoint</h3><p>Score 3 of 4 correct to unlock Module 2</p></div></div>
+        <div id="quiz-m1">
+          <div class="qq" id="m1q1"><div class="qn">Q1 of 4</div><div class="qt">What is Brightwheel's primary purpose at Helon Universe?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m1q1',false)"><div class="od"></div>Delivering curriculum lessons directly to learners</div>
+            <div class="opt" onclick="sel(this,'m1q1',true)"><div class="od"></div>Documentation and family communication — the official record of everything that happens in sessions</div>
+            <div class="opt" onclick="sel(this,'m1q1',false)"><div class="od"></div>Processing billing and tuition payments for families</div>
+            <div class="opt" onclick="sel(this,'m1q1',false)"><div class="od"></div>Tracking Lexia Core5 phonics progress scores</div>
+          </div><div class="qfb" id="fb-m1q1"></div></div>
+          <div class="qq" id="m1q2"><div class="qn">Q2 of 4</div><div class="qt">Where do families go to see real-time updates on their child's day?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m1q2',false)"><div class="od"></div>The Helon Universe website</div>
+            <div class="opt" onclick="sel(this,'m1q2',false)"><div class="od"></div>A daily summary email from the guide</div>
+            <div class="opt" onclick="sel(this,'m1q2',true)"><div class="od"></div>The Brightwheel parent app — they see updates as the guide logs them throughout the day</div>
+            <div class="opt" onclick="sel(this,'m1q2',false)"><div class="od"></div>A printed report sent home at the end of each week</div>
+          </div><div class="qfb" id="fb-m1q2"></div></div>
+          <div class="qq" id="m1q3"><div class="qn">Q3 of 4</div><div class="qt">Which version of Brightwheel is best to use during an active session?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m1q3',true)"><div class="od"></div>The mobile app — faster and designed for real-time in-the-moment logging</div>
+            <div class="opt" onclick="sel(this,'m1q3',false)"><div class="od"></div>The browser version — it has more features available</div>
+            <div class="opt" onclick="sel(this,'m1q3',false)"><div class="od"></div>Either — they are identical in every way</div>
+            <div class="opt" onclick="sel(this,'m1q3',false)"><div class="od"></div>Neither — all logging should happen at end of day only</div>
+          </div><div class="qfb" id="fb-m1q3"></div></div>
+          <div class="qq" id="m1q4"><div class="qn">Q4 of 4</div><div class="qt">Is Brightwheel logging optional for guides on busy days?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m1q4',false)"><div class="od"></div>Yes — it is a helpful tool but not required every session</div>
+            <div class="opt" onclick="sel(this,'m1q4',false)"><div class="od"></div>Yes — guides can catch up and batch-log at the end of the week</div>
+            <div class="opt" onclick="sel(this,'m1q4',true)"><div class="od"></div>No — it is the official program record. Families and the program depend on consistent, accurate logging every session.</div>
+            <div class="opt" onclick="sel(this,'m1q4',false)"><div class="od"></div>Only required for learners with formal documentation plans</div>
+          </div><div class="qfb" id="fb-m1q4"></div></div>
+        </div>
+        <div id="result-m1" class="qr"><div class="rs" id="score-m1"></div><div class="rm" id="msg-m1"></div><div class="rsub" id="sub-m1"></div><button class="btn btn-ok btn-lg" id="next-m1" onclick="unlock('m2')" style="display:none">Continue to Module 2 →</button><button class="btn btn-s" id="retry-m1" onclick="retry('m1')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:18px;display:flex;justify-content:flex-end;"><button class="btn btn-p" id="submit-m1" onclick="submit('m1',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="ln"><button class="btn btn-s" onclick="show('welcome')">← Home</button></div>
+    </div>
+
+    <!-- MODULE 2 -->
+    <div class="screen" id="screen-m2">
+      <div class="lh"><div class="ltag">✦ Module 2 of 5</div><h2>Daily Reporting & Activities</h2><div class="lmeta"><span>📖 ~13 min</span><span>✦ Quiz required</span></div></div>
+      <div class="lb">
+        <h3>The Daily Report: Your Real-Time Log</h3>
+        <p>The daily report in Brightwheel is the running record of a learner's day. It is visible to families in real time as you add entries. Think of it as a digital version of the pickup conversation — except it's richer, more detailed, and permanently documented.</p>
+        <p>Families treasure seeing updates appear throughout the day. A photo at 9am, a note about a breakthrough at 10:30, a reading session logged at noon — it brings them into the room when they can't be there.</p>
+
+        <h3>Activity Types You Will Log</h3>
+        <table class="ctable">
+          <tr><th>Activity Type</th><th>What to Record</th><th>When to Log</th></tr>
+          <tr><td>📚 Learning / Curriculum</td><td>Program used, what was taught, how the learner responded, wins and struggles</td><td>During or immediately after each Teacher block</td></tr>
+          <tr><td>📖 Reading</td><td>LittleLit session — book, level, time, comprehension notes</td><td>After the LittleLit station ends</td></tr>
+          <tr><td>💻 Digital Learning</td><td>Lexia Core5 — minutes, level, skills worked on, any alerts</td><td>After each Core5 session</td></tr>
+          <tr><td>🍎 Meals / Snacks</td><td>What was eaten, how much, appetite notes if relevant</td><td>During or right after meals</td></tr>
+          <tr><td>📝 Observation / Note</td><td>Behavioral moments, emotional state, breakthroughs, concerns</td><td>Any time — capture moments as they happen</td></tr>
+          <tr><td>📷 Photo / Video</td><td>Learner actively at work — with permission. Show the learning in action.</td><td>During sessions, at meaningful moments</td></tr>
+        </table>
+
+        <h3>How to Add an Activity</h3>
+        <div class="steps">
+          <div class="step"><div class="sn">1</div><div class="sc"><h4>Open the correct learner's profile</h4><p>Tap the learner's name from your classroom view. Every entry is attached to a specific learner — never log one child's activity on another's profile.</p></div></div>
+          <div class="step"><div class="sn">2</div><div class="sc"><h4>Tap "Add Activity" and select the type</h4><p>The form adjusts to show the right fields for that activity. Choose the type that matches what actually happened — don't use "Observation" as a catch-all for everything.</p></div></div>
+          <div class="step"><div class="sn">3</div><div class="sc"><h4>Write a specific, detailed note</h4><p>"Good session" tells a family nothing. "Completed Level 2 Language Arts — identified all letter sounds correctly, needed one prompt on blending CVC words" tells them everything. Be specific.</p></div></div>
+          <div class="step"><div class="sn">4</div><div class="sc"><h4>Post in real time</h4><p>Posting sends the update immediately to the family. For most activities, post as you go — families appreciate seeing updates unfold throughout the day, not all at once at 3pm.</p></div></div>
+        </div>
+
+        <div class="callout"><strong>Quality over speed:</strong> One specific, detailed note is worth ten vague ones. Write as if the family is standing next to you, genuinely curious about what their child just did — and why it mattered.</div>
+      </div>
+      <div class="qs">
+        <div class="qh"><div class="qi">✏️</div><div><h3>Module 2 Checkpoint</h3><p>Score 3 of 4 correct to unlock Module 3</p></div></div>
+        <div id="quiz-m2">
+          <div class="qq" id="m2q1"><div class="qn">Q1 of 4</div><div class="qt">When should a guide post activity updates in Brightwheel?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m2q1',false)"><div class="od"></div>Only at the end of the day in one batch to avoid interrupting sessions</div>
+            <div class="opt" onclick="sel(this,'m2q1',true)"><div class="od"></div>In real time during or immediately after each activity — families see updates as they happen</div>
+            <div class="opt" onclick="sel(this,'m2q1',false)"><div class="od"></div>Once per week in a consolidated summary report</div>
+            <div class="opt" onclick="sel(this,'m2q1',false)"><div class="od"></div>Only when something notable happens — routine sessions don't need logging</div>
+          </div><div class="qfb" id="fb-m2q1"></div></div>
+          <div class="qq" id="m2q2"><div class="qn">Q2 of 4</div><div class="qt">A guide writes "Good session today!" after a curriculum block. What is wrong with this note?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m2q2',false)"><div class="od"></div>Nothing — short notes save time and families prefer brevity</div>
+            <div class="opt" onclick="sel(this,'m2q2',true)"><div class="od"></div>It is too vague — it tells the family nothing about what was taught, how the learner responded, or what progress was made</div>
+            <div class="opt" onclick="sel(this,'m2q2',false)"><div class="od"></div>It should be logged under Observation, not Learning/Curriculum</div>
+            <div class="opt" onclick="sel(this,'m2q2',false)"><div class="od"></div>It should be saved as a draft rather than posted immediately</div>
+          </div><div class="qfb" id="fb-m2q2"></div></div>
+          <div class="qq" id="m2q3"><div class="qn">Q3 of 4</div><div class="qt">Which activity type would you use to log a Lexia Core5 session?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m2q3',false)"><div class="od"></div>Reading</div>
+            <div class="opt" onclick="sel(this,'m2q3',false)"><div class="od"></div>Learning / Curriculum</div>
+            <div class="opt" onclick="sel(this,'m2q3',true)"><div class="od"></div>Digital Learning</div>
+            <div class="opt" onclick="sel(this,'m2q3',false)"><div class="od"></div>Observation / Note</div>
+          </div><div class="qfb" id="fb-m2q3"></div></div>
+          <div class="qq" id="m2q4"><div class="qn">Q4 of 4</div><div class="qt">Why must a guide always open the correct learner's profile before logging an activity?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m2q4',false)"><div class="od"></div>Each learner has a different set of available activity types</div>
+            <div class="opt" onclick="sel(this,'m2q4',true)"><div class="od"></div>Every entry is permanently attached to that learner's record — logging on the wrong profile sends the wrong update to the wrong family</div>
+            <div class="opt" onclick="sel(this,'m2q4',false)"><div class="od"></div>The app loads faster when the correct profile is selected first</div>
+            <div class="opt" onclick="sel(this,'m2q4',false)"><div class="od"></div>The app will automatically prevent posting if the wrong profile is open</div>
+          </div><div class="qfb" id="fb-m2q4"></div></div>
+        </div>
+        <div id="result-m2" class="qr"><div class="rs" id="score-m2"></div><div class="rm" id="msg-m2"></div><div class="rsub" id="sub-m2"></div><button class="btn btn-ok btn-lg" id="next-m2" onclick="unlock('m3')" style="display:none">Continue to Module 3 →</button><button class="btn btn-s" id="retry-m2" onclick="retry('m2')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:18px;display:flex;justify-content:flex-end;"><button class="btn btn-p" id="submit-m2" onclick="submit('m2',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="ln"><button class="btn btn-s" onclick="show('m1')">← Module 1</button></div>
+    </div>
+
+    <!-- MODULE 3 -->
+    <div class="screen" id="screen-m3">
+      <div class="lh"><div class="ltag">✦ Module 3 of 5</div><h2>Family Communication</h2><div class="lmeta"><span>📖 ~12 min</span><span>✦ Quiz required</span></div></div>
+      <div class="lb">
+        <h3>Brightwheel Is the Only Channel</h3>
+        <p>All family communication at Helon Universe happens through Brightwheel — not personal text messages, not personal email, not social media. Brightwheel keeps communication documented, professional, and visible to the program director. It also protects your personal contact information.</p>
+
+        <h3>Three Ways to Communicate with Families</h3>
+        <div class="steps">
+          <div class="step"><div class="sn">1</div><div class="sc"><h4>Direct Messages</h4><p>Use the Messages tab to send a private message to a specific family. These go only to that learner's parents or guardians. Use for individual updates, questions, or follow-ups that don't belong in the activity feed.</p></div></div>
+          <div class="step"><div class="sn">2</div><div class="sc"><h4>Activity Feed Posts</h4><p>When you post an activity, it automatically appears in the family's Brightwheel feed. This is not a message — it's more like a news post. Families can react to entries depending on your program's settings.</p></div></div>
+          <div class="step"><div class="sn">3</div><div class="sc"><h4>School-Wide Announcements</h4><p>Your program director sends group announcements to all families through Brightwheel. This is a director function — guides do not send announcements to all families.</p></div></div>
+        </div>
+
+        <h3>Sharing Photos and Videos</h3>
+        <p>Photos are one of the most valued things families receive. A photo of their child engaged in learning connects families to a day they couldn't see.</p>
+        <div class="ig">
+          <div class="ic"><div class="ic-label">Do</div><p>Take photos that show the learner actively engaged — reading, working on a task, building, writing. Add a short caption describing what they're doing and why it matters to their learning.</p></div>
+          <div class="ic"><div class="ic-label">Don't</div><p>Never share photos without confirmed parental permission. Never photograph other learners without permission from all families. Never use your personal phone camera — use the Brightwheel app only.</p></div>
+        </div>
+
+        <h3>Professional Communication Standards</h3>
+        <div class="hlbox">
+          <h4>Brightwheel Communication Ground Rules</h4>
+          <ul>
+            <li>Never share concerns about a learner's behavior or development over Brightwheel without first speaking with your director.</li>
+            <li>Never give families your personal phone number or email. Direct them to Brightwheel messaging — always.</li>
+            <li>Respond to family messages within the same business day whenever possible.</li>
+            <li>If a family raises a concern you can't confidently answer, say "Let me look into that and get back to you" — then loop in your director before responding.</li>
+            <li>Write warmly but professionally. Your director can see every message. Communicate accordingly.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="qs">
+        <div class="qh"><div class="qi">✏️</div><div><h3>Module 3 Checkpoint</h3><p>Score 3 of 4 correct to unlock Module 4</p></div></div>
+        <div id="quiz-m3">
+          <div class="qq" id="m3q1"><div class="qn">Q1 of 4</div><div class="qt">A family texts the guide's personal phone asking how their child's session went. The guide should:</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m3q1',false)"><div class="od"></div>Reply with a quick update — it's faster and more personal</div>
+            <div class="opt" onclick="sel(this,'m3q1',true)"><div class="od"></div>Direct them to Brightwheel messaging — all family communication goes through the platform, not personal phones</div>
+            <div class="opt" onclick="sel(this,'m3q1',false)"><div class="od"></div>Ignore the text and post the update to Brightwheel without acknowledging the message</div>
+            <div class="opt" onclick="sel(this,'m3q1',false)"><div class="od"></div>Give them a personal email address as a more professional alternative to texting</div>
+          </div><div class="qfb" id="fb-m3q1"></div></div>
+          <div class="qq" id="m3q2"><div class="qn">Q2 of 4</div><div class="qt">What makes a good photo to share with a family through Brightwheel?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m3q2',false)"><div class="od"></div>A clear photo of the learner's completed worksheet as proof of work</div>
+            <div class="opt" onclick="sel(this,'m3q2',true)"><div class="od"></div>The learner actively engaged in learning — with a caption explaining what they're doing and why it matters</div>
+            <div class="opt" onclick="sel(this,'m3q2',false)"><div class="od"></div>A group photo of all learners during enrichment</div>
+            <div class="opt" onclick="sel(this,'m3q2',false)"><div class="od"></div>A candid taken on a personal phone and uploaded at the end of the day</div>
+          </div><div class="qfb" id="fb-m3q2"></div></div>
+          <div class="qq" id="m3q3"><div class="qn">Q3 of 4</div><div class="qt">A parent messages expressing concern that their child seems behind in reading. The guide should:</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m3q3',false)"><div class="od"></div>Immediately reassure the parent that everything is fine</div>
+            <div class="opt" onclick="sel(this,'m3q3',false)"><div class="od"></div>Share all of the learner's assessment data directly in the message thread</div>
+            <div class="opt" onclick="sel(this,'m3q3',true)"><div class="od"></div>Tell the parent you will look into it and get back to them — then loop in the director before responding with specifics</div>
+            <div class="opt" onclick="sel(this,'m3q3',false)"><div class="od"></div>Send a detailed written analysis of the child's current reading level</div>
+          </div><div class="qfb" id="fb-m3q3"></div></div>
+          <div class="qq" id="m3q4"><div class="qn">Q4 of 4</div><div class="qt">Why does all Helon Universe communication happen through Brightwheel rather than personal channels?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m3q4',false)"><div class="od"></div>Brightwheel messages are delivered more reliably than texts</div>
+            <div class="opt" onclick="sel(this,'m3q4',false)"><div class="od"></div>Most families prefer apps to phone calls</div>
+            <div class="opt" onclick="sel(this,'m3q4',true)"><div class="od"></div>It keeps communication documented, professional, visible to the director, and protects guides' personal contact information</div>
+            <div class="opt" onclick="sel(this,'m3q4',false)"><div class="od"></div>It is required by state childcare licensing regulations</div>
+          </div><div class="qfb" id="fb-m3q4"></div></div>
+        </div>
+        <div id="result-m3" class="qr"><div class="rs" id="score-m3"></div><div class="rm" id="msg-m3"></div><div class="rsub" id="sub-m3"></div><button class="btn btn-ok btn-lg" id="next-m3" onclick="unlock('m4')" style="display:none">Continue to Module 4 →</button><button class="btn btn-s" id="retry-m3" onclick="retry('m3')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:18px;display:flex;justify-content:flex-end;"><button class="btn btn-p" id="submit-m3" onclick="submit('m3',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="ln"><button class="btn btn-s" onclick="show('m2')">← Module 2</button></div>
+    </div>
+
+    <!-- MODULE 4 -->
+    <div class="screen" id="screen-m4">
+      <div class="lh"><div class="ltag">✦ Module 4 of 5</div><h2>Attendance & Check-In</h2><div class="lmeta"><span>📖 ~10 min</span><span>✦ Quiz required</span></div></div>
+      <div class="lb">
+        <h3>Why Attendance Matters</h3>
+        <p>Attendance in Brightwheel is not just a headcount — it is a legal and operational record. It documents who was in your care, when they arrived, when they left, and who dropped off or picked up. This protects the learner, the family, and Helon Universe. The timestamp is part of the official record — it cannot be edited after the fact.</p>
+
+        <h3>Check-In at Arrival</h3>
+        <div class="steps">
+          <div class="step"><div class="sn">1</div><div class="sc"><h4>Mark the learner present immediately</h4><p>The moment a learner arrives, mark them checked in on Brightwheel. Do not wait — the timestamp is the record. "I'll do it later" creates a gap in the official log.</p></div></div>
+          <div class="step"><div class="sn">2</div><div class="sc"><h4>Note who dropped off</h4><p>Brightwheel lets you record the authorized individual who brought the learner. If someone not on the authorized list drops off, note it and alert your director.</p></div></div>
+          <div class="step"><div class="sn">3</div><div class="sc"><h4>Complete any health check</h4><p>If your program uses Brightwheel's health screening feature at check-in, complete it every time. This is part of your compliance record — not optional.</p></div></div>
+        </div>
+
+        <h3>Check-Out at Departure</h3>
+        <div class="steps">
+          <div class="step"><div class="sn">1</div><div class="sc"><h4>Confirm the authorized pickup person</h4><p>Before releasing a learner, check the authorized pickup list in Brightwheel. Do not rely on memory or the person's word — check the app every time.</p></div></div>
+          <div class="step"><div class="sn">2</div><div class="sc"><h4>Mark check-out immediately</h4><p>Record the departure and who picked up as it happens. This closes the attendance record for the day. Do not batch check-outs at the end of your shift.</p></div></div>
+          <div class="step"><div class="sn">3</div><div class="sc"><h4>Never release to an unauthorized person</h4><p>If someone not on the list arrives to pick up, do not release the learner under any circumstances. Contact your director immediately. Trust the list — not the conversation.</p></div></div>
+        </div>
+
+        <h3>Absences</h3>
+        <p>If a learner has not arrived within 15 minutes of their expected start time, mark them absent in Brightwheel and notify your director. Do not assume they are running late — always document and communicate.</p>
+
+        <div class="callout"><strong>Attendance is always real-time:</strong> Check in = check in immediately. Check out = check out immediately. The timestamp is part of the official record — batch-entering at the end of the day is not acceptable.</div>
+      </div>
+      <div class="qs">
+        <div class="qh"><div class="qi">✏️</div><div><h3>Module 4 Checkpoint</h3><p>Score 3 of 4 correct to unlock the final module</p></div></div>
+        <div id="quiz-m4">
+          <div class="qq" id="m4q1"><div class="qn">Q1 of 4</div><div class="qt">When should a guide mark a learner as checked in upon arrival?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m4q1',false)"><div class="od"></div>At the end of the morning block when things settle down</div>
+            <div class="opt" onclick="sel(this,'m4q1',true)"><div class="od"></div>Immediately when the learner arrives — the timestamp is part of the official record</div>
+            <div class="opt" onclick="sel(this,'m4q1',false)"><div class="od"></div>All at once at the end of the day to save time during busy sessions</div>
+            <div class="opt" onclick="sel(this,'m4q1',false)"><div class="od"></div>Only if the learner's family specifically requests attendance tracking</div>
+          </div><div class="qfb" id="fb-m4q1"></div></div>
+          <div class="qq" id="m4q2"><div class="qn">Q2 of 4</div><div class="qt">An unfamiliar adult arrives at pickup and says they are a family friend. The guide should:</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m4q2',false)"><div class="od"></div>Release the learner — if the family trusts them enough to send them, it should be fine</div>
+            <div class="opt" onclick="sel(this,'m4q2',false)"><div class="od"></div>Call the parent to ask if it's okay, then release the learner</div>
+            <div class="opt" onclick="sel(this,'m4q2',true)"><div class="od"></div>Check the authorized pickup list in Brightwheel — if the person is not listed, do not release the learner and contact the director immediately</div>
+            <div class="opt" onclick="sel(this,'m4q2',false)"><div class="od"></div>Ask the adult to wait while adding them to the authorized list in Brightwheel</div>
+          </div><div class="qfb" id="fb-m4q2"></div></div>
+          <div class="qq" id="m4q3"><div class="qn">Q3 of 4</div><div class="qt">A learner hasn't arrived 20 minutes after their expected start time. What should the guide do?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m4q3',false)"><div class="od"></div>Wait until the end of the day before marking anything in Brightwheel</div>
+            <div class="opt" onclick="sel(this,'m4q3',false)"><div class="od"></div>Send the family a Brightwheel message asking if they're running late, then wait for a reply</div>
+            <div class="opt" onclick="sel(this,'m4q3',true)"><div class="od"></div>Mark the learner absent in Brightwheel and notify the director — do not assume they are simply running late</div>
+            <div class="opt" onclick="sel(this,'m4q3',false)"><div class="od"></div>Leave attendance blank and check again at noon</div>
+          </div><div class="qfb" id="fb-m4q3"></div></div>
+          <div class="qq" id="m4q4"><div class="qn">Q4 of 4</div><div class="qt">Why is Brightwheel attendance more than just a headcount?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m4q4',false)"><div class="od"></div>It automatically calculates tuition based on days attended</div>
+            <div class="opt" onclick="sel(this,'m4q4',true)"><div class="od"></div>It is a legal and operational record — who was in care, when they arrived, when they left, and who was authorized for pickup</div>
+            <div class="opt" onclick="sel(this,'m4q4',false)"><div class="od"></div>It sends automatic parent reminders about upcoming sessions</div>
+            <div class="opt" onclick="sel(this,'m4q4',false)"><div class="od"></div>It feeds into the learner's curriculum placement and progress data</div>
+          </div><div class="qfb" id="fb-m4q4"></div></div>
+        </div>
+        <div id="result-m4" class="qr"><div class="rs" id="score-m4"></div><div class="rm" id="msg-m4"></div><div class="rsub" id="sub-m4"></div><button class="btn btn-ok btn-lg" id="next-m4" onclick="unlock('m5')" style="display:none">Continue to Module 5 →</button><button class="btn btn-s" id="retry-m4" onclick="retry('m4')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:18px;display:flex;justify-content:flex-end;"><button class="btn btn-p" id="submit-m4" onclick="submit('m4',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="ln"><button class="btn btn-s" onclick="show('m3')">← Module 3</button></div>
+    </div>
+
+    <!-- MODULE 5 -->
+    <div class="screen" id="screen-m5">
+      <div class="lh"><div class="ltag">✦ Module 5 of 5</div><h2>Brightwheel at Helon Universe</h2><div class="lmeta"><span>📖 ~10 min</span><span>✦ Final quiz</span></div></div>
+      <div class="lb">
+        <h3>Two Tools, One Workflow</h3>
+        <p>At Helon Universe, Brightwheel and the Daily Planning tool work as a pair. They serve different audiences and different purposes — but both are required every day.</p>
+        <table class="ctable">
+          <tr><th></th><th>Brightwheel</th><th>Daily Planning Tool</th></tr>
+          <tr><td>Audience</td><td>Families — real time</td><td>You + the program — internal</td></tr>
+          <tr><td>What goes in</td><td>Activities, photos, meals, attendance, messages</td><td>Deep session data, program scores, observations, tomorrow's plan</td></tr>
+          <tr><td>When</td><td>Throughout the day, in real time</td><td>End of day — analysis and planning</td></tr>
+          <tr><td>Tone</td><td>Warm, narrative, family-friendly</td><td>Professional, data-focused, instructional</td></tr>
+        </table>
+
+        <h3>The Guide's Brightwheel Daily Routine</h3>
+        <div class="steps">
+          <div class="step"><div class="sn">1</div><div class="sc"><h4>Morning — Check In & Set Up</h4><p>As each learner arrives, mark check-in immediately. Complete any health check. Open each learner's profile — you'll be switching between them throughout the day.</p></div></div>
+          <div class="step"><div class="sn">2</div><div class="sc"><h4>During Sessions — Log as You Go</h4><p>After each Core5 session → log Digital Learning. After each LittleLit session → log Reading. After each Teacher block → log Learning/Curriculum. Don't batch. Don't wait. Real time, every time.</p></div></div>
+          <div class="step"><div class="sn">3</div><div class="sc"><h4>Observations — Capture Them Fresh</h4><p>Breakthroughs, behavior moments, great quotes, concerns — log an Observation immediately. These details evaporate from memory. If it matters, log it when it happens.</p></div></div>
+          <div class="step"><div class="sn">4</div><div class="sc"><h4>Photos — At Least One Per Learner Per Day</h4><p>Aim for at least one meaningful photo per learner. Not every session — but regularly. Families treasure these. Keep your Brightwheel app camera ready during active work time.</p></div></div>
+          <div class="step"><div class="sn">5</div><div class="sc"><h4>End of Day — Check Out & Review</h4><p>Mark each learner as checked out when they leave. Before closing the app, review each learner's feed: did you log everything? Any family messages to respond to today?</p></div></div>
+        </div>
+
+        <div class="callout"><strong>The relationship Brightwheel builds:</strong> Families who receive consistent, specific, warm updates from their guide become the most engaged and trusting partners in the learning journey. Your Brightwheel practice IS your relationship-building practice — treat it that way.</div>
+      </div>
+      <div class="qs">
+        <div class="qh"><div class="qi">🏆</div><div><h3>Final Checkpoint — Module 5</h3><p>Score 3 of 4 correct to complete the course</p></div></div>
+        <div id="quiz-m5">
+          <div class="qq" id="m5q1"><div class="qn">Q1 of 4</div><div class="qt">What is the key difference between Brightwheel and the Helon Universe Daily Planning tool?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m5q1',false)"><div class="od"></div>Brightwheel is for curriculum; the Daily Planning tool is for attendance</div>
+            <div class="opt" onclick="sel(this,'m5q1',true)"><div class="od"></div>Brightwheel is the real-time, family-facing log; the Daily Planning tool is the internal record for deeper analysis and planning</div>
+            <div class="opt" onclick="sel(this,'m5q1',false)"><div class="od"></div>They contain identical information — one is just a backup of the other</div>
+            <div class="opt" onclick="sel(this,'m5q1',false)"><div class="od"></div>The Daily Planning tool replaces Brightwheel once a guide is fully trained</div>
+          </div><div class="qfb" id="fb-m5q1"></div></div>
+          <div class="qq" id="m5q2"><div class="qn">Q2 of 4</div><div class="qt">A guide finishes three Core5 sessions back to back and plans to log all three in Brightwheel at the end of the day. This is:</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m5q2',false)"><div class="od"></div>Fine — the content is the same regardless of when it is entered</div>
+            <div class="opt" onclick="sel(this,'m5q2',true)"><div class="od"></div>Incorrect — Brightwheel logging should happen in real time after each session, not batched later</div>
+            <div class="opt" onclick="sel(this,'m5q2',false)"><div class="od"></div>Acceptable on busy days — families understand guides have other priorities</div>
+            <div class="opt" onclick="sel(this,'m5q2',false)"><div class="od"></div>Only a problem if a parent specifically requested real-time updates</div>
+          </div><div class="qfb" id="fb-m5q2"></div></div>
+          <div class="qq" id="m5q3"><div class="qn">Q3 of 4</div><div class="qt">What should a guide do before closing the Brightwheel app at the end of the day?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m5q3',false)"><div class="od"></div>Export all data to a spreadsheet for backup</div>
+            <div class="opt" onclick="sel(this,'m5q3',false)"><div class="od"></div>Send a group message to all families summarizing the day</div>
+            <div class="opt" onclick="sel(this,'m5q3',true)"><div class="od"></div>Mark all learners as checked out, review each learner's feed for completeness, and respond to any unanswered family messages</div>
+            <div class="opt" onclick="sel(this,'m5q3',false)"><div class="od"></div>Delete any unsent drafts from the day's session</div>
+          </div><div class="qfb" id="fb-m5q3"></div></div>
+          <div class="qq" id="m5q4"><div class="qn">Q4 of 4</div><div class="qt">Why does consistent Brightwheel logging matter beyond just meeting documentation requirements?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m5q4',false)"><div class="od"></div>It keeps the director satisfied during program reviews</div>
+            <div class="opt" onclick="sel(this,'m5q4',false)"><div class="od"></div>It fulfills the guide's legal childcare documentation obligations</div>
+            <div class="opt" onclick="sel(this,'m5q4',true)"><div class="od"></div>It builds the family relationship — engaged, trusting families become the most supportive partners in the learning journey</div>
+            <div class="opt" onclick="sel(this,'m5q4',false)"><div class="od"></div>It earns the guide performance recognition at the end of the year</div>
+          </div><div class="qfb" id="fb-m5q4"></div></div>
+        </div>
+        <div id="result-m5" class="qr"><div class="rs" id="score-m5"></div><div class="rm" id="msg-m5"></div><div class="rsub" id="sub-m5"></div><button class="btn btn-ok btn-lg" id="next-m5" onclick="unlock('complete')" style="display:none">🎉 Complete Course →</button><button class="btn btn-s" id="retry-m5" onclick="retry('m5')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:18px;display:flex;justify-content:flex-end;"><button class="btn btn-p" id="submit-m5" onclick="submit('m5',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="ln"><button class="btn btn-s" onclick="show('m4')">← Module 4</button></div>
+    </div>
+
+    <!-- COMPLETE -->
+    <div class="screen" id="screen-complete">
+      <div class="comp-wrap">
+        <div class="comp-badge">💡</div>
+        <h2>Course Complete!</h2>
+        <p>You're ready to use Brightwheel with confidence — logging sessions in real time, communicating professionally with families, tracking attendance accurately, and weaving it into the Helon Universe daily workflow.</p>
+        <div class="chips">
+          <div class="chip">✓ What Is Brightwheel?</div>
+          <div class="chip">✓ Daily Reporting & Activities</div>
+          <div class="chip">✓ Family Communication</div>
+          <div class="chip">✓ Attendance & Check-In</div>
+          <div class="chip">✓ Brightwheel at Helon Universe</div>
+        </div>
+        <div style="display:flex;gap:13px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-p btn-lg" onclick="show('welcome')">← Back to Home</button>
+          <button class="btn btn-s btn-lg" onclick="window.print()">🖨 Print Certificate</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="ti">✓</span><span id="tm"></span></div>
+<script>
+const MODS=['m1','m2','m3','m4','m5'];
+const state={unlocked:new Set(['welcome','m1']),completed:new Set(),answers:{},submitted:new Set()};
+const NAMES={welcome:'Course Home',m1:'Module 1',m2:'Module 2',m3:'Module 3',m4:'Module 4',m5:'Module 5',complete:'Certificate'};
+const ICONS=['💡','📋','💬','✅','🔗'];
+function go(id){if(!state.unlocked.has(id)){toast('🔒','Complete the previous quiz to unlock.','locked-msg');return;}show(id);}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+id).classList.add('active');document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));const nav=document.getElementById('nav-'+id);if(nav)nav.classList.add('active');document.getElementById('cur').textContent=NAMES[id]||id;updateUI();window.scrollTo(0,0);}
+function unlock(next){state.unlocked.add(next);updateUI();show(next);}
+function updateUI(){MODS.forEach((m,i)=>{const nav=document.getElementById('nav-'+m),card=document.getElementById('card-'+m);if(!nav)return;nav.classList.remove('locked','completed');if(state.completed.has(m)){nav.classList.add('completed');nav.querySelector('.ni-ic').textContent='✓';nav.querySelector('.nbadge').textContent='✓';if(card){card.classList.remove('locked');card.classList.add('completed');card.querySelector('.mc-s').textContent='✓';}}else if(!state.unlocked.has(m)){nav.classList.add('locked');nav.querySelector('.ni-ic').textContent='🔒';if(card){card.classList.add('locked');card.querySelector('.mc-s').textContent='🔒';}}else{nav.querySelector('.ni-ic').textContent=ICONS[i];if(card){card.classList.remove('locked','completed');card.querySelector('.mc-s').textContent='→';}}});const cn=document.getElementById('nav-complete');if(state.unlocked.has('complete')){cn.classList.remove('locked');cn.querySelector('.ni-ic').textContent='🏆';}const pct=Math.round(state.completed.size/MODS.length*100);document.getElementById('pf').style.width=pct+'%';document.getElementById('pt').textContent=pct+'%';}
+function sel(el,qid,correct){if(state.submitted.has(qid.slice(0,2)))return;el.closest('.qopts').querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');state.answers[qid]=correct;const mod=qid.slice(0,2);document.getElementById('submit-'+mod).disabled=![...document.querySelectorAll('#quiz-'+mod+' .qq')].every(q=>state.answers[q.id]!==undefined);}
+function submit(mod,total){if(state.submitted.has(mod))return;state.submitted.add(mod);let correct=0;document.querySelectorAll('#quiz-'+mod+' .qq').forEach(q=>{const ok=state.answers[q.id];if(ok)correct++;q.querySelectorAll('.opt').forEach(o=>{o.classList.add('disabled');if(o.getAttribute('onclick')?.includes('true'))o.classList.add('correct-ans');else if(o.classList.contains('selected'))o.classList.add('wrong-ans');});const fb=document.getElementById('fb-'+q.id);if(ok){q.classList.add('correct');fb.textContent='✓ Correct!';fb.className='qfb show correct';}else{q.classList.add('wrong');fb.textContent='✗ Not quite — the highlighted option is correct.';fb.className='qfb show wrong';}});const pct=Math.round(correct/total*100),passed=pct>=75;const r=document.getElementById('result-'+mod);r.classList.add('show',passed?'passed':'failed');document.getElementById('score-'+mod).textContent=pct+'%';document.getElementById('score-'+mod).className='rs '+(passed?'pass':'fail');document.getElementById('msg-'+mod).textContent=passed?'🎉 Passed!':'Not quite — try again';document.getElementById('sub-'+mod).textContent=passed?`${correct} of ${total} correct — module complete!`:`${correct} of ${total} — need 3+ to pass.`;document.getElementById('submit-'+mod).style.display='none';if(passed){state.completed.add(mod);document.getElementById('next-'+mod).style.display='inline-flex';updateUI();toast('✓','Module complete!','success');}else document.getElementById('retry-'+mod).style.display='inline-flex';}
+function retry(mod){state.submitted.delete(mod);Object.keys(state.answers).filter(k=>k.startsWith(mod)).forEach(k=>delete state.answers[k]);document.querySelectorAll('#quiz-'+mod+' .qq').forEach(q=>{q.classList.remove('correct','wrong');q.querySelectorAll('.opt').forEach(o=>o.classList.remove('selected','correct-ans','wrong-ans','disabled'));const fb=document.getElementById('fb-'+q.id);if(fb){fb.className='qfb';fb.textContent='';}});const r=document.getElementById('result-'+mod);r.classList.remove('show','passed','failed');document.getElementById('retry-'+mod).style.display='none';document.getElementById('next-'+mod).style.display='none';const sb=document.getElementById('submit-'+mod);sb.style.display='inline-flex';sb.disabled=true;}
+let tt;function toast(icon,msg,type=''){const t=document.getElementById('toast');document.getElementById('ti').textContent=icon;document.getElementById('tm').textContent=msg;t.className='toast show '+type;clearTimeout(tt);tt=setTimeout(()=>t.className='toast',3200);}
+updateUI();
+</script>
+</body>
+</html>

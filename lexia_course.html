@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lexia Core5 Training | Self-Paced Course</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600;700;800&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --blue:    #1C6EA4;
+  --blue2:   #2980B9;
+  --blue3:   #5DADE2;
+  --navy:    #0D2B45;
+  --navy2:   #112233;
+  --teal:    #148F77;
+  --sky:     #D6EAF8;
+  --sky2:    #EBF5FB;
+  --white:   #FFFFFF;
+  --sand:    #F4F6F7;
+  --gray:    #566573;
+  --muted:   #95A5A6;
+  --dark:    #1A1A2E;
+  --pass:    #1E8449;
+  --pass-l:  #D5F5E3;
+  --fail:    #C0392B;
+  --fail-l:  #FDEDEC;
+  --gold:    #D4AC0D;
+  --gold-l:  #FEF9E7;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Sora',sans-serif;background:var(--sand);color:var(--dark);min-height:100vh;}
+
+/* SIDEBAR */
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:270px;background:var(--navy2);display:flex;flex-direction:column;z-index:100;overflow-y:auto;}
+.sb-brand{padding:26px 22px 18px;border-bottom:1px solid rgba(255,255,255,0.07);}
+.sb-brand .logo{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.sb-logo-icon{width:36px;height:36px;background:linear-gradient(135deg,#F47B20,#FDB913);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;}
+.sb-brand h1{font-size:15px;font-weight:700;color:var(--white);line-height:1.3;}
+.sb-brand span{font-size:10px;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;color:#FDB913;}
+.sb-progress{padding:14px 22px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.sb-prog-top{display:flex;justify-content:space-between;font-size:10px;font-weight:600;letter-spacing:0.09em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.sb-prog-top span{color:#FDB913;}
+.prog-bar{height:3px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;}
+.prog-fill{height:100%;background:linear-gradient(90deg,#F47B20,#FDB913);transition:width .6s ease;}
+.sb-section{padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.sb-sec-title{padding:5px 22px 8px;font-size:9px;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;color:rgba(255,255,255,0.25);}
+.nav-item{display:flex;align-items:center;gap:11px;padding:9px 22px;cursor:pointer;transition:background .15s;position:relative;}
+.nav-item:hover{background:rgba(255,255,255,0.05);}
+.nav-item.active{background:rgba(28,110,164,0.25);}
+.nav-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#F47B20;}
+.nav-item.locked{opacity:.4;cursor:not-allowed;}
+.nav-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;background:rgba(255,255,255,0.07);}
+.nav-item.active .nav-icon{background:#F47B20;}
+.nav-item.completed .nav-icon{background:var(--teal);}
+.nav-title{font-size:12px;font-weight:600;color:rgba(255,255,255,0.85);line-height:1.3;flex:1;}
+.nav-item.locked .nav-title{color:rgba(255,255,255,0.3);}
+.nav-sub{font-size:10px;color:rgba(255,255,255,0.3);margin-top:1px;}
+.nb{font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.35);}
+.nav-item.completed .nb{background:var(--teal);color:white;}
+
+/* MAIN */
+.main{margin-left:270px;min-height:100vh;padding-bottom:80px;}
+.topbar{background:var(--white);border-bottom:1px solid #E5E8EA;padding:14px 44px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.tb-crumb{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:5px;}
+.tb-crumb .cur{color:var(--dark);font-weight:600;}
+.tb-badge{font-size:10px;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;padding:4px 11px;border-radius:20px;background:var(--sky);color:var(--blue);border:1px solid #BDE0F5;}
+.content{max-width:800px;margin:0 auto;padding:44px 44px 0;}
+.screen{display:none;}
+.screen.active{display:block;animation:fadeUp .3s ease;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* WELCOME */
+.hero{background:linear-gradient(135deg,var(--navy) 0%,var(--blue) 100%);border-radius:20px;padding:52px 48px;margin-bottom:28px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-80px;right:-80px;width:320px;height:320px;background:radial-gradient(circle,rgba(93,173,226,.25) 0%,transparent 70%);pointer-events:none;}
+.hero-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--blue3);margin-bottom:14px;}
+.hero h2{font-family:'Lora',serif;font-size:40px;line-height:1.2;color:var(--white);margin-bottom:12px;}
+.hero h2 em{font-style:normal;color:#FDB913;}
+.hero p{font-size:15px;color:rgba(255,255,255,.65);line-height:1.7;max-width:500px;margin-bottom:28px;}
+.hero-stats{display:flex;gap:28px;margin-bottom:28px;}
+.stat-n{font-family:'Lora',serif;font-size:30px;font-weight:700;color:var(--white);}
+.stat-l{font-size:11px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.07em;}
+.mod-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:28px;}
+.mod-card{background:var(--white);border-radius:13px;padding:18px;border:1px solid #E5E8EA;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.mod-card:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.07);}
+.mod-card.locked{opacity:.5;cursor:not-allowed;}
+.mod-card.locked:hover{transform:none;box-shadow:none;}
+.mod-card.completed{border-color:var(--teal);}
+.mc-num{font-family:'Lora',serif;font-size:34px;font-weight:700;color:#E8EEF2;line-height:1;margin-bottom:7px;}
+.mod-card.completed .mc-num{color:var(--teal);opacity:.3;}
+.mod-card h3{font-size:13px;font-weight:700;color:var(--dark);margin-bottom:3px;line-height:1.35;}
+.mod-card p{font-size:11px;color:var(--muted);line-height:1.5;}
+.mc-status{position:absolute;top:14px;right:14px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;}
+.mod-card.completed .mc-status{background:var(--teal);color:white;}
+.mod-card.locked .mc-status{background:#EEE;color:#AAA;}
+.mod-card:not(.locked):not(.completed) .mc-status{background:#F47B20;color:white;}
+
+/* LESSON */
+.lsn-header{margin-bottom:32px;}
+.lsn-tag{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--blue);background:var(--sky);padding:4px 11px;border-radius:20px;margin-bottom:12px;}
+.lsn-header h2{font-family:'Lora',serif;font-size:34px;line-height:1.2;color:var(--dark);margin-bottom:9px;}
+.lsn-meta{display:flex;align-items:center;gap:18px;font-size:12px;color:var(--muted);}
+.lsn-body{font-size:15px;line-height:1.75;color:var(--gray);}
+.lsn-body h3{font-family:'Lora',serif;font-size:21px;color:var(--dark);margin:32px 0 12px;padding-top:32px;border-top:1px solid #E5E8EA;}
+.lsn-body h3:first-of-type{margin-top:0;padding-top:0;border-top:none;}
+.lsn-body p{margin-bottom:14px;}
+.callout{background:var(--gold-l);border-left:4px solid var(--gold);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0;font-size:14px;color:var(--dark);font-style:italic;}
+.callout strong{font-style:normal;color:var(--navy);}
+.info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin:18px 0;}
+.ic{background:var(--white);border:1px solid #E5E8EA;border-radius:11px;padding:16px;}
+.ic-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#F47B20;margin-bottom:5px;}
+.ic p{font-size:13px;color:var(--gray);margin:0;line-height:1.55;}
+.steps{margin:18px 0;}
+.step{display:flex;gap:14px;margin-bottom:14px;align-items:flex-start;}
+.sn{width:30px;height:30px;border-radius:50%;background:#F47B20;color:white;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sc h4{font-size:14px;font-weight:700;color:var(--dark);margin-bottom:3px;}
+.sc p{font-size:13px;color:var(--gray);margin:0;line-height:1.55;}
+.cmp-table{width:100%;border-collapse:collapse;margin:18px 0;border-radius:11px;overflow:hidden;border:1px solid #E5E8EA;}
+.cmp-table th{background:#F47B20;color:white;padding:11px 15px;text-align:left;font-size:12px;font-weight:600;letter-spacing:.03em;}
+.cmp-table td{padding:11px 15px;font-size:13px;color:var(--gray);border-top:1px solid #E5E8EA;vertical-align:top;}
+.cmp-table tr:nth-child(odd) td{background:var(--sky2);}
+.cmp-table tr:nth-child(even) td{background:white;}
+.cmp-table td:first-child{font-weight:600;color:var(--dark);}
+.hl-box{background:var(--navy);color:white;padding:22px 26px;border-radius:13px;margin:22px 0;}
+.hl-box h4{font-family:'Lora',serif;font-size:18px;color:var(--blue3);margin-bottom:10px;}
+.hl-box ul{padding-left:18px;}
+.hl-box ul li{font-size:13px;color:#ccc;margin-bottom:5px;line-height:1.55;}
+
+/* QUIZ */
+.quiz-section{margin-top:52px;padding-top:36px;border-top:2px solid #E5E8EA;}
+.quiz-hdr{display:flex;align-items:center;gap:13px;margin-bottom:26px;}
+.quiz-ico{width:44px;height:44px;background:#F47B20;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;color:white;flex-shrink:0;}
+.quiz-hdr h3{font-family:'Lora',serif;font-size:22px;color:var(--dark);margin-bottom:3px;}
+.quiz-hdr p{font-size:12px;color:var(--muted);}
+.qq{background:var(--white);border:1px solid #E5E8EA;border-radius:13px;padding:22px;margin-bottom:18px;transition:all .2s;}
+.qq.correct{border-color:var(--pass);background:var(--pass-l);}
+.qq.wrong{border-color:var(--fail);background:var(--fail-l);}
+.qq-num{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.qq-text{font-size:15px;font-weight:600;color:var(--dark);margin-bottom:16px;line-height:1.4;}
+.qq-opts{display:flex;flex-direction:column;gap:9px;}
+.opt{display:flex;align-items:flex-start;gap:11px;padding:11px 15px;border-radius:9px;border:1.5px solid #E5E8EA;cursor:pointer;transition:all .15s;background:white;font-size:13px;color:var(--gray);line-height:1.4;}
+.opt:hover{border-color:var(--blue);background:var(--sky2);}
+.opt.selected{border-color:var(--blue);background:var(--sky);color:var(--dark);}
+.opt.correct-ans{border-color:var(--pass);background:var(--pass-l);color:var(--dark);}
+.opt.wrong-ans{border-color:var(--fail);background:var(--fail-l);color:var(--dark);}
+.opt.disabled{pointer-events:none;}
+.opt-dot{width:17px;height:17px;border-radius:50%;border:2px solid #CCC;flex-shrink:0;margin-top:1px;transition:all .15s;}
+.opt.selected .opt-dot{border-color:var(--blue);background:#F47B20;}
+.opt.correct-ans .opt-dot{border-color:var(--pass);background:var(--pass);}
+.opt.wrong-ans .opt-dot{border-color:var(--fail);background:var(--fail);}
+.qq-fb{padding:11px 15px;border-radius:9px;font-size:13px;margin-top:10px;display:none;line-height:1.5;}
+.qq-fb.show{display:block;}
+.qq-fb.correct{background:var(--pass-l);color:#1a6b35;border:1px solid var(--pass);}
+.qq-fb.wrong{background:var(--fail-l);color:#8b1a1a;border:1px solid #e0a0a0;}
+.quiz-result{background:var(--white);border-radius:15px;padding:32px;text-align:center;border:2px solid #E5E8EA;margin-top:22px;display:none;}
+.quiz-result.show{display:block;animation:fadeUp .4s ease;}
+.quiz-result.passed{border-color:var(--pass);}
+.quiz-result.failed{border-color:var(--fail);}
+.res-score{font-family:'Lora',serif;font-size:60px;font-weight:700;line-height:1;margin-bottom:7px;}
+.res-score.pass{color:var(--pass);}
+.res-score.fail{color:var(--fail);}
+.res-msg{font-size:19px;font-weight:700;margin-bottom:7px;color:var(--dark);}
+.res-sub{font-size:13px;color:var(--muted);margin-bottom:24px;}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:7px;padding:12px 26px;border-radius:9px;font-family:'Sora',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;border:none;}
+.btn-primary{background:#F47B20;color:white;}
+.btn-primary:hover{background:var(--navy);transform:translateY(-1px);box-shadow:0 4px 12px rgba(28,110,164,.35);}
+.btn-success{background:var(--teal);color:white;}
+.btn-success:hover{background:#0e7a65;}
+.btn-secondary{background:white;color:var(--dark);border:1.5px solid #DDD;}
+.btn-secondary:hover{border-color:var(--blue);color:var(--blue);}
+.btn-lg{padding:15px 32px;font-size:14px;border-radius:11px;}
+.btn:disabled{opacity:.4;cursor:not-allowed;pointer-events:none;}
+.lsn-nav{display:flex;align-items:center;justify-content:space-between;margin-top:44px;padding-top:28px;border-top:1px solid #E5E8EA;}
+
+/* COMPLETE */
+.complete-wrap{text-align:center;padding:70px 40px;}
+.complete-badge{width:110px;height:110px;background:linear-gradient(135deg,var(--blue),var(--teal));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:48px;margin:0 auto 28px;box-shadow:0 14px 40px rgba(28,110,164,.3);}
+.complete-wrap h2{font-family:'Lora',serif;font-size:42px;color:var(--dark);margin-bottom:12px;}
+.complete-wrap p{font-size:16px;color:var(--gray);max-width:440px;margin:0 auto 32px;line-height:1.7;}
+.cert-chips{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-bottom:36px;}
+.chip{background:var(--pass-l);color:var(--pass);border:1px solid var(--pass);padding:5px 14px;border-radius:20px;font-size:12px;font-weight:600;}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;right:22px;background:var(--navy);color:white;padding:13px 18px;border-radius:11px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:9px;transform:translateY(100px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:999;max-width:300px;box-shadow:0 8px 20px rgba(0,0,0,.3);}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-left:4px solid var(--teal);}
+.toast.locked-msg{border-left:4px solid #FDB913;}
+</style>
+</head>
+<body>
+
+<nav class="sidebar" id="sidebar">
+  <div class="sb-brand">
+    <div class="logo">
+      <div class="sb-logo-icon">📖</div>
+      <div>
+        <h1>Lexia Core5<br>Training</h1>
+      </div>
+    </div>
+    <span>Self-Paced Course</span>
+  </div>
+  <div class="sb-progress">
+    <div class="sb-prog-top">Progress <span id="prog-text">0%</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+  <div class="sb-section">
+    <div class="sb-sec-title">Modules</div>
+    <div class="nav-item active" onclick="showScreen('welcome')" id="nav-welcome">
+      <div class="nav-icon">🏠</div>
+      <div style="flex:1"><div class="nav-title">Course Home</div><div class="nav-sub">Overview</div></div>
+    </div>
+    <div class="nav-item" onclick="tryNav('m1')" id="nav-m1">
+      <div class="nav-icon">🔍</div>
+      <div style="flex:1"><div class="nav-title">What Is Lexia Core5?</div><div class="nav-sub">Purpose & approach</div></div>
+      <div class="nb">Quiz</div>
+    </div>
+    <div class="nav-item locked" onclick="tryNav('m2')" id="nav-m2">
+      <div class="nav-icon">🔒</div>
+      <div style="flex:1"><div class="nav-title">How Core5 Works</div><div class="nav-sub">Sessions & adaptive path</div></div>
+      <div class="nb">Quiz</div>
+    </div>
+    <div class="nav-item locked" onclick="tryNav('m3')" id="nav-m3">
+      <div class="nav-icon">🔒</div>
+      <div style="flex:1"><div class="nav-title">Reading the Data</div><div class="nav-sub">Reports & progress</div></div>
+      <div class="nb">Quiz</div>
+    </div>
+    <div class="nav-item locked" onclick="tryNav('m4')" id="nav-m4">
+      <div class="nav-icon">🔒</div>
+      <div style="flex:1"><div class="nav-title">Your Role as Guide</div><div class="nav-sub">Support & intervention</div></div>
+      <div class="nb">Quiz</div>
+    </div>
+    <div class="nav-item locked" onclick="tryNav('m5')" id="nav-m5">
+      <div class="nav-icon">🔒</div>
+      <div style="flex:1"><div class="nav-title">Integrating with MBTP</div><div class="nav-sub">Connecting both programs</div></div>
+      <div class="nb">Quiz</div>
+    </div>
+    <div class="nav-item locked" onclick="tryNav('complete')" id="nav-complete">
+      <div class="nav-icon">🏆</div>
+      <div style="flex:1"><div class="nav-title">Certificate</div></div>
+    </div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div class="tb-crumb">Lexia Core5 Training › <span class="cur" id="tb-cur">Course Home</span></div>
+    <div class="tb-badge" id="tb-badge">Self-Paced</div>
+  </div>
+  <div class="content">
+
+    <!-- WELCOME -->
+    <div class="screen active" id="screen-welcome">
+      <div class="hero">
+        <div class="hero-tag">✦ Self-Paced Course</div>
+        <h2>Mastering<br><em>Lexia Core5</em></h2>
+        <p>Learn to use Lexia Core5 effectively — understand its adaptive engine, read student data, support learners between sessions, and connect it with MBTP.</p>
+        <div class="hero-stats">
+          <div><div class="stat-n">5</div><div class="stat-l">Modules</div></div>
+          <div><div class="stat-n">~75</div><div class="stat-l">Minutes</div></div>
+          <div><div class="stat-n">80%</div><div class="stat-l">Pass score</div></div>
+        </div>
+        <button class="btn btn-primary btn-lg" onclick="tryNav('m1')">Start Course →</button>
+      </div>
+      <div class="mod-grid">
+        <div class="mod-card" onclick="tryNav('m1')" id="card-m1"><div class="mc-num">01</div><div class="mc-status">→</div><h3>What Is Lexia Core5?</h3><p>Purpose, design, and who it's built for</p></div>
+        <div class="mod-card locked" onclick="tryNav('m2')" id="card-m2"><div class="mc-num">02</div><div class="mc-status">🔒</div><h3>How Core5 Works</h3><p>Adaptive sessions, skill areas, and pacing</p></div>
+        <div class="mod-card locked" onclick="tryNav('m3')" id="card-m3"><div class="mc-num">03</div><div class="mc-status">🔒</div><h3>Reading the Data</h3><p>Progress reports, usage minutes, alerts</p></div>
+        <div class="mod-card locked" onclick="tryNav('m4')" id="card-m4"><div class="mc-num">04</div><div class="mc-status">🔒</div><h3>Your Role as Guide</h3><p>When to intervene, how to support</p></div>
+        <div class="mod-card locked" onclick="tryNav('m5')" id="card-m5"><div class="mc-num">05</div><div class="mc-status">🔒</div><h3>Integrating with MBTP</h3><p>Bridging phonics and literacy-based learning</p></div>
+      </div>
+      <div class="callout"><strong>Checkpoint rule:</strong> Each module ends with a 4-question quiz. Score 80%+ (3 of 4 correct) to unlock the next module. Unlimited retakes — no penalty.</div>
+    </div>
+
+    <!-- MODULE 1 -->
+    <div class="screen" id="screen-m1">
+      <div class="lsn-header">
+        <div class="lsn-tag">✦ Module 1 of 5</div>
+        <h2>What Is Lexia Core5?</h2>
+        <div class="lsn-meta"><span>📖 ~12 min</span><span>✦ Quiz required</span></div>
+      </div>
+      <div class="lsn-body">
+        <h3>A Reading Program Built on Science</h3>
+        <p>Lexia Core5 is an adaptive, blended learning program designed to accelerate the development of fundamental literacy skills in PreK–5th grade students. Unlike a workbook or a set of leveled readers, Core5 adjusts to each student's performance in real time — giving them more practice on skills they haven't mastered and moving them forward when they're ready.</p>
+        <p>The program is built on the <strong>Science of Reading</strong> — a body of research showing that reading is not a natural process but a skill that must be explicitly taught through systematic, structured phonics instruction. Core5 delivers this instruction through interactive, game-like activities that keep young learners engaged while targeting the underlying skills that make fluent reading possible.</p>
+
+        <h3>What Core5 Teaches</h3>
+        <div class="info-grid">
+          <div class="ic"><div class="ic-label">Phonological Awareness</div><p>The ability to hear, identify, and manipulate sounds in spoken language — rhyming, syllables, blending, segmenting.</p></div>
+          <div class="ic"><div class="ic-label">Phonics & Word Study</div><p>The relationship between letters and sounds (phoneme-grapheme correspondence), decoding, and encoding.</p></div>
+          <div class="ic"><div class="ic-label">Structural Analysis</div><p>Prefixes, suffixes, roots, and compound words — building vocabulary through word parts.</p></div>
+          <div class="ic"><div class="ic-label">Fluency</div><p>Reading accurately and automatically so cognitive resources are freed for comprehension.</p></div>
+          <div class="ic"><div class="ic-label">Vocabulary</div><p>Word meanings, context clues, and academic language needed for reading comprehension.</p></div>
+          <div class="ic"><div class="ic-label">Comprehension</div><p>Strategies for understanding, analyzing, and responding to text.</p></div>
+        </div>
+
+        <h3>Why Core5 and MBTP Work Together</h3>
+        <p>MBTP is a literature-rich curriculum — it builds comprehension, vocabulary, and love of reading through real books and projects. But it does not teach phonics or decoding. Core5 fills exactly that gap: it provides the structured, systematic phonics instruction that MBTP assumes learners already have.</p>
+        <div class="callout"><strong>Think of it this way:</strong> Core5 teaches learners HOW to decode words. MBTP gives them great books and ideas to decode those words with. Together, they build a complete reader.</div>
+      </div>
+      <div class="quiz-section">
+        <div class="quiz-hdr"><div class="quiz-ico">✏️</div><div><h3>Module 1 Checkpoint</h3><p>Score 3 of 4 correct (75%+) to unlock Module 2</p></div></div>
+        <div id="quiz-m1">
+          <div class="qq" id="m1q1"><div class="qq-num">Q1 of 4</div><div class="qq-text">What type of learning approach does Lexia Core5 use to adjust to each student's needs?</div><div class="qq-opts">
+            <div class="opt" onclick="sel(this,'m1q1',false)"><div class="opt-dot"></div>Fixed-level instruction where all students follow the same path</div>
+            <div class="opt" onclick="sel(this,'m1q1',true)"><div class="opt-dot"></div>Adaptive learning that adjusts in real time based on each student's performance</div>
+            <div class="opt" onclick="sel(this,'m1q1',false)"><div class="opt-dot"></div>Teacher-directed whole group instruction with occasional digital review</div>
+            <div class="opt" onclick="sel(this,'m1q1',false)"><div class="opt-dot"></div>Peer-based collaborative reading circles</div>
+          </div><div class="qq-fb" id="fb-m1q1"></div></div>
+
+          <div class="qq" id="m1q2"><div class="qq-num">Q2 of 4</div><div class="qq-text">Which foundational skill does Core5 teach that MBTP does NOT cover?</div><div class="qq-opts">
+            <div class="opt" onclick="sel(this,'m1q2',false)"><div class="opt-dot"></div>Reading comprehension of literary texts</div>
+            <div class="opt" onclick="sel(this,'m1q2',false)"><div class="opt-dot"></div>Vocabulary development through context</div>
+            <div class="opt" onclick="sel(this,'m1q2',true)"><div class="opt-dot"></div>Systematic phonics and decoding instruction</div>
+            <div class="opt" onclick="sel(this,'m1q2',false)"><div class="opt-dot"></div>Creative writing and story construction</div>
+          </div><div class="qq-fb" id="fb-m1q2"></div></div>
+
+          <div class="qq" id="m1q3"><div class="qq-num">Q3 of 4</div><div class="qq-text">What is Phonological Awareness?</div><div class="qq-opts">
+            <div class="opt" onclick="sel(this,'m1q3',false)"><div class="opt-dot"></div>The ability to recognize sight words on a page</div>
+            <div class="opt" onclick="sel(this,'m1q3',true)"><div class="opt-dot"></div>The ability to hear, identify, and manipulate sounds in spoken language</div>
+            <div class="opt" onclick="sel(this,'m1q3',false)"><div class="opt-dot"></div>Understanding the meaning of prefixes and suffixes</div>
+            <div class="opt" onclick="sel(this,'m1q3',false)"><div class="opt-dot"></div>Reading fluently at grade level without errors</div>
+          </div><div class="qq-fb" id="fb-m1q3"></div></div>
+
+          <div class="qq" id="m1q4"><div class="qq-num">Q4 of 4</div><div class="qq-text">The Science of Reading tells us that reading is:</div><div class="qq-opts">
+            <div class="opt" onclick="sel(this,'m1q4',false)"><div class="opt-dot"></div>A natural process children develop on their own given enough exposure to books</div>
+            <div class="opt" onclick="sel(this,'m1q4',true)"><div class="opt-dot"></div>A skill that must be explicitly taught through systematic, structured phonics instruction</div>
+            <div class="opt" onclick="sel(this,'m1q4',false)"><div class="opt-dot"></div>Primarily a visual memory task involving sight word recognition</div>
+            <div class="opt" onclick="sel(this,'m1q4',false)"><div class="opt-dot"></div>A talent that some children have and others do not</div>
+          </div><div class="qq-fb" id="fb-m1q4"></div></div>
+        </div>
+        <div id="result-m1" class="quiz-result"><div class="res-score" id="score-m1"></div><div class="res-msg" id="msg-m1"></div><div class="res-sub" id="sub-m1"></div><button class="btn btn-success btn-lg" id="next-m1" onclick="unlock('m2')" style="display:none">Continue to Module 2 →</button><button class="btn btn-secondary" id="retry-m1" onclick="retry('m1')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:20px;display:flex;justify-content:flex-end;"><button class="btn btn-primary" id="submit-m1" onclick="submit('m1',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="lsn-nav"><button class="btn btn-secondary" onclick="showScreen('welcome')">← Home</button></div>
+    </div>
+
+    <!-- MODULE 2 -->
+    <div class="screen" id="screen-m2">
+      <div class="lsn-header">
+        <div class="lsn-tag">✦ Module 2 of 5</div>
+        <h2>How Core5 Works</h2>
+        <div class="lsn-meta"><span>📖 ~12 min</span><span>✦ Quiz required</span></div>
+      </div>
+      <div class="lsn-body">
+        <h3>The Adaptive Engine</h3>
+        <p>When a student opens Core5, the program immediately begins assessing where they are. It starts at their identified level and continuously adjusts — serving harder content when they succeed and looping back when they struggle. No two students follow the same exact path through the program.</p>
+        <p>Each session is made up of <strong>activities</strong> that target specific skills in sequence. When a student completes activities in a skill area at or above the success threshold, they advance. If they fall below it, Core5 provides additional practice before moving on.</p>
+
+        <h3>The Six Skill Areas in Order</h3>
+        <div class="steps">
+          <div class="step"><div class="sn">1</div><div class="sc"><h4>Phonological Awareness</h4><p>Hearing and manipulating sounds — rhyme, syllables, phonemes. Foundation of all reading.</p></div></div>
+          <div class="step"><div class="sn">2</div><div class="sc"><h4>Phonics & Word Study</h4><p>Letter-sound relationships, decoding patterns, encoding. The core of explicit reading instruction.</p></div></div>
+          <div class="step"><div class="sn">3</div><div class="sc"><h4>Structural Analysis</h4><p>Word parts — prefixes, suffixes, roots — to build decoding of multi-syllabic words.</p></div></div>
+          <div class="step"><div class="sn">4</div><div class="sc"><h4>Fluency</h4><p>Accuracy and automaticity so reading doesn't require effortful decoding of every word.</p></div></div>
+          <div class="step"><div class="sn">5</div><div class="sc"><h4>Vocabulary</h4><p>Word meanings, context, academic language. Bridges decoding and comprehension.</p></div></div>
+          <div class="step"><div class="sn">6</div><div class="sc"><h4>Comprehension</h4><p>Making meaning from text — inference, main idea, text structure.</p></div></div>
+        </div>
+
+        <h3>Session Length & Frequency</h3>
+        <table class="cmp-table">
+          <tr><th>Age Group</th><th>Recommended Session Length</th><th>Frequency</th></tr>
+          <tr><td>PreK – K (Ages 4–6)</td><td>15–20 minutes</td><td>3–5 days per week</td></tr>
+          <tr><td>Grades 1–2 (Ages 6–8)</td><td>20–30 minutes</td><td>4–5 days per week</td></tr>
+          <tr><td>Grades 3–5 (Ages 8–11)</td><td>30–45 minutes</td><td>3–5 days per week</td></tr>
+        </table>
+
+        <div class="callout"><strong>Key rule:</strong> Consistency matters more than session length. A learner who uses Core5 3–5 times per week consistently will progress far more than one who uses it for long stretches infrequently.</div>
+
+        <h3>What "On Grade Level" Means in Core5</h3>
+        <p>Core5 uses a benchmark system to identify whether a student is on track, slightly behind, or at risk. The program automatically flags students who are falling behind their expected pace. As a guide, your job is to check these flags regularly and use them to inform how you support the learner outside of their Core5 sessions.</p>
+      </div>
+      <div class="quiz-section">
+        <div class="quiz-hdr"><div class="quiz-ico">✏️</div><div><h3>Module 2 Checkpoint</h3><p>Score 3 of 4 correct to unlock Module 3</p></div></div>
+        <div id="quiz-m2">
+          <div class="qq" id="m2q1"><div class="qq-num">Q1 of 4</div><div class="qq-text">What makes Core5 "adaptive"?</div><div class="qq-opts">
+            <div class="opt" onclick="sel(this,'m2q1',false)"><div class="opt-dot"></div>A teacher manually assigns new levels each week</div>
+            <div class="opt" onclick="sel(this,'m2q1',true)"><div class="opt-dot"></div>It adjusts content in real time based on each student's ongoing performance</div>
+            <div class="opt" onclick="sel(this,'m2q1',false)"><div class="opt-dot"></div>Students choose their own activities from a menu</div>
+            <div class="opt" onclick="sel(this,'m2q1',false)"><div class="opt-dot"></div>Parents set difficulty levels through the family portal</div>
+          </div><div class="qq-fb" id="fb-m2q1"></div></div>
+
+          <div class="qq" id="m2q2"><div class="qq-num">Q2 of 4</div><div class="qq-text">Which skill area comes FIRST in Core5's sequence?</div><div class="qq-opts">
+            <div class="opt" onclick="sel(this,'m2q2',false)"><div class="opt-dot"></div>Fluency</div>
+            <div class="opt" onclick="sel(this,'m2q2',false)"><div class="opt-dot"></div>Vocabulary</div>
+            <div class="opt" onclick="sel(this,'m2q2',true)"><div class="opt-dot"></div>Phonological Awareness</div>
+            <div class="opt" onclick="sel(this,'m2q2',false)"><div class="opt-dot"></div>Comprehension</div>
+          </div><div class="qq-fb" id="fb-m2q2"></div></div>
+
+          <div class="qq" id="m2q3"><div class="qq-num">Q3 of 4</div><div class="qq-text">For a Grade 1 student, what is the recommended Core5 session length?</div><div class="qq-opts">
+            <div class="opt" onclick="sel(this,'m2q3',false)"><div class="opt-dot"></div>10–15 minutes</div>
+            <div class="opt" onclick="sel(this,'m2q3',true)"><div class="opt-dot"></div>20–30 minutes</div>
+            <div class="opt" onclick="sel(this,'m2q3',false)"><div class="opt-dot"></div>45–60 minutes</div>
+            <div class="opt" onclick="sel(this,'m2q3',false)"><div class="opt-dot"></div>As long as the student wants to continue</div>
+          </div><div class="qq-fb" id="fb-m2q3"></div></div>
+
+          <div class="qq" id="m2q4"><div class="qq-num">Q4 of 4</div><div class="qq-text">What matters most for Core5 progress?</div><div class="qq-opts">
+            <div class="opt" onclick="sel(this,'m2q4',false)"><div class="opt-dot"></div>Having the longest possible daily sessions</div>
+            <div class="opt" onclick="sel(this,'m2q4',true)"><div class="opt-dot"></div>Consistent use 3–5 days per week</div>
+            <div class="opt" onclick="sel(this,'m2q4',false)"><div class="opt-dot"></div>Completing all six skill areas in a single week</div>
+            <div class="opt" onclick="sel(this,'m2q4',false)"><div class="opt-dot"></div>Scoring 100% on every activity before moving on</div>
+          </div><div class="qq-fb" id="fb-m2q4"></div></div>
+        </div>
+        <div id="result-m2" class="quiz-result"><div class="res-score" id="score-m2"></div><div class="res-msg" id="msg-m2"></div><div class="res-sub" id="sub-m2"></div><button class="btn btn-success btn-lg" id="next-m2" onclick="unlock('m3')" style="display:none">Continue to Module 3 →</button><button class="btn btn-secondary" id="retry-m2" onclick="retry('m2')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:20px;display:flex;justify-content:flex-end;"><button class="btn btn-primary" id="submit-m2" onclick="submit('m2',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="lsn-nav"><button class="btn btn-secondary" onclick="showScreen('m1')">← Module 1</button></div>
+    </div>
+
+    <!-- MODULE 3 -->
+    <div class="screen" id="screen-m3">
+      <div class="lsn-header">
+        <div class="lsn-tag">✦ Module 3 of 5</div>
+        <h2>Reading the Data</h2>
+        <div class="lsn-meta"><span>📖 ~12 min</span><span>✦ Quiz required</span></div>
+      </div>
+      <div class="lsn-body">
+        <h3>Your Most Important Habit: Check the Reports</h3>
+        <p>Core5 generates detailed progress data for every student. As a learning guide, your job is to look at this data regularly — ideally after every session — so you know exactly where each learner is, what they're struggling with, and whether they're on pace.</p>
+
+        <h3>Key Reports to Know</h3>
+        <div class="steps">
+          <div class="step"><div class="sn">1</div><div class="sc"><h4>Student Progress Report</h4><p>Shows which skill areas the student has completed, is working on, and hasn't started. Color-coded: green = on track, yellow = monitor, red = at risk. Check this weekly.</p></div></div>
+          <div class="step"><div class="sn">2</div><div class="sc"><h4>Usage Report</h4><p>Tracks time-on-task. Shows minutes used per day and week. A student who isn't logging enough minutes won't progress regardless of quality. Target: recommended minutes per session × days per week.</p></div></div>
+          <div class="step"><div class="sn">3</div><div class="sc"><h4>Skill Alert Report</h4><p>Flags specific skills where a student is struggling or has stalled. These are your intervention priorities. When you see a skill alert, that skill needs additional support OUTSIDE of Core5 — through direct instruction from you.</p></div></div>
+          <div class="step"><div class="sn">4</div><div class="sc"><h4>Benchmark Performance</h4><p>Compares student performance to grade-level expectations. Shows if the student is on track to meet end-of-year benchmarks. Use this for parent reporting and planning.</p></div></div>
+        </div>
+
+        <h3>The 80% Rule</h3>
+        <p>In the HLPP system, any skill area where a student scores below 80% should be treated as a priority intervention area. This means:</p>
+        <div class="hl-box">
+          <h4>When you see below 80% in a skill area</h4>
+          <ul>
+            <li>Flag it in your end-of-day planning notes</li>
+            <li>Plan a brief 5–10 minute direct instruction activity on that skill in the next session</li>
+            <li>Use the skill name to search for reinforcement activities (flashcards, games, decodable texts)</li>
+            <li>Document the skill and your plan in the parent report</li>
+            <li>Continue Core5 sessions as normal — the program will also re-target this skill</li>
+          </ul>
+        </div>
+
+        <table class="cmp-table">
+          <tr><th>Score Range</th><th>Status</th><th>Guide Action</th></tr>
+          <tr><td>90–100%</td><td>Mastered</td><td>Move forward, celebrate progress with learner</td></tr>
+          <tr><td>80–89%</td><td>On Track</td><td>Continue current approach, monitor</td></tr>
+          <tr><td>70–79%</td><td>Monitor</td><td>Add light reinforcement outside Core5</td></tr>
+          <tr><td>Below 70%</td><td>Intervention Needed</td><td>Direct instruction + note in parent report</td></tr>
+        </table>
+      </div>
+      <div class="quiz-section">
+        <div class="quiz-hdr"><div class="quiz-ico">✏️</div><div><h3>Module 3 Checkpoint</h3><p>Score 3 of 4 correct to unlock Module 4</p></div></div>
+        <div id="quiz-m3">
+          <div class="qq" id="m3q1"><div class="qq-num">Q1 of 4</div><div class="qq-text">What does a "Skill Alert" in Core5 indicate?</div><div class="qq-opts">
+            <div class="opt" onclick="sel(this,'m3q1',false)"><div class="opt-dot"></div>The student has mastered that skill and is ready to advance</div>
+            <div class="opt" onclick="sel(this,'m3q1',true)"><div class="opt-dot"></div>The student is struggling or stalled in that skill and needs additional support</div>
+            <div class="opt" onclick="sel(this,'m3q1',false)"><div class="opt-dot"></div>The student's session time has run out</div>
+            <div class="opt" onclick="sel(this,'m3q1',false)"><div class="opt-dot"></div>A new skill area has been unlocked</div>
+          </div><div class="qq-fb" id="fb-m3q1"></div></div>
+
+          <div class="qq" id="m3q2"><div class="qq-num">Q2 of 4</div><div class="qq-text">Under the 80% rule, what should a guide do when a skill area score falls below 80%?</div><div class="qq-opts">
+            <div class="opt" onclick="sel(this,'m3q2',false)"><div class="opt-dot"></div>Stop Core5 sessions until the score improves</div>
+            <div class="opt" onclick="sel(this,'m3q2',false)"><div class="opt-dot"></div>Contact Lexia customer support immediately</div>
+            <div class="opt" onclick="sel(this,'m3q2',true)"><div class="opt-dot"></div>Flag it, plan a direct instruction activity on that skill, and document it in the parent report</div>
+            <div class="opt" onclick="sel(this,'m3q2',false)"><div class="opt-dot"></div>Move to a different reading program for that skill area</div>
+          </div><div class="qq-fb" id="fb-m3q2"></div></div>
+
+          <div class="qq" id="m3q3"><div class="qq-num">Q3 of 4</div><div class="qq-text">Which report tells you whether a student is spending enough time on Core5?</div><div class="qq-opts">
+            <div class="opt" onclick="sel(this,'m3q3',false)"><div class="opt-dot"></div>Skill Alert Report</div>
+            <div class="opt" onclick="sel(this,'m3q3',false)"><div class="opt-dot"></div>Benchmark Performance</div>
+            <div class="opt" onclick="sel(this,'m3q3',true)"><div class="opt-dot"></div>Usage Report</div>
+            <div class="opt" onclick="sel(this,'m3q3',false)"><div class="opt-dot"></div>Student Progress Report</div>
+          </div><div class="qq-fb" id="fb-m3q3"></div></div>
+
+          <div class="qq" id="m3q4"><div class="qq-num">Q4 of 4</div><div class="qq-text">What score range indicates a skill is "On Track" in Core5?</div><div class="qq-opts">
+            <div class="opt" onclick="sel(this,'m3q4',false)"><div class="opt-dot"></div>70–79%</div>
+            <div class="opt" onclick="sel(this,'m3q4',true)"><div class="opt-dot"></div>80–89%</div>
+            <div class="opt" onclick="sel(this,'m3q4',false)"><div class="opt-dot"></div>Below 70%</div>
+            <div class="opt" onclick="sel(this,'m3q4',false)"><div class="opt-dot"></div>50–65%</div>
+          </div><div class="qq-fb" id="fb-m3q4"></div></div>
+        </div>
+        <div id="result-m3" class="quiz-result"><div class="res-score" id="score-m3"></div><div class="res-msg" id="msg-m3"></div><div class="res-sub" id="sub-m3"></div><button class="btn btn-success btn-lg" id="next-m3" onclick="unlock('m4')" style="display:none">Continue to Module 4 →</button><button class="btn btn-secondary" id="retry-m3" onclick="retry('m3')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:20px;display:flex;justify-content:flex-end;"><button class="btn btn-primary" id="submit-m3" onclick="submit('m3',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="lsn-nav"><button class="btn btn-secondary" onclick="showScreen('m2')">← Module 2</button></div>
+    </div>
+
+    <!-- MODULE 4 -->
+    <div class="screen" id="screen-m4">
+      <div class="lsn-header">
+        <div class="lsn-tag">✦ Module 4 of 5</div>
+        <h2>Your Role as Learning Guide</h2>
+        <div class="lsn-meta"><span>📖 ~10 min</span><span>✦ Quiz required</span></div>
+      </div>
+      <div class="lsn-body">
+        <h3>What Core5 Does — And What It Can't</h3>
+        <p>Core5 is exceptionally good at delivering individualized practice, tracking progress, and flagging skill gaps. What it cannot do is notice that a learner is frustrated, tired, or needs a human moment of encouragement. That's your job.</p>
+
+        <h3>During a Core5 Session</h3>
+        <div class="steps">
+          <div class="step"><div class="sn">1</div><div class="sc"><h4>Set up the learner and step back</h4><p>Core5 works best with minimal interruption. Once the student is logged in and working, resist the urge to intervene — let the program do its job.</p></div></div>
+          <div class="step"><div class="sn">2</div><div class="sc"><h4>Observe without interfering</h4><p>Watch for signs of frustration, confusion, or disengagement. If a student has been stuck on the same activity for more than 5 minutes, that's your cue to gently check in.</p></div></div>
+          <div class="step"><div class="sn">3</div><div class="sc"><h4>Encourage — don't help answer</h4><p>If a learner asks you for the answer to a Core5 activity, redirect: "Try your best — the program learns from your answers, even the ones you're not sure about."</p></div></div>
+          <div class="step"><div class="sn">4</div><div class="sc"><h4>Note what you observe</h4><p>Which activities caused visible struggle? Which produced obvious success? These observations supplement the data and belong in your end-of-day notes.</p></div></div>
+        </div>
+
+        <h3>After a Core5 Session</h3>
+        <p>Immediately after the session, check the progress report. Note any skill alerts. Plan one reinforcement activity for the next session targeting the weakest area. Document minutes used.</p>
+
+        <div class="callout"><strong>The guide's most important habit:</strong> Pull up the Core5 report every single session — not once a week. Progress data is only useful if you look at it while it's still actionable.</div>
+
+        <h3>When to Intervene Directly</h3>
+        <table class="cmp-table">
+          <tr><th>Situation</th><th>Guide Response</th></tr>
+          <tr><td>Student has been on same activity 3+ sessions</td><td>Provide direct 5-min phonics instruction on that skill before the next Core5 session</td></tr>
+          <tr><td>Student score drops below 70% in a skill</td><td>Pause, teach the skill directly, then return to Core5 the next session</td></tr>
+          <tr><td>Student is frustrated or crying</td><td>Close the laptop, take a break, revisit the activity with verbal support first</td></tr>
+          <tr><td>Student is rushing through activities carelessly</td><td>Establish a pace expectation: "We take our time and think carefully on each one."</td></tr>
+        </table>
+      </div>
+      <div class="quiz-section">
+        <div class="quiz-hdr"><div class="quiz-ico">✏️</div><div><h3>Module 4 Checkpoint</h3><p>Score 3 of 4 correct to unlock the final module</p></div></div>
+        <div id="quiz-m4">
+          <div class="qq" id="m4q1"><div class="qq-num">Q1 of 4</div><div class="qq-text">What should a guide do if a learner asks for the answer to a Core5 activity?</div><div class="qq-opts">
+            <div class="opt" onclick="sel(this,'m4q1',false)"><div class="opt-dot"></div>Whisper the correct answer so the program doesn't notice</div>
+            <div class="opt" onclick="sel(this,'m4q1',true)"><div class="opt-dot"></div>Redirect: "Try your best — the program learns from all your answers."</div>
+            <div class="opt" onclick="sel(this,'m4q1',false)"><div class="opt-dot"></div>Skip the activity and move to the next one</div>
+            <div class="opt" onclick="sel(this,'m4q1',false)"><div class="opt-dot"></div>Stop the session and reteach the skill immediately</div>
+          </div><div class="qq-fb" id="fb-m4q1"></div></div>
+
+          <div class="qq" id="m4q2"><div class="qq-num">Q2 of 4</div><div class="qq-text">When should a guide check the Core5 progress report?</div><div class="qq-opts">
+            <div class="opt" onclick="sel(this,'m4q2',false)"><div class="opt-dot"></div>Once a month during parent meetings</div>
+            <div class="opt" onclick="sel(this,'m4q2',false)"><div class="opt-dot"></div>Once a week on Fridays</div>
+            <div class="opt" onclick="sel(this,'m4q2',true)"><div class="opt-dot"></div>Every session — immediately after the student finishes</div>
+            <div class="opt" onclick="sel(this,'m4q2',false)"><div class="opt-dot"></div>Only when a parent asks for a progress update</div>
+          </div><div class="qq-fb" id="fb-m4q2"></div></div>
+
+          <div class="qq" id="m4q3"><div class="qq-num">Q3 of 4</div><div class="qq-text">A student has been stuck on the same Core5 activity for 3 sessions in a row. What is the best response?</div><div class="qq-opts">
+            <div class="opt" onclick="sel(this,'m4q3',false)"><div class="opt-dot"></div>Ask Core5 support to reset the student's account</div>
+            <div class="opt" onclick="sel(this,'m4q3',false)"><div class="opt-dot"></div>Remove Core5 from the schedule until the student is more ready</div>
+            <div class="opt" onclick="sel(this,'m4q3',true)"><div class="opt-dot"></div>Provide 5 minutes of direct phonics instruction on that skill before the next session</div>
+            <div class="opt" onclick="sel(this,'m4q3',false)"><div class="opt-dot"></div>Let Core5 handle it — the program will self-correct eventually</div>
+          </div><div class="qq-fb" id="fb-m4q3"></div></div>
+
+          <div class="qq" id="m4q4"><div class="qq-num">Q4 of 4</div><div class="qq-text">What should a guide observe during a Core5 session?</div><div class="qq-opts">
+            <div class="opt" onclick="sel(this,'m4q4',false)"><div class="opt-dot"></div>Nothing — Core5 is fully independent and requires no observation</div>
+            <div class="opt" onclick="sel(this,'m4q4',true)"><div class="opt-dot"></div>Signs of frustration, confusion, or disengagement — and note which activities caused them</div>
+            <div class="opt" onclick="sel(this,'m4q4',false)"><div class="opt-dot"></div>How fast the student clicks through activities</div>
+            <div class="opt" onclick="sel(this,'m4q4',false)"><div class="opt-dot"></div>Whether the student is enjoying the game animations</div>
+          </div><div class="qq-fb" id="fb-m4q4"></div></div>
+        </div>
+        <div id="result-m4" class="quiz-result"><div class="res-score" id="score-m4"></div><div class="res-msg" id="msg-m4"></div><div class="res-sub" id="sub-m4"></div><button class="btn btn-success btn-lg" id="next-m4" onclick="unlock('m5')" style="display:none">Continue to Module 5 →</button><button class="btn btn-secondary" id="retry-m4" onclick="retry('m4')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:20px;display:flex;justify-content:flex-end;"><button class="btn btn-primary" id="submit-m4" onclick="submit('m4',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="lsn-nav"><button class="btn btn-secondary" onclick="showScreen('m3')">← Module 3</button></div>
+    </div>
+
+    <!-- MODULE 5 -->
+    <div class="screen" id="screen-m5">
+      <div class="lsn-header">
+        <div class="lsn-tag">✦ Module 5 of 5</div>
+        <h2>Integrating Core5 with MBTP</h2>
+        <div class="lsn-meta"><span>📖 ~10 min</span><span>✦ Final quiz</span></div>
+      </div>
+      <div class="lsn-body">
+        <h3>Two Programs, One Complete Reader</h3>
+        <p>Core5 and MBTP address different but complementary aspects of literacy. Understanding how they work together — and how to bridge them — is what makes your instruction cohesive rather than fragmented.</p>
+
+        <table class="cmp-table">
+          <tr><th>Core5</th><th>MBTP Language Arts</th></tr>
+          <tr><td>Phonics, decoding, phonological awareness</td><td>Comprehension, literary analysis, writing</td></tr>
+          <tr><td>Adaptive, individual digital practice</td><td>Guide-led, literature-based, discussion-driven</td></tr>
+          <tr><td>Systematic skill progression</td><td>Concept-based thematic units</td></tr>
+          <tr><td>Data-driven, reports every session</td><td>Project-assessed, rubric-based</td></tr>
+          <tr><td>20–45 min daily</td><td>45–90 min daily</td></tr>
+        </table>
+
+        <h3>How to Bridge Them in Practice</h3>
+        <div class="steps">
+          <div class="step"><div class="sn">1</div><div class="sc"><h4>Schedule Core5 before MBTP Language Arts</h4><p>Doing decoding practice first warms up the brain for the higher-level reading and analysis work in MBTP.</p></div></div>
+          <div class="step"><div class="sn">2</div><div class="sc"><h4>Use Core5 vocabulary in MBTP discussions</h4><p>When Core5 teaches a new word pattern or root, look for that pattern in the MBTP book the learner is reading. Point it out: "Remember the '-tion' ending from Core5? There it is in your book."</p></div></div>
+          <div class="step"><div class="sn">3</div><div class="sc"><h4>Let Core5 struggles inform your MBTP scaffolding</h4><p>If Core5 flags a learner struggling with vowel teams, pre-teach words with those patterns before the MBTP reading session that week.</p></div></div>
+          <div class="step"><div class="sn">4</div><div class="sc"><h4>Document both in your daily log</h4><p>Your end-of-day record should capture Core5 minutes, skill alerts, and MBTP progress together so you can see the full picture of a learner's literacy development.</p></div></div>
+        </div>
+
+        <div class="callout"><strong>The bridge moment:</strong> After each Core5 session, spend 2 minutes pointing out one thing the learner just practiced in Core5 that they'll also see in today's MBTP book. This explicit connection accelerates transfer from decoding skill to real reading.</div>
+      </div>
+      <div class="quiz-section">
+        <div class="quiz-hdr"><div class="quiz-ico">🏆</div><div><h3>Final Checkpoint — Module 5</h3><p>Score 3 of 4 correct to complete the course</p></div></div>
+        <div id="quiz-m5">
+          <div class="qq" id="m5q1"><div class="qq-num">Q1 of 4</div><div class="qq-text">Which skill does Core5 cover that MBTP Language Arts does NOT?</div><div class="qq-opts">
+            <div class="opt" onclick="sel(this,'m5q1',false)"><div class="opt-dot"></div>Literary comprehension and analysis</div>
+            <div class="opt" onclick="sel(this,'m5q1',true)"><div class="opt-dot"></div>Systematic phonics and decoding instruction</div>
+            <div class="opt" onclick="sel(this,'m5q1',false)"><div class="opt-dot"></div>Creative writing and storytelling</div>
+            <div class="opt" onclick="sel(this,'m5q1',false)"><div class="opt-dot"></div>Science and Social Studies integration</div>
+          </div><div class="qq-fb" id="fb-m5q1"></div></div>
+
+          <div class="qq" id="m5q2"><div class="qq-num">Q2 of 4</div><div class="qq-text">Why is it recommended to schedule Core5 BEFORE MBTP Language Arts?</div><div class="qq-opts">
+            <div class="opt" onclick="sel(this,'m5q2',false)"><div class="opt-dot"></div>Core5 takes longer and should be done first to save time</div>
+            <div class="opt" onclick="sel(this,'m5q2',true)"><div class="opt-dot"></div>Decoding practice warms up the brain for higher-level reading and analysis work</div>
+            <div class="opt" onclick="sel(this,'m5q2',false)"><div class="opt-dot"></div>MBTP requires Core5 scores before lessons can begin</div>
+            <div class="opt" onclick="sel(this,'m5q2',false)"><div class="opt-dot"></div>Core5 must be completed while the learner is fresh and energized</div>
+          </div><div class="qq-fb" id="fb-m5q2"></div></div>
+
+          <div class="qq" id="m5q3"><div class="qq-num">Q3 of 4</div><div class="qq-text">A student struggles with vowel teams in Core5. How should this inform the MBTP session?</div><div class="qq-opts">
+            <div class="opt" onclick="sel(this,'m5q3',false)"><div class="opt-dot"></div>Skip the MBTP reading session until Core5 is mastered</div>
+            <div class="opt" onclick="sel(this,'m5q3',true)"><div class="opt-dot"></div>Pre-teach vowel team words before the MBTP reading session that week</div>
+            <div class="opt" onclick="sel(this,'m5q3',false)"><div class="opt-dot"></div>Use a different MBTP unit with fewer vowel team words</div>
+            <div class="opt" onclick="sel(this,'m5q3',false)"><div class="opt-dot"></div>Have the learner re-do the Core5 session twice in one day</div>
+          </div><div class="qq-fb" id="fb-m5q3"></div></div>
+
+          <div class="qq" id="m5q4"><div class="qq-num">Q4 of 4</div><div class="qq-text">What is "the bridge moment" described in this module?</div><div class="qq-opts">
+            <div class="opt" onclick="sel(this,'m5q4',false)"><div class="opt-dot"></div>The transition period between Core5 and MBTP where a learner takes a break</div>
+            <div class="opt" onclick="sel(this,'m5q4',true)"><div class="opt-dot"></div>After Core5, spending 2 minutes pointing out something from Core5 that the learner will see in their MBTP book</div>
+            <div class="opt" onclick="sel(this,'m5q4',false)"><div class="opt-dot"></div>A weekly review session where both programs are assessed together</div>
+            <div class="opt" onclick="sel(this,'m5q4',false)"><div class="opt-dot"></div>The moment a learner graduates from Core5 to MBTP-only instruction</div>
+          </div><div class="qq-fb" id="fb-m5q4"></div></div>
+        </div>
+        <div id="result-m5" class="quiz-result"><div class="res-score" id="score-m5"></div><div class="res-msg" id="msg-m5"></div><div class="res-sub" id="sub-m5"></div><button class="btn btn-success btn-lg" id="next-m5" onclick="unlock('complete')" style="display:none">🎉 Complete Course →</button><button class="btn btn-secondary" id="retry-m5" onclick="retry('m5')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:20px;display:flex;justify-content:flex-end;"><button class="btn btn-primary" id="submit-m5" onclick="submit('m5',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="lsn-nav"><button class="btn btn-secondary" onclick="showScreen('m4')">← Module 4</button></div>
+    </div>
+
+    <!-- COMPLETE -->
+    <div class="screen" id="screen-complete">
+      <div class="complete-wrap">
+        <div class="complete-badge">📖</div>
+        <h2>Course Complete!</h2>
+        <p>You've passed all 5 modules and are ready to use Lexia Core5 effectively alongside MBTP in your learning guide sessions.</p>
+        <div class="cert-chips">
+          <div class="chip">✓ What Is Core5?</div>
+          <div class="chip">✓ How Core5 Works</div>
+          <div class="chip">✓ Reading the Data</div>
+          <div class="chip">✓ Your Role as Guide</div>
+          <div class="chip">✓ Integration with MBTP</div>
+        </div>
+        <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-primary btn-lg" onclick="showScreen('welcome')">← Back to Home</button>
+          <button class="btn btn-secondary btn-lg" onclick="window.print()">🖨 Print Certificate</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="t-icon">🔒</span><span id="t-msg"></span></div>
+
+<script>
+const MODS=['m1','m2','m3','m4','m5'];
+const state={unlocked:new Set(['welcome','m1']),completed:new Set(),answers:{},submitted:new Set()};
+const NAMES={welcome:'Course Home',m1:'Module 1',m2:'Module 2',m3:'Module 3',m4:'Module 4',m5:'Module 5',complete:'Certificate'};
+const ICONS=['🔍','📊','📈','🎯','🔗'];
+
+function tryNav(id){if(!state.unlocked.has(id)){toast('🔒','Complete the previous quiz to unlock this module.','locked-msg');return;}showScreen(id);}
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const nav=document.getElementById('nav-'+id);if(nav)nav.classList.add('active');
+  document.getElementById('tb-cur').textContent=NAMES[id]||id;
+  updateUI();window.scrollTo(0,0);
+}
+function unlock(next){state.unlocked.add(next);updateUI();showScreen(next);}
+function updateUI(){
+  MODS.forEach((m,i)=>{
+    const nav=document.getElementById('nav-'+m);
+    const card=document.getElementById('card-'+m);
+    if(!nav)return;
+    nav.classList.remove('locked','completed');
+    if(state.completed.has(m)){
+      nav.classList.add('completed');
+      nav.querySelector('.nav-icon').textContent='✓';
+      nav.querySelector('.nb').textContent='✓';
+      if(card){card.classList.remove('locked');card.classList.add('completed');card.querySelector('.mc-status').textContent='✓';}
+    } else if(!state.unlocked.has(m)){
+      nav.classList.add('locked');
+      nav.querySelector('.nav-icon').textContent='🔒';
+      if(card){card.classList.add('locked');card.querySelector('.mc-status').textContent='🔒';}
+    } else {
+      nav.querySelector('.nav-icon').textContent=ICONS[i];
+      if(card){card.classList.remove('locked','completed');card.querySelector('.mc-status').textContent='→';}
+    }
+  });
+  const cn=document.getElementById('nav-complete');
+  if(state.unlocked.has('complete')){cn.classList.remove('locked');cn.querySelector('.nav-icon').textContent='🏆';}
+  const done=state.completed.size,pct=Math.round(done/MODS.length*100);
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-text').textContent=pct+'%';
+}
+function sel(el,qid,correct){
+  if(state.submitted.has(qid.slice(0,2)))return;
+  el.closest('.qq-opts').querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  state.answers[qid]=correct;
+  const mod=qid.slice(0,2);
+  const qs=document.querySelectorAll('#quiz-'+mod+' .qq');
+  document.getElementById('submit-'+mod).disabled=![...qs].every(q=>state.answers[q.id]!==undefined);
+}
+function submit(mod,total){
+  if(state.submitted.has(mod))return;
+  state.submitted.add(mod);
+  let correct=0;
+  document.querySelectorAll('#quiz-'+mod+' .qq').forEach(q=>{
+    const ok=state.answers[q.id];
+    if(ok)correct++;
+    q.querySelectorAll('.opt').forEach(o=>{
+      o.classList.add('disabled');
+      const isCorrect=o.getAttribute('onclick')?.includes('true');
+      if(isCorrect)o.classList.add('correct-ans');
+      else if(o.classList.contains('selected'))o.classList.add('wrong-ans');
+    });
+    const fb=document.getElementById('fb-'+q.id);
+    if(ok){q.classList.add('correct');fb.textContent='✓ Correct!';fb.className='qq-fb show correct';}
+    else{q.classList.add('wrong');fb.textContent='✗ Not quite — the highlighted option is correct.';fb.className='qq-fb show wrong';}
+  });
+  const pct=Math.round(correct/total*100);
+  const passed=pct>=75;
+  const r=document.getElementById('result-'+mod);
+  r.classList.add('show',passed?'passed':'failed');
+  document.getElementById('score-'+mod).textContent=pct+'%';
+  document.getElementById('score-'+mod).className='res-score '+(passed?'pass':'fail');
+  document.getElementById('msg-'+mod).textContent=passed?'🎉 Passed!':'Not quite — try again';
+  document.getElementById('sub-'+mod).textContent=passed?`${correct} of ${total} correct — module complete!`:`${correct} of ${total} correct — need 3+ to pass.`;
+  document.getElementById('submit-'+mod).style.display='none';
+  if(passed){state.completed.add(mod);document.getElementById('next-'+mod).style.display='inline-flex';updateUI();toast('✓','Module complete!','success');}
+  else document.getElementById('retry-'+mod).style.display='inline-flex';
+}
+function retry(mod){
+  state.submitted.delete(mod);
+  Object.keys(state.answers).filter(k=>k.startsWith(mod)).forEach(k=>delete state.answers[k]);
+  document.querySelectorAll('#quiz-'+mod+' .qq').forEach(q=>{
+    q.classList.remove('correct','wrong');
+    q.querySelectorAll('.opt').forEach(o=>o.classList.remove('selected','correct-ans','wrong-ans','disabled'));
+    const fb=document.getElementById('fb-'+q.id);if(fb){fb.className='qq-fb';fb.textContent='';}
+  });
+  const r=document.getElementById('result-'+mod);r.classList.remove('show','passed','failed');
+  document.getElementById('retry-'+mod).style.display='none';
+  document.getElementById('next-'+mod).style.display='none';
+  const sb=document.getElementById('submit-'+mod);sb.style.display='inline-flex';sb.disabled=true;
+}
+let tt;function toast(icon,msg,type=''){const t=document.getElementById('toast');document.getElementById('t-icon').textContent=icon;document.getElementById('t-msg').textContent=msg;t.className='toast show '+type;clearTimeout(tt);tt=setTimeout(()=>t.className='toast',3200);}
+updateUI();
+</script>
+</body>
+</html>

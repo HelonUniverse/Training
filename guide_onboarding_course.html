@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning Guide Onboarding | Helon Universe</title>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --gold:#9B6A00;--gold2:#C8920A;--gold-l:#FEF9ED;--gold-m:#FCEAC2;
+  --forest:#2E5D4B;--forest-l:#E4F2ED;
+  --rust:#8B3E2F;--rust-l:#FAEAE7;
+  --ink:#1C1410;--ink2:#3D2E22;--gray:#6B5744;--muted:#A08C7A;
+  --bg:#FAF8F5;--card:#FFFFFF;--rule:#EDE6DC;--rule2:#F5F0EA;
+  --pass:#2E5D4B;--pass-l:#D4EDDA;
+  --fail:#8B3E2F;--fail-l:#FAEAE7;
+  --dark:#1C1410;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Lexend',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;}
+
+.sidebar{position:fixed;left:0;top:0;bottom:0;width:272px;background:var(--dark);display:flex;flex-direction:column;z-index:100;overflow-y:auto;}
+.sb-brand{padding:24px 20px 16px;border-bottom:1px solid rgba(255,255,255,.07);}
+.sb-logo{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.sb-ic{width:38px;height:38px;background:linear-gradient(135deg,#F47B20,#FDB913);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:19px;}
+.sb-brand h1{font-size:14px;font-weight:700;color:white;line-height:1.3;}
+.sb-brand span{font-size:10px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:#FDB913;}
+.sb-prog{padding:12px 20px;border-bottom:1px solid rgba(255,255,255,.05);}
+.sb-prog-top{display:flex;justify-content:space-between;font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:6px;}
+.sb-prog-top span{color:#FDB913;}
+.pb{height:3px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;}
+.pf{height:100%;background:linear-gradient(90deg,#F47B20,#FDB913);transition:width .6s ease;}
+.sb-sec{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.sb-sec-title{padding:5px 20px 7px;font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.2);}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 20px;cursor:pointer;transition:background .15s;position:relative;}
+.ni:hover{background:rgba(255,255,255,.05);}
+.ni.active{background:rgba(244,123,32,.2);}
+.ni.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#F47B20;}
+.ni.locked{opacity:.38;cursor:not-allowed;}
+.ni-ic{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;background:rgba(255,255,255,.07);}
+.ni.active .ni-ic{background:#F47B20;}
+.ni.completed .ni-ic{background:var(--forest);}
+.ni-t{font-size:12px;font-weight:600;color:rgba(255,255,255,.82);flex:1;line-height:1.3;}
+.ni.locked .ni-t{color:rgba(255,255,255,.28);}
+.ni-sub{font-size:10px;color:rgba(255,255,255,.28);margin-top:1px;}
+.nbadge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:8px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.3);}
+.ni.completed .nbadge{background:var(--forest);color:white;}
+
+.main{margin-left:272px;min-height:100vh;padding-bottom:80px;}
+.topbar{background:var(--card);border-bottom:1px solid var(--rule);padding:13px 42px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;}
+.tb-crumb{font-size:12px;color:var(--muted);}
+.tb-crumb .cur{color:var(--ink);font-weight:600;}
+.tb-badge{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;padding:4px 11px;border-radius:20px;background:#FEF3EA;color:#F47B20;border:1px solid #FDDBB8;}
+.content{max-width:800px;margin:0 auto;padding:42px 42px 0;}
+.screen{display:none;}
+.screen.active{display:block;animation:fu .3s ease;}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+.hero{background:linear-gradient(135deg,#2D2D2D 0%,#1A1A1A 100%);border-radius:18px;padding:50px 46px;margin-bottom:26px;position:relative;overflow:hidden;}
+.hero::before{content:'';position:absolute;top:-50px;right:-50px;width:250px;height:250px;background:radial-gradient(circle,rgba(253,185,19,.15) 0%,transparent 70%);}
+.hero-tag{display:inline-block;font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--gold2);margin-bottom:12px;}
+.hero h2{font-family:'Playfair Display',serif;font-size:38px;line-height:1.2;color:white;margin-bottom:10px;}
+.hero h2 em{font-style:normal;color:#FDB913;}
+.hero p{font-size:15px;color:rgba(255,255,255,.6);line-height:1.7;max-width:480px;margin-bottom:26px;}
+.hero-stats{display:flex;gap:26px;margin-bottom:26px;}
+.hs-n{font-family:'Playfair Display',serif;font-size:30px;color:white;}
+.hs-l{font-size:11px;color:rgba(255,255,255,.38);text-transform:uppercase;letter-spacing:.07em;}
+.mod-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:26px;}
+.mc{background:var(--card);border-radius:13px;padding:17px;border:1px solid var(--rule);cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.mc:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.06);}
+.mc.locked{opacity:.5;cursor:not-allowed;}
+.mc.locked:hover{transform:none;box-shadow:none;}
+.mc.completed{border-color:var(--forest);}
+.mc-num{font-family:'Playfair Display',serif;font-size:34px;color:#EEE;line-height:1;margin-bottom:6px;}
+.mc.completed .mc-num{color:var(--forest);opacity:.35;}
+.mc h3{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:3px;line-height:1.35;}
+.mc p{font-size:11px;color:var(--muted);line-height:1.5;}
+.mc-s{position:absolute;top:13px;right:13px;width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;}
+.mc.completed .mc-s{background:var(--forest);color:white;}
+.mc.locked .mc-s{background:#EEE;color:#AAA;}
+.mc:not(.locked):not(.completed) .mc-s{background:#F47B20;color:white;}
+
+.lh{margin-bottom:30px;}
+.ltag{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#F47B20;background:#FEF3EA;padding:4px 11px;border-radius:20px;margin-bottom:11px;}
+.lh h2{font-family:'Playfair Display',serif;font-size:34px;line-height:1.2;color:var(--ink);margin-bottom:8px;}
+.lmeta{display:flex;align-items:center;gap:16px;font-size:12px;color:var(--muted);}
+.lb{font-size:15px;line-height:1.75;color:var(--gray);}
+.lb h3{font-family:'Playfair Display',serif;font-size:21px;color:var(--ink);margin:30px 0 11px;padding-top:30px;border-top:1px solid var(--rule);}
+.lb h3:first-of-type{margin-top:0;padding-top:0;border-top:none;}
+.lb p{margin-bottom:13px;}
+.callout{background:var(--gold-l);border-left:4px solid #F47B20;padding:13px 17px;border-radius:0 10px 10px 0;margin:17px 0;font-size:14px;color:var(--ink);font-style:italic;}
+.callout strong{font-style:normal;color:var(--forest);}
+.ig{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin:17px 0;}
+.ic{background:var(--card);border:1px solid var(--rule);border-radius:11px;padding:15px;}
+.ic-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#F47B20;margin-bottom:5px;}
+.ic p{font-size:13px;color:var(--gray);margin:0;line-height:1.55;}
+.steps{margin:17px 0;}
+.step{display:flex;gap:13px;margin-bottom:13px;align-items:flex-start;}
+.sn{width:30px;height:30px;border-radius:50%;background:#F47B20;color:white;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.sc h4{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:3px;}
+.sc p{font-size:13px;color:var(--gray);margin:0;line-height:1.55;}
+.ctable{width:100%;border-collapse:collapse;margin:17px 0;border-radius:11px;overflow:hidden;border:1px solid var(--rule);}
+.ctable th{background:#F47B20;color:white;padding:11px 14px;text-align:left;font-size:12px;font-weight:700;}
+.ctable td{padding:11px 14px;font-size:13px;color:var(--gray);border-top:1px solid var(--rule);vertical-align:top;}
+.ctable tr:nth-child(odd) td{background:var(--rule2);}
+.ctable tr:nth-child(even) td{background:var(--card);}
+.ctable td:first-child{font-weight:700;color:var(--ink);}
+.sched-block{display:grid;grid-template-columns:100px 1fr 1fr 1fr 1fr;gap:0;border-radius:11px;overflow:hidden;border:1px solid var(--rule);margin:17px 0;}
+.sb-header{background:#F47B20;color:white;padding:9px 14px;font-size:11px;font-weight:700;}
+.sb-time{background:var(--rule2);padding:9px 14px;font-size:12px;font-weight:700;color:var(--ink2);border-top:1px solid var(--rule);}
+.sb-cell{padding:9px 14px;font-size:11px;border-top:1px solid var(--rule);border-left:1px solid var(--rule);}
+.sb-teacher{background:#FEF9ED;color:var(--gold);font-weight:700;}
+.sb-lexia{background:#EAF4FB;color:#1A6EA4;font-weight:600;}
+.sb-lit{background:#E4F2ED;color:var(--forest);font-weight:600;}
+.sb-ind{background:#FAF8F5;color:var(--muted);}
+.hlbox{background:var(--dark);padding:20px 24px;border-radius:13px;margin:20px 0;}
+.hlbox h4{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold2);margin-bottom:9px;}
+.hlbox ul{padding-left:18px;}
+.hlbox ul li{font-size:13px;color:#ccc;margin-bottom:5px;line-height:1.55;}
+
+.qs{margin-top:50px;padding-top:34px;border-top:2px solid var(--rule);}
+.qh{display:flex;align-items:center;gap:12px;margin-bottom:24px;}
+.qi{width:44px;height:44px;background:#F47B20;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;color:white;flex-shrink:0;}
+.qh h3{font-family:'Playfair Display',serif;font-size:22px;color:var(--ink);margin-bottom:3px;}
+.qh p{font-size:12px;color:var(--muted);}
+.qq{background:var(--card);border:1px solid var(--rule);border-radius:13px;padding:21px;margin-bottom:17px;}
+.qq.correct{border-color:var(--pass);background:var(--pass-l);}
+.qq.wrong{border-color:var(--fail);background:var(--fail-l);}
+.qn{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.qt{font-size:15px;font-weight:600;color:var(--ink);margin-bottom:15px;line-height:1.4;}
+.qopts{display:flex;flex-direction:column;gap:8px;}
+.opt{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-radius:9px;border:1.5px solid var(--rule);cursor:pointer;transition:all .15s;background:var(--card);font-size:13px;color:var(--gray);line-height:1.4;}
+.opt:hover{border-color:#F47B20;background:#FEF3EA;}
+.opt.selected{border-color:#F47B20;background:#FEF3EA;color:var(--ink);}
+.opt.correct-ans{border-color:var(--pass);background:var(--pass-l);}
+.opt.wrong-ans{border-color:var(--fail);background:var(--fail-l);}
+.opt.disabled{pointer-events:none;}
+.od{width:17px;height:17px;border-radius:50%;border:2px solid #CCC;flex-shrink:0;margin-top:1px;}
+.opt.selected .od{border-color:var(--gold2);background:#F47B20;}
+.opt.correct-ans .od{border-color:var(--pass);background:var(--pass);}
+.opt.wrong-ans .od{border-color:var(--fail);background:var(--fail);}
+.qfb{padding:11px 14px;border-radius:9px;font-size:13px;margin-top:9px;display:none;line-height:1.5;}
+.qfb.show{display:block;}
+.qfb.correct{background:var(--pass-l);color:#155724;border:1px solid var(--pass);}
+.qfb.wrong{background:var(--fail-l);color:#721c24;border:1px solid #e0a0a0;}
+.qr{background:var(--card);border-radius:14px;padding:30px;text-align:center;border:2px solid var(--rule);margin-top:20px;display:none;}
+.qr.show{display:block;animation:fu .4s ease;}
+.qr.passed{border-color:var(--pass);}
+.qr.failed{border-color:var(--fail);}
+.rs{font-family:'Playfair Display',serif;font-size:60px;line-height:1;margin-bottom:7px;}
+.rs.pass{color:var(--pass);}
+.rs.fail{color:var(--fail);}
+.rm{font-size:18px;font-weight:700;margin-bottom:7px;color:var(--ink);}
+.rsub{font-size:13px;color:var(--muted);margin-bottom:22px;}
+.btn{display:inline-flex;align-items:center;gap:7px;padding:11px 24px;border-radius:9px;font-family:'Lexend',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;border:none;}
+.btn-p{background:#F47B20;color:white;}
+.btn-p:hover{background:#C85E10;transform:translateY(-1px);}
+.btn-ok{background:var(--forest);color:white;}
+.btn-ok:hover{background:#1f4534;}
+.btn-s{background:var(--card);color:var(--ink);border:1.5px solid var(--rule);}
+.btn-s:hover{border-color:var(--gold2);color:var(--gold);}
+.btn-lg{padding:14px 30px;font-size:14px;border-radius:11px;}
+.btn:disabled{opacity:.4;cursor:not-allowed;pointer-events:none;}
+.ln{display:flex;align-items:center;justify-content:space-between;margin-top:42px;padding-top:26px;border-top:1px solid var(--rule);}
+.comp-wrap{text-align:center;padding:68px 40px;}
+.comp-badge{width:108px;height:108px;background:linear-gradient(135deg,#F47B20,#FDB913);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:46px;margin:0 auto 26px;box-shadow:0 14px 40px rgba(244,123,32,.3);}
+.comp-wrap h2{font-family:'Playfair Display',serif;font-size:40px;color:var(--ink);margin-bottom:11px;}
+.comp-wrap p{font-size:16px;color:var(--gray);max-width:440px;margin:0 auto 30px;line-height:1.7;}
+.chips{display:flex;justify-content:center;gap:9px;flex-wrap:wrap;margin-bottom:34px;}
+.chip{background:var(--pass-l);color:var(--pass);border:1px solid var(--pass);padding:5px 13px;border-radius:20px;font-size:12px;font-weight:600;}
+.toast{position:fixed;bottom:22px;right:22px;background:var(--dark);color:white;padding:13px 18px;border-radius:11px;font-size:13px;font-weight:500;display:flex;align-items:center;gap:9px;transform:translateY(100px);opacity:0;transition:all .3s cubic-bezier(.34,1.56,.64,1);z-index:999;max-width:300px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-left:4px solid var(--forest);}
+.toast.locked-msg{border-left:4px solid #F47B20;}
+.course-map{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+.cm-item{display:flex;align-items:center;gap:16px;background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:16px 20px;cursor:pointer;transition:all .2s;}
+.cm-item:hover{border-color:#F47B20;background:#FEF3EA;}
+.cm-dot{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.cm-content h4{font-size:14px;font-weight:700;color:var(--ink);margin-bottom:2px;}
+.cm-content p{font-size:12px;color:var(--muted);}
+.cm-arrow{margin-left:auto;color:var(--muted);font-size:14px;}
+</style>
+</head>
+<body>
+
+<nav class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo"><div class="sb-ic">🌟</div><div><h1>Learning Guide<br>Onboarding</h1></div></div>
+    <span>Helon Universe · New Guides</span>
+  </div>
+  <div class="sb-prog">
+    <div class="sb-prog-top">Progress <span id="pt">0%</span></div>
+    <div class="pb"><div class="pf" id="pf" style="width:0%"></div></div>
+  </div>
+  <div class="sb-sec">
+    <div class="sb-sec-title">Modules</div>
+    <div class="ni active" onclick="show('welcome')" id="nav-welcome"><div class="ni-ic">🏠</div><div style="flex:1"><div class="ni-t">Course Home</div><div class="ni-sub">Overview & training map</div></div></div>
+    <div class="ni" onclick="go('m1')" id="nav-m1"><div class="ni-ic">🌟</div><div style="flex:1"><div class="ni-t">The Learning Guide Role</div><div class="ni-sub">Who you are & what you do</div></div><div class="nbadge">Quiz</div></div>
+    <div class="ni locked" onclick="go('m2')" id="nav-m2"><div class="ni-ic">🔒</div><div style="flex:1"><div class="ni-t">The HLPP System</div><div class="ni-sub">4-station model, rotation, schedule</div></div><div class="nbadge">Quiz</div></div>
+    <div class="ni locked" onclick="go('m3')" id="nav-m3"><div class="ni-ic">🔒</div><div style="flex:1"><div class="ni-t">The Programs at a Glance</div><div class="ni-sub">MBTP, CA, Core5, LittleLit</div></div><div class="nbadge">Quiz</div></div>
+    <div class="ni locked" onclick="go('m4')" id="nav-m4"><div class="ni-ic">🔒</div><div style="flex:1"><div class="ni-t">Data, Progress & Planning</div><div class="ni-sub">Rubrics, daily log, parent communication</div></div><div class="nbadge">Quiz</div></div>
+    <div class="ni locked" onclick="go('m5')" id="nav-m5"><div class="ni-ic">🔒</div><div style="flex:1"><div class="ni-t">Your First Week</div><div class="ni-sub">Setup, preparation, and mindset</div></div><div class="nbadge">Quiz</div></div>
+    <div class="ni locked" onclick="go('complete')" id="nav-complete"><div class="ni-ic">🏆</div><div style="flex:1"><div class="ni-t">Certificate</div></div></div>
+  </div>
+</nav>
+
+<div class="main">
+  <div class="topbar">
+    <div class="tb-crumb">Learning Guide Onboarding › <span class="cur" id="cur">Course Home</span></div>
+    <div class="tb-badge">New Guide Training</div>
+  </div>
+  <div class="content">
+
+    <!-- WELCOME -->
+    <div class="screen active" id="screen-welcome">
+      <div class="hero">
+        <div class="hero-tag">✦ New Guide Onboarding</div>
+        <h2>Welcome to the<br><em>Helon Universe</em></h2>
+        <p>This onboarding course introduces you to your role as a learning guide, the HLPP system, the programs you'll use, how to track progress, and how to prepare for your first week.</p>
+        <div class="hero-stats">
+          <div><div class="hs-n">5</div><div class="hs-l">Modules</div></div>
+          <div><div class="hs-n">~80</div><div class="hs-l">Minutes</div></div>
+          <div><div class="hs-n">75%</div><div class="hs-l">Pass score</div></div>
+        </div>
+        <button class="btn btn-p btn-lg" onclick="go('m1')">Begin Onboarding →</button>
+      </div>
+
+      <div style="background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:24px;margin-bottom:20px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;">After this course, continue with</div>
+        <div class="course-map">
+          <div class="cm-item"><div class="cm-dot" style="background:#FEF0EB">📘</div><div class="cm-content"><h4>MBTP Training</h4><p>Moving Beyond the Page — full curriculum training for guides</p></div><div class="cm-arrow">→</div></div>
+          <div class="cm-item"><div class="cm-dot" style="background:#EBF5FB">📖</div><div class="cm-content"><h4>Lexia Core5 Training</h4><p>Phonics platform — sessions, data, and your role</p></div><div class="cm-arrow">→</div></div>
+          <div class="cm-item"><div class="cm-dot" style="background:#E4F2ED">📚</div><div class="cm-content"><h4>LittleLit Training</h4><p>Independent reading — guiding discussion and using data</p></div><div class="cm-arrow">→</div></div>
+          <div class="cm-item"><div class="cm-dot" style="background:#EDE8F5">🧩</div><div class="cm-content"><h4>Curriculum Access Training</h4><p>The Autism Helper platform — for learners who need structured instruction</p></div><div class="cm-arrow">→</div></div>
+          <div class="cm-item"><div class="cm-dot" style="background:#FEF0EB">❤️</div><div class="cm-content"><h4>Supporting Autistic Learners</h4><p>Strategies, structures, and approaches for autistic learners</p></div><div class="cm-arrow">→</div></div>
+        </div>
+      </div>
+      <div class="callout"><strong>Checkpoint rule:</strong> Each module has a 4-question quiz. Score 75%+ (3 of 4) to unlock the next module. Unlimited retakes.</div>
+    </div>
+
+    <!-- MODULE 1 -->
+    <div class="screen" id="screen-m1">
+      <div class="lh"><div class="ltag">✦ Module 1 of 5</div><h2>The Learning Guide Role</h2><div class="lmeta"><span>📖 ~14 min</span><span>✦ Quiz required</span></div></div>
+      <div class="lb">
+        <h3>Who Is a Learning Guide?</h3>
+        <p>A learning guide is the heart of the Helon Universe micro-school. You are not a teacher in the traditional sense — you are a <strong>personalized instructional partner</strong>. You work closely with a small group of learners (maximum 4), delivering 1:1 curriculum instruction, supporting independent digital learning stations, tracking progress, and communicating with families.</p>
+        <p>Your learners look to you for structure, safety, consistency, and challenge. You are often the most significant adult learning relationship in their day. That is a profound responsibility — and an equally profound opportunity.</p>
+
+        <h3>What You Do Each Day</h3>
+        <div class="ig">
+          <div class="ic"><div class="ic-label">Direct Instruction</div><p>Deliver curriculum lessons 1:1 during Teacher blocks. Each learner receives two Teacher sessions per day. This is where MBTP, Curriculum Access, and direct skill instruction happen.</p></div>
+          <div class="ic"><div class="ic-label">Facilitate Independent Stations</div><p>Set learners up on Lexia Core5 and LittleLit stations. Monitor engagement, check progress data after each session, and intervene when needed.</p></div>
+          <div class="ic"><div class="ic-label">Observe & Document</div><p>Notice what's happening beyond the screen data — engagement, frustration, breakthroughs, confusion. Record observations in your daily log.</p></div>
+          <div class="ic"><div class="ic-label">Plan Ahead</div><p>Use the end-of-day log and planning tool to plan tomorrow's sessions based on today's data. Never arrive at a session without knowing exactly what you're teaching.</p></div>
+          <div class="ic"><div class="ic-label">Communicate with Families</div><p>Generate a daily parent report from your log. Families depend on you to bridge the gap between what happens in the micro-school and what they understand at home.</p></div>
+          <div class="ic"><div class="ic-label">Grow Professionally</div><p>Complete program training courses, stay current on learner progress, and reflect on your own practice. Great guides are lifelong learners themselves.</p></div>
+        </div>
+
+        <h3>What Makes a Great Guide</h3>
+        <p>The most effective learning guides share a few key qualities: they are <strong>consistent</strong> (learners trust the routine), <strong>curious</strong> (they genuinely want to understand each learner), <strong>data-driven</strong> (they make decisions based on evidence, not assumptions), and <strong>warm</strong> (they build the relationship that makes learning possible).</p>
+
+        <div class="callout"><strong>Remember:</strong> You don't have to know everything on day one. You DO need to show up prepared, follow the systems, ask questions, and stay curious about your learners. The tools will support you — your job is to show up and care deeply.</div>
+      </div>
+      <div class="qs">
+        <div class="qh"><div class="qi">✏️</div><div><h3>Module 1 Checkpoint</h3><p>Score 3 of 4 correct to unlock Module 2</p></div></div>
+        <div id="quiz-m1">
+          <div class="qq" id="m1q1"><div class="qn">Q1 of 4</div><div class="qt">How many learners does an HLPP learning guide work with at maximum?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m1q1',false)"><div class="od"></div>8 learners — 4 per Teacher block</div>
+            <div class="opt" onclick="sel(this,'m1q1',true)"><div class="od"></div>4 learners</div>
+            <div class="opt" onclick="sel(this,'m1q1',false)"><div class="od"></div>6 learners</div>
+            <div class="opt" onclick="sel(this,'m1q1',false)"><div class="od"></div>10 learners in whole-group format</div>
+          </div><div class="qfb" id="fb-m1q1"></div></div>
+
+          <div class="qq" id="m1q2"><div class="qn">Q2 of 4</div><div class="qt">During which session type does a guide deliver direct curriculum instruction?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m1q2',false)"><div class="od"></div>During the Lexia Core5 digital station</div>
+            <div class="opt" onclick="sel(this,'m1q2',false)"><div class="od"></div>During enrichment time at the end of the day</div>
+            <div class="opt" onclick="sel(this,'m1q2',true)"><div class="od"></div>During the Teacher 1:1 blocks — each learner receives two per day</div>
+            <div class="opt" onclick="sel(this,'m1q2',false)"><div class="od"></div>During the LittleLit independent station</div>
+          </div><div class="qfb" id="fb-m1q2"></div></div>
+
+          <div class="qq" id="m1q3"><div class="qn">Q3 of 4</div><div class="qt">Why does a guide communicate with families through a daily parent report?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m1q3',false)"><div class="od"></div>It is required by law for all home education programs</div>
+            <div class="opt" onclick="sel(this,'m1q3',true)"><div class="od"></div>Families depend on the guide to bridge what happens in sessions with what they understand at home</div>
+            <div class="opt" onclick="sel(this,'m1q3',false)"><div class="od"></div>It replaces the need for a parent-teacher conference</div>
+            <div class="opt" onclick="sel(this,'m1q3',false)"><div class="od"></div>It is only sent when there are concerns about the learner</div>
+          </div><div class="qfb" id="fb-m1q3"></div></div>
+
+          <div class="qq" id="m1q4"><div class="qn">Q4 of 4</div><div class="qt">What does it mean to be "data-driven" as a learning guide?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m1q4',false)"><div class="od"></div>Using only digital programs and avoiding paper-based materials</div>
+            <div class="opt" onclick="sel(this,'m1q4',false)"><div class="od"></div>Collecting as many data points as possible regardless of usefulness</div>
+            <div class="opt" onclick="sel(this,'m1q4',true)"><div class="od"></div>Making instructional decisions based on evidence and observation rather than assumptions</div>
+            <div class="opt" onclick="sel(this,'m1q4',false)"><div class="od"></div>Tracking learner screen time above all other data</div>
+          </div><div class="qfb" id="fb-m1q4"></div></div>
+        </div>
+        <div id="result-m1" class="qr"><div class="rs" id="score-m1"></div><div class="rm" id="msg-m1"></div><div class="rsub" id="sub-m1"></div><button class="btn btn-ok btn-lg" id="next-m1" onclick="unlock('m2')" style="display:none">Continue to Module 2 →</button><button class="btn btn-s" id="retry-m1" onclick="retry('m1')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:18px;display:flex;justify-content:flex-end;"><button class="btn btn-p" id="submit-m1" onclick="submit('m1',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="ln"><button class="btn btn-s" onclick="show('welcome')">← Home</button></div>
+    </div>
+
+    <!-- MODULE 2 -->
+    <div class="screen" id="screen-m2">
+      <div class="lh"><div class="ltag">✦ Module 2 of 5</div><h2>The HLPP System</h2><div class="lmeta"><span>📖 ~15 min</span><span>✦ Quiz required</span></div></div>
+      <div class="lb">
+        <h3>Helon Universe</h3>
+        <p>HLPP (Helon Universe) is the instructional planning system that your micro-school runs on. It is built around a <strong>four-station rotation model</strong> — a structured daily schedule where each learner rotates between four types of learning time.</p>
+
+        <h3>The Four Stations</h3>
+        <div class="ig">
+          <div class="ic"><div class="ic-label" style="color:var(--gold)">🌟 Teacher 1:1</div><p>Direct instruction from the guide. This is where curriculum lessons (MBTP or Curriculum Access) happen. Each learner gets 2 Teacher blocks per day.</p></div>
+          <div class="ic"><div class="ic-label" style="color:#1A6EA4">💻 Lexia Core5</div><p>Adaptive phonics and decoding program. The learner works independently on the digital platform. Guide monitors from a distance and checks reports after.</p></div>
+          <div class="ic"><div class="ic-label" style="color:var(--forest)">📖 LittleLit</div><p>Independent digital reading program. Leveled books with comprehension activities. The learner works alone while the guide is in a Teacher block with another learner.</p></div>
+          <div class="ic"><div class="ic-label" style="color:var(--muted)">📚 Independent Work</div><p>Reinforcement of the day's curriculum lessons — worksheets, activities, review tasks. Student completes independently when not in another station.</p></div>
+        </div>
+
+        <h3>The Daily Schedule</h3>
+        <table class="ctable">
+          <tr><th>Block</th><th>Time</th><th>Duration</th></tr>
+          <tr><td>Block 1</td><td>8:15 – 8:55</td><td>40 min</td></tr>
+          <tr><td>Block 2</td><td>8:55 – 9:35</td><td>40 min</td></tr>
+          <tr><td>Block 3</td><td>9:35 – 10:15</td><td>40 min</td></tr>
+          <tr><td>Block 4</td><td>10:15 – 10:55</td><td>40 min</td></tr>
+          <tr><td>Block 5</td><td>10:55 – 11:35</td><td>40 min</td></tr>
+          <tr><td>Block 6</td><td>11:35 – 12:15</td><td>40 min</td></tr>
+          <tr><td>Block 7</td><td>12:15 – 12:55</td><td>40 min</td></tr>
+          <tr><td>Block 8</td><td>12:55 – 1:15</td><td>20 min</td></tr>
+          <tr><td>Enrichment</td><td>1:15 – 2:00</td><td>45 min</td></tr>
+        </table>
+
+        <h3>Scheduling Rules You Must Know</h3>
+        <div class="hlbox">
+          <h4>Non-Negotiable Rules</h4>
+          <ul>
+            <li>You can teach <strong>only one student at a time</strong> — one student per Teacher block.</li>
+            <li>Every learner must receive <strong>2 Teacher blocks per day</strong> — no exceptions.</li>
+            <li>Every learner must have <strong>at least 1 Lexia Core5 session per day</strong>.</li>
+            <li>Every learner must have <strong>at least 1 LittleLit session per day</strong>.</li>
+            <li>Maximum students = <strong>4</strong>. Beyond 4, there are not enough Teacher blocks.</li>
+            <li>Daily order: <strong>Core5 first</strong> → LittleLit independent → Teacher 1:1 (curriculum).</li>
+          </ul>
+        </div>
+
+        <h3>The Mastery Rubric</h3>
+        <p>All curriculum progress in HLPP is evaluated using the same four-level rubric:</p>
+        <table class="ctable">
+          <tr><th>Level</th><th>Description</th></tr>
+          <tr><td>Explores</td><td>Initial exposure — the learner is encountering this concept or skill for the first time</td></tr>
+          <tr><td>Develops</td><td>Skill development — the learner is building toward mastery with support</td></tr>
+          <tr><td>Applies</td><td>Consistent performance — the learner demonstrates the skill reliably with little support</td></tr>
+          <tr><td>Integrates</td><td>Mastery and transfer — the learner applies the skill independently in new contexts</td></tr>
+        </table>
+        <div class="callout"><strong>The 80% rule:</strong> Any skill area where a learner performs below 80% — in any program — should be treated as an intervention priority. Flag it, plan a response, and document it in the parent report.</div>
+      </div>
+      <div class="qs">
+        <div class="qh"><div class="qi">✏️</div><div><h3>Module 2 Checkpoint</h3><p>Score 3 of 4 correct to unlock Module 3</p></div></div>
+        <div id="quiz-m2">
+          <div class="qq" id="m2q1"><div class="qn">Q1 of 4</div><div class="qt">How many Teacher 1:1 blocks does each learner receive per day?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m2q1',false)"><div class="od"></div>1 block</div>
+            <div class="opt" onclick="sel(this,'m2q1',true)"><div class="od"></div>2 blocks</div>
+            <div class="opt" onclick="sel(this,'m2q1',false)"><div class="od"></div>3 blocks</div>
+            <div class="opt" onclick="sel(this,'m2q1',false)"><div class="od"></div>4 blocks</div>
+          </div><div class="qfb" id="fb-m2q1"></div></div>
+
+          <div class="qq" id="m2q2"><div class="qn">Q2 of 4</div><div class="qt">What is the maximum number of learners an HLPP guide can support under the standard scheduling model?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m2q2',false)"><div class="od"></div>6</div>
+            <div class="opt" onclick="sel(this,'m2q2',false)"><div class="od"></div>5</div>
+            <div class="opt" onclick="sel(this,'m2q2',true)"><div class="od"></div>4</div>
+            <div class="opt" onclick="sel(this,'m2q2',false)"><div class="od"></div>8</div>
+          </div><div class="qfb" id="fb-m2q2"></div></div>
+
+          <div class="qq" id="m2q3"><div class="qn">Q3 of 4</div><div class="qt">In the HLPP mastery rubric, what does "Applies" mean?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m2q3',false)"><div class="od"></div>The learner is being introduced to the skill for the first time</div>
+            <div class="opt" onclick="sel(this,'m2q3',false)"><div class="od"></div>The learner applies the skill in new contexts without any support</div>
+            <div class="opt" onclick="sel(this,'m2q3',true)"><div class="od"></div>The learner demonstrates the skill consistently with little support</div>
+            <div class="opt" onclick="sel(this,'m2q3',false)"><div class="od"></div>The learner is building toward mastery but needs significant support</div>
+          </div><div class="qfb" id="fb-m2q3"></div></div>
+
+          <div class="qq" id="m2q4"><div class="qn">Q4 of 4</div><div class="qt">In the HLPP daily order, which program should always come FIRST?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m2q4',false)"><div class="od"></div>LittleLit — independent reading warms up the brain</div>
+            <div class="opt" onclick="sel(this,'m2q4',false)"><div class="od"></div>Teacher 1:1 — the guide needs to be freshest for direct instruction</div>
+            <div class="opt" onclick="sel(this,'m2q4',true)"><div class="od"></div>Lexia Core5 — phonics practice prepares the brain for all reading activity</div>
+            <div class="opt" onclick="sel(this,'m2q4',false)"><div class="od"></div>The order doesn't matter as long as all three happen</div>
+          </div><div class="qfb" id="fb-m2q4"></div></div>
+        </div>
+        <div id="result-m2" class="qr"><div class="rs" id="score-m2"></div><div class="rm" id="msg-m2"></div><div class="rsub" id="sub-m2"></div><button class="btn btn-ok btn-lg" id="next-m2" onclick="unlock('m3')" style="display:none">Continue to Module 3 →</button><button class="btn btn-s" id="retry-m2" onclick="retry('m2')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:18px;display:flex;justify-content:flex-end;"><button class="btn btn-p" id="submit-m2" onclick="submit('m2',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="ln"><button class="btn btn-s" onclick="show('m1')">← Module 1</button></div>
+    </div>
+
+    <!-- MODULE 3 -->
+    <div class="screen" id="screen-m3">
+      <div class="lh"><div class="ltag">✦ Module 3 of 5</div><h2>The Programs at a Glance</h2><div class="lmeta"><span>📖 ~14 min</span><span>✦ Quiz required</span></div></div>
+      <div class="lb">
+        <h3>Four Programs, One Complete Learner</h3>
+        <p>Every program in the HLPP system addresses a specific dimension of literacy and learning. Understanding what each program does — and doesn't do — helps you use them together strategically.</p>
+
+        <table class="ctable">
+          <tr><th>Program</th><th>What It Builds</th><th>Delivery</th><th>Best For</th></tr>
+          <tr><td>MBTP (Moving Beyond the Page)</td><td>Literary analysis, comprehension, writing, integrated subjects</td><td>Guide-led 1:1 — Teacher blocks</td><td>Learners ready for discussion-based, literature-rich instruction</td></tr>
+          <tr><td>Curriculum Access (The Autism Helper)</td><td>9 subjects at skill level — including Life Skills, Functional Math/Literacy</td><td>Guide-led 1:1 — Teacher blocks</td><td>Learners who need structured, visual, skill-level instruction; autistic learners</td></tr>
+          <tr><td>Lexia Core5</td><td>Phonics, decoding, phonological awareness — the Science of Reading</td><td>Independent digital station</td><td>All learners — foundational literacy for every reading level</td></tr>
+          <tr><td>LittleLit</td><td>Independent reading, comprehension, vocabulary, reader identity</td><td>Independent digital station</td><td>All learners with basic decoding — builds stamina and deep comprehension</td></tr>
+        </table>
+
+        <h3>MBTP vs. Curriculum Access — Which One?</h3>
+        <p>A learner uses either MBTP or Curriculum Access as their primary curriculum — not both simultaneously as their main program. The guide determines which based on the learner's needs:</p>
+        <div class="ig">
+          <div class="ic"><div class="ic-label" style="color:#B85042">Use MBTP when:</div><p>The learner engages well with discussion, can access leveled literature independently (with support), and is ready for concept-based, humanities-rich instruction.</p></div>
+          <div class="ic"><div class="ic-label" style="color:#5C3D8F">Use Curriculum Access when:</div><p>The learner needs more structure and visual support than MBTP provides, has an uneven skill profile, benefits from functional skills instruction, or is an autistic learner.</p></div>
+        </div>
+
+        <h3>What Every Learner Needs Every Day</h3>
+        <div class="steps">
+          <div class="step"><div class="sn">1</div><div class="sc"><h4>Lexia Core5</h4><p>At least one session — 20–45 minutes depending on age. Always the first literacy activity of the day.</p></div></div>
+          <div class="step"><div class="sn">2</div><div class="sc"><h4>LittleLit</h4><p>At least one independent reading session — 20–30 minutes. Done as a station while guide teaches another learner.</p></div></div>
+          <div class="step"><div class="sn">3</div><div class="sc"><h4>Two Teacher blocks</h4><p>Curriculum instruction (MBTP or CA). The guide's most focused, intentional time with each learner.</p></div></div>
+        </div>
+
+        <div class="callout"><strong>Your next step:</strong> After completing this onboarding course, take the full training course for whichever program(s) your learners use. Each has its own self-paced course — MBTP Training, Curriculum Access Training, Lexia Core5 Training, and LittleLit Training.</div>
+      </div>
+      <div class="qs">
+        <div class="qh"><div class="qi">✏️</div><div><h3>Module 3 Checkpoint</h3><p>Score 3 of 4 correct to unlock Module 4</p></div></div>
+        <div id="quiz-m3">
+          <div class="qq" id="m3q1"><div class="qn">Q1 of 4</div><div class="qt">Which program is specifically designed for learners who need structured, visual, skill-level instruction?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m3q1',false)"><div class="od"></div>MBTP — Moving Beyond the Page</div>
+            <div class="opt" onclick="sel(this,'m3q1',true)"><div class="od"></div>Curriculum Access — The Autism Helper</div>
+            <div class="opt" onclick="sel(this,'m3q1',false)"><div class="od"></div>LittleLit</div>
+            <div class="opt" onclick="sel(this,'m3q1',false)"><div class="od"></div>Lexia Core5</div>
+          </div><div class="qfb" id="fb-m3q1"></div></div>
+
+          <div class="qq" id="m3q2"><div class="qn">Q2 of 4</div><div class="qt">Which two programs run as independent digital stations — not requiring direct guide instruction during the session?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m3q2',false)"><div class="od"></div>MBTP and Curriculum Access</div>
+            <div class="opt" onclick="sel(this,'m3q2',false)"><div class="od"></div>MBTP and Lexia Core5</div>
+            <div class="opt" onclick="sel(this,'m3q2',true)"><div class="od"></div>Lexia Core5 and LittleLit</div>
+            <div class="opt" onclick="sel(this,'m3q2',false)"><div class="od"></div>LittleLit and Curriculum Access</div>
+          </div><div class="qfb" id="fb-m3q2"></div></div>
+
+          <div class="qq" id="m3q3"><div class="qn">Q3 of 4</div><div class="qt">Can a learner use both MBTP and Curriculum Access as their primary curriculum simultaneously?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m3q3',false)"><div class="od"></div>Yes — guides always use both together</div>
+            <div class="opt" onclick="sel(this,'m3q3',true)"><div class="od"></div>No — a learner uses one as their primary curriculum; the guide determines which based on the learner's needs</div>
+            <div class="opt" onclick="sel(this,'m3q3',false)"><div class="od"></div>Yes — alternate daily between MBTP and CA</div>
+            <div class="opt" onclick="sel(this,'m3q3',false)"><div class="od"></div>No — only MBTP is used in the HLPP model</div>
+          </div><div class="qfb" id="fb-m3q3"></div></div>
+
+          <div class="qq" id="m3q4"><div class="qn">Q4 of 4</div><div class="qt">What does Lexia Core5 teach that no other HLPP program covers?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m3q4',false)"><div class="od"></div>Literary analysis and book-based discussion</div>
+            <div class="opt" onclick="sel(this,'m3q4',false)"><div class="od"></div>Life skills and functional independence</div>
+            <div class="opt" onclick="sel(this,'m3q4',true)"><div class="od"></div>Systematic phonics, decoding, and phonological awareness — the Science of Reading</div>
+            <div class="opt" onclick="sel(this,'m3q4',false)"><div class="od"></div>Vocabulary in context through independent leveled reading</div>
+          </div><div class="qfb" id="fb-m3q4"></div></div>
+        </div>
+        <div id="result-m3" class="qr"><div class="rs" id="score-m3"></div><div class="rm" id="msg-m3"></div><div class="rsub" id="sub-m3"></div><button class="btn btn-ok btn-lg" id="next-m3" onclick="unlock('m4')" style="display:none">Continue to Module 4 →</button><button class="btn btn-s" id="retry-m3" onclick="retry('m3')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:18px;display:flex;justify-content:flex-end;"><button class="btn btn-p" id="submit-m3" onclick="submit('m3',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="ln"><button class="btn btn-s" onclick="show('m2')">← Module 2</button></div>
+    </div>
+
+    <!-- MODULE 4 -->
+    <div class="screen" id="screen-m4">
+      <div class="lh"><div class="ltag">✦ Module 4 of 5</div><h2>Data, Progress & Planning</h2><div class="lmeta"><span>📖 ~12 min</span><span>✦ Quiz required</span></div></div>
+      <div class="lb">
+        <h3>The Daily Data Loop</h3>
+        <p>The HLPP system runs on a daily data loop: you deliver instruction, observe and document what happens, analyze the data, plan tomorrow's sessions, and communicate with families. This loop happens every single day — not once a week, not at the end of the month.</p>
+        <div class="steps">
+          <div class="step"><div class="sn">1</div><div class="sc"><h4>Deliver Sessions</h4><p>Teach curriculum, facilitate digital stations, observe engagement and behavior.</p></div></div>
+          <div class="step"><div class="sn">2</div><div class="sc"><h4>Check Program Data</h4><p>After every Core5 session, pull the progress report. After every LittleLit session, check comprehension scores. After curriculum, note mastery level.</p></div></div>
+          <div class="step"><div class="sn">3</div><div class="sc"><h4>Log the Day</h4><p>Complete the end-of-day log in the Daily Planning tool. Document all three programs plus your observations. Upload any reports or work samples.</p></div></div>
+          <div class="step"><div class="sn">4</div><div class="sc"><h4>Generate Tomorrow's Plan</h4><p>Use the AI planning tool to generate a prioritized plan for tomorrow based on today's data. Review it, adjust if needed, and note prep required.</p></div></div>
+          <div class="step"><div class="sn">5</div><div class="sc"><h4>Send the Parent Report</h4><p>Generate and send (or share) the parent report. Families should receive this daily — it is your primary communication tool.</p></div></div>
+        </div>
+
+        <h3>What Belongs in Your Daily Log</h3>
+        <table class="ctable">
+          <tr><th>Section</th><th>What to Document</th></tr>
+          <tr><td>MBTP / Curriculum Access</td><td>Unit, lesson, option used, mastery level, what was covered, wins, struggles</td></tr>
+          <tr><td>Lexia Core5</td><td>Minutes, score, level, skills worked on, wins, any skill alerts below 80%</td></tr>
+          <tr><td>LittleLit</td><td>Minutes, comprehension score, book, level, wins, concerns</td></tr>
+          <tr><td>Observations</td><td>Engagement, behavior patterns, emotional state, highlight moment, anything the data can't capture</td></tr>
+        </table>
+
+        <div class="callout"><strong>The golden rule of documentation:</strong> If it isn't written down, it didn't happen. Your log is the institutional memory of your learner's progress. It protects the learner, supports families, and makes you a better guide.</div>
+      </div>
+      <div class="qs">
+        <div class="qh"><div class="qi">✏️</div><div><h3>Module 4 Checkpoint</h3><p>Score 3 of 4 correct to unlock the final module</p></div></div>
+        <div id="quiz-m4">
+          <div class="qq" id="m4q1"><div class="qn">Q1 of 4</div><div class="qt">How often should a guide complete the end-of-day log and parent report?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m4q1',false)"><div class="od"></div>Once a week on Fridays</div>
+            <div class="opt" onclick="sel(this,'m4q1',false)"><div class="od"></div>Once a month or when parents request one</div>
+            <div class="opt" onclick="sel(this,'m4q1',true)"><div class="od"></div>Every day — the daily data loop runs Monday through Friday</div>
+            <div class="opt" onclick="sel(this,'m4q1',false)"><div class="od"></div>Only when there are concerns or notable events</div>
+          </div><div class="qfb" id="fb-m4q1"></div></div>
+
+          <div class="qq" id="m4q2"><div class="qn">Q2 of 4</div><div class="qt">When should a guide check the Lexia Core5 progress report?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m4q2',false)"><div class="od"></div>Once a week during planning time</div>
+            <div class="opt" onclick="sel(this,'m4q2',true)"><div class="od"></div>After every Core5 session — while the data is still actionable</div>
+            <div class="opt" onclick="sel(this,'m4q2',false)"><div class="od"></div>Only when a parent asks for a progress update</div>
+            <div class="opt" onclick="sel(this,'m4q2',false)"><div class="od"></div>At the end of each month</div>
+          </div><div class="qfb" id="fb-m4q2"></div></div>
+
+          <div class="qq" id="m4q3"><div class="qn">Q3 of 4</div><div class="qt">The "Observation" section of the daily log is for:</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m4q3',false)"><div class="od"></div>Repeating the data already captured in the program reports</div>
+            <div class="opt" onclick="sel(this,'m4q3',false)"><div class="od"></div>Recording the learner's test scores</div>
+            <div class="opt" onclick="sel(this,'m4q3',true)"><div class="od"></div>Documenting what you noticed — engagement, behavior, emotional state — that the data can't capture</div>
+            <div class="opt" onclick="sel(this,'m4q3',false)"><div class="od"></div>Logging parent communication and phone calls</div>
+          </div><div class="qfb" id="fb-m4q3"></div></div>
+
+          <div class="qq" id="m4q4"><div class="qn">Q4 of 4</div><div class="qt">What triggers the 80% rule in the HLPP system?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m4q4',false)"><div class="od"></div>When a learner scores exactly 80% or above — no action needed</div>
+            <div class="opt" onclick="sel(this,'m4q4',false)"><div class="od"></div>When a learner uses less than 80 minutes of screen time</div>
+            <div class="opt" onclick="sel(this,'m4q4',true)"><div class="od"></div>When any skill area falls below 80% — this becomes an intervention priority to plan, document, and address</div>
+            <div class="opt" onclick="sel(this,'m4q4',false)"><div class="od"></div>When a learner scores below 80% on a single item — not an average</div>
+          </div><div class="qfb" id="fb-m4q4"></div></div>
+        </div>
+        <div id="result-m4" class="qr"><div class="rs" id="score-m4"></div><div class="rm" id="msg-m4"></div><div class="rsub" id="sub-m4"></div><button class="btn btn-ok btn-lg" id="next-m4" onclick="unlock('m5')" style="display:none">Continue to Module 5 →</button><button class="btn btn-s" id="retry-m4" onclick="retry('m4')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:18px;display:flex;justify-content:flex-end;"><button class="btn btn-p" id="submit-m4" onclick="submit('m4',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="ln"><button class="btn btn-s" onclick="show('m3')">← Module 3</button></div>
+    </div>
+
+    <!-- MODULE 5 -->
+    <div class="screen" id="screen-m5">
+      <div class="lh"><div class="ltag">✦ Module 5 of 5</div><h2>Your First Week</h2><div class="lmeta"><span>📖 ~10 min</span><span>✦ Final quiz</span></div></div>
+      <div class="lb">
+        <h3>What to Do Before Day One</h3>
+        <div class="steps">
+          <div class="step"><div class="sn">1</div><div class="sc"><h4>Complete Your Training Courses</h4><p>Finish all program training courses — MBTP or Curriculum Access (whichever your learners use), Lexia Core5, LittleLit, and Supporting Autistic Learners (if relevant). Don't walk into a session with a program you haven't trained on.</p></div></div>
+          <div class="step"><div class="sn">2</div><div class="sc"><h4>Get Your Learner Profiles</h4><p>Read every assessment, profile, or intake document available for each learner. Talk to the family. Find out strengths, interests, sensitivities, and what "a good day" looks like for this child.</p></div></div>
+          <div class="step"><div class="sn">3</div><div class="sc"><h4>Set Up Placement</h4><p>Log into each program and confirm level placements. For Core5 and LittleLit, check the platform. For MBTP or CA, review the placement assessment results and confirm the starting lesson or level.</p></div></div>
+          <div class="step"><div class="sn">4</div><div class="sc"><h4>Prepare Your Physical Space</h4><p>Materials in predictable places. Visual schedule posted. Data sheets ready. Devices charged. Nothing should be scrambled when the learner arrives.</p></div></div>
+          <div class="step"><div class="sn">5</div><div class="sc"><h4>Know Your First Day Plan</h4><p>What is Block 1? Block 2? Who is in each station? What lesson are you teaching? What is the first thing a learner does when they walk in? Know this before day one.</p></div></div>
+        </div>
+
+        <h3>First Week Mindset</h3>
+        <div class="ig">
+          <div class="ic"><div class="ic-label">Prioritize Routine Over Content</div><p>The first week is about establishing the routine — the schedule, the transitions, the expectations. Content will follow. A learner who knows what to expect every day is a learner who can learn.</p></div>
+          <div class="ic"><div class="ic-label">Learn Each Learner</div><p>Your best instruction in week one is observation. What motivates them? What overwhelms them? What do they do when they're curious vs. stuck? This information is more valuable than any lesson plan.</p></div>
+          <div class="ic"><div class="ic-label">Expect Adjustment</div><p>New routines take time. Expect some resistance, confusion, or unsteadiness — especially from learners who have experienced inconsistency before. Stay calm, stay consistent, stay warm.</p></div>
+          <div class="ic"><div class="ic-label">Use the Daily Log from Day One</div><p>Start your documentation habit on the very first day, even if you only have a few notes. The habit is what matters — the completeness will build over time.</p></div>
+        </div>
+
+        <div class="callout"><strong>You are ready.</strong> The tools, the training, and the systems are in place. What matters most now is your consistency, your curiosity about your learners, and your commitment to showing up prepared every day. Welcome to the team.</div>
+      </div>
+      <div class="qs">
+        <div class="qh"><div class="qi">🏆</div><div><h3>Final Checkpoint — Module 5</h3><p>Score 3 of 4 correct to complete the course</p></div></div>
+        <div id="quiz-m5">
+          <div class="qq" id="m5q1"><div class="qn">Q1 of 4</div><div class="qt">What should a guide confirm BEFORE their first day of sessions?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m5q1',false)"><div class="od"></div>That all learners are excited about the new schedule</div>
+            <div class="opt" onclick="sel(this,'m5q1',true)"><div class="od"></div>Training is complete, learner profiles are read, level placements are confirmed, space is set up, and Day 1 plan is known</div>
+            <div class="opt" onclick="sel(this,'m5q1',false)"><div class="od"></div>That all materials have been purchased and paid for</div>
+            <div class="opt" onclick="sel(this,'m5q1',false)"><div class="od"></div>That the parent report template has been filled out in advance</div>
+          </div><div class="qfb" id="fb-m5q1"></div></div>
+
+          <div class="qq" id="m5q2"><div class="qn">Q2 of 4</div><div class="qt">What should a guide prioritize ABOVE lesson content in the first week?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m5q2',false)"><div class="od"></div>Completing as many curriculum lessons as possible to stay on pace</div>
+            <div class="opt" onclick="sel(this,'m5q2',true)"><div class="od"></div>Establishing the routine — schedule, transitions, expectations — so the learner knows what to expect</div>
+            <div class="opt" onclick="sel(this,'m5q2',false)"><div class="od"></div>Assessing every learner for level placement across all programs</div>
+            <div class="opt" onclick="sel(this,'m5q2',false)"><div class="od"></div>Sending parent reports before any sessions begin</div>
+          </div><div class="qfb" id="fb-m5q2"></div></div>
+
+          <div class="qq" id="m5q3"><div class="qn">Q3 of 4</div><div class="qt">A learner shows resistance and confusion during their first week. The guide should:</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m5q3',false)"><div class="od"></div>Immediately refer the learner for additional assessment</div>
+            <div class="opt" onclick="sel(this,'m5q3',false)"><div class="od"></div>Adapt the schedule to remove the station the learner resists</div>
+            <div class="opt" onclick="sel(this,'m5q3',true)"><div class="od"></div>Stay calm and consistent — new routines take time, especially for learners who have experienced inconsistency</div>
+            <div class="opt" onclick="sel(this,'m5q3',false)"><div class="od"></div>Contact the family to consider if this program is the right fit</div>
+          </div><div class="qfb" id="fb-m5q3"></div></div>
+
+          <div class="qq" id="m5q4"><div class="qn">Q4 of 4</div><div class="qt">When should a guide start using the daily log?</div><div class="qopts">
+            <div class="opt" onclick="sel(this,'m5q4',false)"><div class="od"></div>After the first month, once the routine is established</div>
+            <div class="opt" onclick="sel(this,'m5q4',false)"><div class="od"></div>Only when there is something notable to document</div>
+            <div class="opt" onclick="sel(this,'m5q4',true)"><div class="od"></div>From Day One — the habit of documentation is more important than initial completeness</div>
+            <div class="opt" onclick="sel(this,'m5q4',false)"><div class="od"></div>After all program training courses have been completed</div>
+          </div><div class="qfb" id="fb-m5q4"></div></div>
+        </div>
+        <div id="result-m5" class="qr"><div class="rs" id="score-m5"></div><div class="rm" id="msg-m5"></div><div class="rsub" id="sub-m5"></div><button class="btn btn-ok btn-lg" id="next-m5" onclick="unlock('complete')" style="display:none">🎉 Complete Onboarding →</button><button class="btn btn-s" id="retry-m5" onclick="retry('m5')" style="display:none">Retake Quiz</button></div>
+        <div style="margin-top:18px;display:flex;justify-content:flex-end;"><button class="btn btn-p" id="submit-m5" onclick="submit('m5',4)" disabled>Submit Answers</button></div>
+      </div>
+      <div class="ln"><button class="btn btn-s" onclick="show('m4')">← Module 4</button></div>
+    </div>
+
+    <!-- COMPLETE -->
+    <div class="screen" id="screen-complete">
+      <div class="comp-wrap">
+        <div class="comp-badge">🌟</div>
+        <h2>Onboarding Complete!</h2>
+        <p>You understand your role, the HLPP system, every program, the data loop, and how to prepare for your first week. Now complete the program-specific training courses below.</p>
+        <div class="chips">
+          <div class="chip">✓ The Learning Guide Role</div>
+          <div class="chip">✓ The HLPP System</div>
+          <div class="chip">✓ Programs at a Glance</div>
+          <div class="chip">✓ Data & Planning</div>
+          <div class="chip">✓ First Week Ready</div>
+        </div>
+        <div style="background:var(--rule2);border-radius:14px;padding:22px;margin-bottom:28px;text-align:left;">
+          <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;">Your next training courses</div>
+          <div class="course-map">
+            <div class="cm-item"><div class="cm-dot" style="background:#FEF0EB">📘</div><div class="cm-content"><h4>MBTP Training</h4><p>Required if any learner uses MBTP</p></div></div>
+            <div class="cm-item"><div class="cm-dot" style="background:#EDE8F5">🧩</div><div class="cm-content"><h4>Curriculum Access Training</h4><p>Required if any learner uses CA</p></div></div>
+            <div class="cm-item"><div class="cm-dot" style="background:#EBF5FB">📖</div><div class="cm-content"><h4>Lexia Core5 Training</h4><p>Required for all guides</p></div></div>
+            <div class="cm-item"><div class="cm-dot" style="background:#E4F2ED">📚</div><div class="cm-content"><h4>LittleLit Training</h4><p>Required for all guides</p></div></div>
+            <div class="cm-item"><div class="cm-dot" style="background:#FEF0EB">❤️</div><div class="cm-content"><h4>Supporting Autistic Learners</h4><p>Required for all guides</p></div></div>
+          </div>
+        </div>
+        <div style="display:flex;gap:13px;justify-content:center;flex-wrap:wrap;">
+          <button class="btn btn-p btn-lg" onclick="show('welcome')">← Back to Home</button>
+          <button class="btn btn-s btn-lg" onclick="window.print()">🖨 Print Certificate</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="ti">✓</span><span id="tm"></span></div>
+<script>
+const MODS=['m1','m2','m3','m4','m5'];
+const state={unlocked:new Set(['welcome','m1']),completed:new Set(),answers:{},submitted:new Set()};
+const NAMES={welcome:'Course Home',m1:'Module 1',m2:'Module 2',m3:'Module 3',m4:'Module 4',m5:'Module 5',complete:'Certificate'};
+const ICONS=['🌟','🏗️','📦','📊','🚀'];
+function go(id){if(!state.unlocked.has(id)){toast('🔒','Complete the previous quiz to unlock.','locked-msg');return;}show(id);}
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+id).classList.add('active');document.querySelectorAll('.ni').forEach(n=>n.classList.remove('active'));const nav=document.getElementById('nav-'+id);if(nav)nav.classList.add('active');document.getElementById('cur').textContent=NAMES[id]||id;updateUI();window.scrollTo(0,0);}
+function unlock(next){state.unlocked.add(next);updateUI();show(next);}
+function updateUI(){MODS.forEach((m,i)=>{const nav=document.getElementById('nav-'+m),card=document.getElementById('card-'+m);if(!nav)return;nav.classList.remove('locked','completed');if(state.completed.has(m)){nav.classList.add('completed');nav.querySelector('.ni-ic').textContent='✓';nav.querySelector('.nbadge').textContent='✓';if(card){card.classList.remove('locked');card.classList.add('completed');card.querySelector('.mc-s').textContent='✓';}}else if(!state.unlocked.has(m)){nav.classList.add('locked');nav.querySelector('.ni-ic').textContent='🔒';if(card){card.classList.add('locked');card.querySelector('.mc-s').textContent='🔒';}}else{nav.querySelector('.ni-ic').textContent=ICONS[i];if(card){card.classList.remove('locked','completed');card.querySelector('.mc-s').textContent='→';}}});const cn=document.getElementById('nav-complete');if(state.unlocked.has('complete')){cn.classList.remove('locked');cn.querySelector('.ni-ic').textContent='🏆';}const pct=Math.round(state.completed.size/MODS.length*100);document.getElementById('pf').style.width=pct+'%';document.getElementById('pt').textContent=pct+'%';}
+function sel(el,qid,correct){if(state.submitted.has(qid.slice(0,2)))return;el.closest('.qopts').querySelectorAll('.opt').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');state.answers[qid]=correct;const mod=qid.slice(0,2);document.getElementById('submit-'+mod).disabled=![...document.querySelectorAll('#quiz-'+mod+' .qq')].every(q=>state.answers[q.id]!==undefined);}
+function submit(mod,total){if(state.submitted.has(mod))return;state.submitted.add(mod);let correct=0;document.querySelectorAll('#quiz-'+mod+' .qq').forEach(q=>{const ok=state.answers[q.id];if(ok)correct++;q.querySelectorAll('.opt').forEach(o=>{o.classList.add('disabled');if(o.getAttribute('onclick')?.includes('true'))o.classList.add('correct-ans');else if(o.classList.contains('selected'))o.classList.add('wrong-ans');});const fb=document.getElementById('fb-'+q.id);if(ok){q.classList.add('correct');fb.textContent='✓ Correct!';fb.className='qfb show correct';}else{q.classList.add('wrong');fb.textContent='✗ Not quite — the highlighted option is correct.';fb.className='qfb show wrong';}});const pct=Math.round(correct/total*100),passed=pct>=75;const r=document.getElementById('result-'+mod);r.classList.add('show',passed?'passed':'failed');document.getElementById('score-'+mod).textContent=pct+'%';document.getElementById('score-'+mod).className='rs '+(passed?'pass':'fail');document.getElementById('msg-'+mod).textContent=passed?'🎉 Passed!':'Not quite — try again';document.getElementById('sub-'+mod).textContent=passed?`${correct} of ${total} correct — module complete!`:`${correct} of ${total} — need 3+ to pass.`;document.getElementById('submit-'+mod).style.display='none';if(passed){state.completed.add(mod);document.getElementById('next-'+mod).style.display='inline-flex';updateUI();toast('✓','Module complete!','success');}else document.getElementById('retry-'+mod).style.display='inline-flex';}
+function retry(mod){state.submitted.delete(mod);Object.keys(state.answers).filter(k=>k.startsWith(mod)).forEach(k=>delete state.answers[k]);document.querySelectorAll('#quiz-'+mod+' .qq').forEach(q=>{q.classList.remove('correct','wrong');q.querySelectorAll('.opt').forEach(o=>o.classList.remove('selected','correct-ans','wrong-ans','disabled'));const fb=document.getElementById('fb-'+q.id);if(fb){fb.className='qfb';fb.textContent='';}});const r=document.getElementById('result-'+mod);r.classList.remove('show','passed','failed');document.getElementById('retry-'+mod).style.display='none';document.getElementById('next-'+mod).style.display='none';const sb=document.getElementById('submit-'+mod);sb.style.display='inline-flex';sb.disabled=true;}
+let tt;function toast(icon,msg,type=''){const t=document.getElementById('toast');document.getElementById('ti').textContent=icon;document.getElementById('tm').textContent=msg;t.className='toast show '+type;clearTimeout(tt);tt=setTimeout(()=>t.className='toast',3200);}
+updateUI();
+</script>
+</body>
+</html>
