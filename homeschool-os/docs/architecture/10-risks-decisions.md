@@ -44,7 +44,7 @@ These are things I'd want a decision on before or during STEP 2 — most have a 
 8. **Timezones and DST.** Called out because recurring class schedules across a DST boundary are the classic calendar bug. Handled by storing RRULE + IANA timezone and materializing instances.
 9. **Evaluator credential verification.** The platform will imply trust by listing evaluators. Verification status is a first-class field with a human verification step; unverified evaluators are labeled as such.
 10. **Notification volume.** Compliance reminders at T-90/30/7/0 across several children is a lot of email. Digest preferences and quiet hours are in the schema from the start.
-11. **Billing hooks.** No payments in MVP, but `organizations.plan` and `ai_usage_counters` exist now so metering and gating don't require a schema migration under time pressure later.
+11. **Billing hooks.** No payments in MVP, but `organizations.plan` and `ai_usage_daily` exist now so metering and gating don't require a schema migration under time pressure later.
 12. **Support/impersonation.** Every SaaS needs it; doing it wrong here is a child-records incident. Break-glass sessions with a stated reason, expiry, and full audit are in from STEP 2.
 13. **Duplicate students across families** (shared custody, two households). *Default: one student record, multiple guardians across households, per-guardian access levels — not two records.*
 14. **What "learning progress %" actually means.** The dashboard shows a number; it needs a defined, explainable formula (weighted skill mastery over the student's active skill set for the year) with a tooltip that explains it. Vague numbers erode trust fast.

@@ -12,7 +12,7 @@ PostgreSQL 15 (Supabase). All tables in `public`; helper functions in schema `ap
 - **Legal/calendar dates are `date`, not `timestamptz`** (a Notice of Intent filed "September 3" must not shift by timezone). Instants (`created_at`, event start/end) are `timestamptz`; every org and family carries a `timezone` (IANA) used for rendering.
 - Enums are Postgres enum types in schema `app` (`app.access_level`, `app.org_role`, `app.status`, …) so a typo is a migration error, not a runtime bug.
 - Every FK is indexed. Every `(organization_id, <hot column>)` and `(student_id, <date>)` access path is indexed.
-- RLS is `enable row level security` + `force row level security` on **every** table. A table with no policy is inaccessible by default; the migration lint fails if a new table has RLS off.
+- RLS is `enable row level security` on **every** table, and every partition is separately locked (RLS is not inherited, and a partition is reachable by name). A table with no policy for an operation denies that operation. `force row level security` is deliberately NOT used - it applies RLS to the table owner too, which would make the SECURITY DEFINER access helpers recurse into the policies that call them; isolation comes from the application never connecting as an owner role. Migration 0036 fails the deploy if any table has RLS off, any non-exempt table has zero policies, or any SECURITY DEFINER function in `app` lacks a pinned `search_path`.
 
 ## 2.1 Identity & tenancy
 
@@ -105,9 +105,9 @@ Unique `(family_id, sha256) where deleted_at is null` → duplicate upload detec
 Index `(student_id, status)`, `(organization_id, status, created_at desc)`.
 **Applying a suggestion is a single server action**: validate payload against a Zod schema per `kind` → perform write → set `applied_record_id` → write `audit_logs` row with `source='ai_confirmed'`. Rejections are kept (they are the eval set).
 
-**ai_interactions** — every assistant/pipeline call: `user_id`, `organization_id`, `student_ids uuid[]`, `feature` (`assistant|document_analysis|lesson_generator|weekly_report|daily_brief|progress_engine`), `provider`, `model`, `prompt_version`, `messages_hash`, `input_summary`, `output_summary`, `tokens_in/out`, `cost_cents`, `latency_ms`, `permission_scope jsonb` (exactly which student IDs the retrieval layer was allowed to see), `status`, `error`, `feedback` (`up|down|null`).
+**ai_usage_events** *(implemented; supersedes the `ai_interactions` + `ai_usage_counters` split)* — every assistant/pipeline call: `user_id`, `organization_id`, `student_ids uuid[]`, `feature` (`assistant|document_analysis|lesson_generator|weekly_report|daily_brief|progress_engine`), `provider`, `model`, `prompt_version`, `messages_hash`, `input_summary`, `output_summary`, `tokens_in/out`, `cost_cents`, `latency_ms`, `permission_scope jsonb` (exactly which student IDs the retrieval layer was allowed to see), `status`, `error`, `feedback` (`up|down|null`).
 
-**ai_usage_counters** — `organization_id | family_id`, `period_start date`, `feature`, `calls`, `tokens`, `cost_cents` — for per-tenant budgets and abuse throttling.
+**ai_usage_daily** — `organization_id | family_id`, `period_start date`, `feature`, `calls`, `tokens`, `cost_cents` — for per-tenant budgets and abuse throttling.
 
 **job_queue** — `kind`, `payload jsonb`, `run_after`, `attempts`, `max_attempts`, `status` (`queued|running|done|failed|dead`), `locked_by`, `locked_at`, `last_error`, `idempotency_key unique`.
 

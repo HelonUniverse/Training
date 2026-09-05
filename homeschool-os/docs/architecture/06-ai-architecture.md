@@ -91,7 +91,7 @@ user prompt
   → model with a fixed tool set; every tool takes scope from AssistantContext, never from the prompt
   → tools execute against the *user-scoped* Supabase client (RLS applies a second time)
   → response streamed with citations (each claim links to the record that produced it)
-  → ai_interactions row records permission_scope, tokens, cost
+  → ai_usage_events row records permission_scope, tokens, cost
 ```
 
 Tool catalog (each with a zod input schema and a role allowlist):
@@ -106,16 +106,16 @@ Guardrails:
 - `studentIds` is injected server-side. A prompt saying "show me all students in the district" returns only the caller's scope; the tool physically cannot widen it.
 - Prompt-injection defense: document text and message bodies are passed inside clearly delimited untrusted blocks with instructions that content within is data, never instruction. Tool results are similarly delimited.
 - Refusal domains: medical/psychological diagnosis, legal advice, and any statement that a family "is compliant." The system prompt and a post-generation regex/classifier check both enforce this; violations are logged.
-- Per-tenant budgets from `ai_usage_counters`; on exhaustion the assistant degrades to deterministic views rather than failing hard.
+- Per-tenant budgets from `ai_usage_daily`; on exhaustion the assistant degrades to deterministic views rather than failing hard.
 
 ## 5. Prompt management & evaluation
 
-- Prompts are versioned modules (`lib/ai/prompts/v1/document_classify.ts`) with the version stored on every `ai_interactions` and `document_ai_analysis` row. A regression is always traceable to a prompt version.
+- Prompts are versioned modules (`lib/ai/prompts/v1/document_classify.ts`) with the version stored on every `ai_usage_events` and `document_ai_analysis` row. A regression is always traceable to a prompt version.
 - `tests/ai/golden/` holds ~40 de-identified fixture documents (evaluations, worksheets, assessments, receipts, handwritten pages, a deliberately blank scan, a rotated photo). CI asserts classification accuracy ≥ target, and **zero fabrication** on the blank/garbled fixtures.
 - `ai_suggestions` acceptance/rejection rate per `kind` is the production quality metric, surfaced in `/admin/ai/evals`.
 
 ## 6. Cost, latency, safety operations
 - Document analysis is asynchronous (job queue) with an optimistic "Analyzing…" state; the UI never blocks on a model call.
 - Streaming for assistant and lesson generation; hard timeout 60s, then a graceful partial result.
-- Every call logged to `ai_interactions` with cost; per-org monthly budget with soft (warn) and hard (block) limits.
+- Every call logged to `ai_usage_events` with cost; per-org monthly budget with soft (warn) and hard (block) limits.
 - PII minimization: prompts send preferred names and initials rather than full legal names + DOB wherever the task does not require them; document text is sent as-is because it must be, and that is disclosed in the privacy policy and gated by the `ai_processing` consent.
