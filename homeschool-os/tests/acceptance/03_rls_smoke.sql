@@ -153,3 +153,30 @@ begin
 
   raise notice 'ALL RLS SMOKE CHECKS PASSED';
 end $$;
+
+-- =============================================================================
+-- NEGATIVE CONTROL
+-- =============================================================================
+-- Everything above is a set of assertions that pass. A test suite that silently
+-- fails to impersonate anyone - because SET LOCAL ROLE did not take effect, or
+-- because the statements ran as a superuser that bypasses RLS - would also
+-- report "all passed". This block asserts something we KNOW is false, so the
+-- run is only trustworthy if this raises.
+do $$
+declare ok boolean := false;
+begin
+  begin
+    perform t.login('11111111-1111-4111-8111-000000000008');  -- stranger
+    -- A stranger must see zero students; assert 2 so this MUST fail.
+    perform t.assert_eq((select count(*) from public.students), 2::bigint,
+      'negative control: stranger must NOT see students');
+  exception when assert_failure then
+    ok := true;
+  end;
+  perform t.logout();
+  if not ok then
+    raise exception 'NEGATIVE CONTROL DID NOT FIRE: RLS is not being enforced in this harness, '
+                    'so every assertion above is meaningless';
+  end if;
+  raise notice 'negative control fired correctly - RLS is genuinely enforced';
+end $$;

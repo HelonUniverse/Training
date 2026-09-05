@@ -1,5 +1,21 @@
--- STEP 2.6 / D: storage policy evaluation against the real storage.objects table.
--- Proves the policy predicates themselves; storage_api_test.sh proves the HTTP path.
+-- STEP 2.6 / D: storage authorization against the REAL storage.objects table.
+--
+-- Part 1 exercises the policy predicate (app.can_upload_to_prefix) directly.
+-- Part 2 exercises the policies themselves by writing and reading real rows in
+-- storage.objects as impersonated users, which is the check that matters.
+--
+-- NOTE ON DESIGN: the document buckets have NO SELECT policy. That is
+-- deliberate (STEP-2-REPORT.md): all reads are server-minted signed URLs so
+-- that every view is audited. A test asserting that an uploader can read their
+-- own quarantined object back is therefore asserting the OPPOSITE of the
+-- architecture, and will correctly fail.
+--
+-- NOTE ON THE PLATFORM: managed Supabase installs storage.protect_delete(),
+-- which blocks every direct SQL DELETE from storage.objects - including as
+-- service_role. Deletion goes through the Storage HTTP API only. Case 10 pins
+-- that behaviour so it is not rediscovered the hard way in STEP 3.
+
+-- ============================ Part 1: predicates =============================
 do $$
 declare
   CARLA uuid := '11111111-1111-4111-8111-000000000001';  -- Melendez family
@@ -9,7 +25,6 @@ declare
   FAM_B text := '22222222-2222-4222-8222-00000000000b';
   ORG   text := '33333333-3333-4333-8333-00000000000c';
 begin
-  -- every bucket must be private
   if exists (select 1 from storage.buckets where public) then
     raise exception 'a storage bucket is public: %',
       (select string_agg(id, ', ') from storage.buckets where public);
@@ -42,6 +57,115 @@ begin
   perform t.logout();
 
   raise notice 'STORAGE POLICY PREDICATES PASSED';
+end $$;
+
+-- ====================== Part 2: real storage.objects rows =====================
+do $$
+declare
+  CARLA uuid := '11111111-1111-4111-8111-000000000001';
+  DIEGO uuid := '11111111-1111-4111-8111-000000000003';
+  ADELE uuid := '11111111-1111-4111-8111-000000000004';
+  FAM_A text := '22222222-2222-4222-8222-00000000000a';
+  FAM_B text := '22222222-2222-4222-8222-00000000000b';
+  ORG   text := '33333333-3333-4333-8333-00000000000c';
+  n int;
+begin
+  -- 1. guardian uploads into their own family prefix -> ALLOWED
+  perform t.login(CARLA);
+  insert into storage.objects (bucket_id, name, owner, owner_id)
+  values ('uploads-quarantine', FAM_A || '/lucas/real-upload.pdf', CARLA, CARLA::text);
+  perform t.logout();
+
+  -- 2. into ANOTHER family's prefix -> DENIED
+  perform t.login(CARLA);
+  begin
+    insert into storage.objects (bucket_id, name, owner, owner_id)
+    values ('uploads-quarantine', FAM_B || '/sofia/steal.pdf', CARLA, CARLA::text);
+    raise exception 'ASSERTION FAILED: cross-family storage write succeeded';
+  exception when insufficient_privilege then null;
+  end;
+  perform t.logout();
+
+  -- 3. forging the owner column -> DENIED
+  perform t.login(CARLA);
+  begin
+    insert into storage.objects (bucket_id, name, owner, owner_id)
+    values ('uploads-quarantine', FAM_A || '/lucas/forged.pdf', DIEGO, DIEGO::text);
+    raise exception 'ASSERTION FAILED: forged storage owner accepted';
+  exception when insufficient_privilege then null;
+  end;
+  perform t.logout();
+
+  -- 4. traversal prefix -> DENIED
+  perform t.login(CARLA);
+  begin
+    insert into storage.objects (bucket_id, name, owner, owner_id)
+    values ('uploads-quarantine', '../etc/passwd', CARLA, CARLA::text);
+    raise exception 'ASSERTION FAILED: traversal prefix accepted';
+  exception when insufficient_privilege then null;
+  end;
+  perform t.logout();
+
+  -- 5. quarantine is write-only BY DESIGN, even for the uploader
+  perform t.login(CARLA);
+  select count(*) into n from storage.objects where bucket_id = 'uploads-quarantine';
+  perform t.assert_eq(n, 0, 'quarantine is not directly readable, even by the uploader');
+  perform t.logout();
+  perform t.login(DIEGO);
+  select count(*) into n from storage.objects where bucket_id = 'uploads-quarantine';
+  perform t.assert_eq(n, 0, 'quarantine is invisible to another family');
+  perform t.logout();
+
+  -- 6. the service-role scanner DOES see it (this is how files leave quarantine)
+  select count(*) into n from storage.objects
+   where bucket_id = 'uploads-quarantine' and name = FAM_A || '/lucas/real-upload.pdf';
+  perform t.assert_eq(n, 1, 'the service-role scanner sees the quarantined object');
+
+  -- 7. avatars are scoped to the caller's own uuid folder, and ARE readable
+  perform t.login(CARLA);
+  insert into storage.objects (bucket_id, name, owner, owner_id)
+  values ('avatars', CARLA::text || '/me.png', CARLA, CARLA::text);
+  select count(*) into n from storage.objects where bucket_id = 'avatars';
+  perform t.assert_eq(n, 1, 'a user reads their own avatar');
+  begin
+    insert into storage.objects (bucket_id, name, owner, owner_id)
+    values ('avatars', DIEGO::text || '/notme.png', CARLA, CARLA::text);
+    raise exception 'ASSERTION FAILED: wrote into another user''s avatar folder';
+  exception when insufficient_privilege then null;
+  end;
+  perform t.logout();
+
+  -- 8. org branding: writable by an org admin
+  perform t.login(ADELE);
+  insert into storage.objects (bucket_id, name, owner, owner_id)
+  values ('org-branding', ORG || '/logo.png', ADELE, ADELE::text);
+  select count(*) into n from storage.objects where bucket_id = 'org-branding';
+  perform t.assert_eq(n, 1, 'an org admin reads org branding');
+  perform t.logout();
+
+  -- 9. ... and not by a guardian, who also cannot see it
+  perform t.login(CARLA);
+  begin
+    insert into storage.objects (bucket_id, name, owner, owner_id)
+    values ('org-branding', ORG || '/hacked.png', CARLA, CARLA::text);
+    raise exception 'ASSERTION FAILED: a guardian wrote org branding';
+  exception when insufficient_privilege then null;
+  end;
+  perform t.logout();
+  perform t.login(DIEGO);
+  select count(*) into n from storage.objects where bucket_id = 'org-branding';
+  perform t.assert_eq(n, 0, 'a non-member does not see org branding');
+  perform t.logout();
+
+  -- 10. managed Supabase blocks direct SQL DELETE on storage.objects entirely
+  begin
+    delete from storage.objects
+     where bucket_id = 'uploads-quarantine' and name = FAM_A || '/lucas/real-upload.pdf';
+    raise exception 'ASSERTION FAILED: direct storage delete was permitted';
+  exception when insufficient_privilege then null;
+  end;
+
+  raise notice 'ALL 10 REAL STORAGE.OBJECTS CASES PASSED';
 end $$;
 
 -- Which policies actually exist on storage.objects, and for which buckets.
