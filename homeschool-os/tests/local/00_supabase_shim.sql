@@ -16,22 +16,46 @@ do $$ begin
   create role supabase_auth_admin nologin noinherit;
 exception when duplicate_object then null; end $$;
 
+create schema if not exists extensions;
+create extension if not exists pgcrypto with schema extensions;
+
+-- Mirrors the columns of Supabase's auth.users that the migrations and the
+-- acceptance fixtures actually touch.
 create table if not exists auth.users (
+  instance_id uuid,
   id uuid primary key default gen_random_uuid(),
+  aud varchar(255),
+  role varchar(255),
   email text,
+  encrypted_password varchar(255),
+  email_confirmed_at timestamptz,
+  raw_app_meta_data jsonb default '{}'::jsonb,
   raw_user_meta_data jsonb default '{}'::jsonb,
-  created_at timestamptz default now()
+  confirmation_token varchar(255),
+  recovery_token varchar(255),
+  email_change_token_new varchar(255),
+  email_change varchar(255),
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
 );
 
 -- Supabase reads these from the request JWT; locally we drive them with a GUC.
+-- Same resolution order as Supabase's own auth.uid(): the individual claim GUC
+-- first, then the full claims JSON that PostgREST sets.
 create or replace function auth.uid() returns uuid
 language sql stable as $$
-  select nullif(current_setting('request.jwt.claim.sub', true), '')::uuid;
+  select coalesce(
+    nullif(current_setting('request.jwt.claim.sub', true), ''),
+    (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'sub')
+  )::uuid;
 $$;
 
 create or replace function auth.role() returns text
 language sql stable as $$
-  select coalesce(nullif(current_setting('request.jwt.claim.role', true), ''), 'authenticated');
+  select coalesce(
+    nullif(current_setting('request.jwt.claim.role', true), ''),
+    (nullif(current_setting('request.jwt.claims', true), '')::jsonb ->> 'role'),
+    'authenticated');
 $$;
 
 create table if not exists storage.buckets (
