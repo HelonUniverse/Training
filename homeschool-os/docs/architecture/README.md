@@ -21,6 +21,10 @@
 | `08-security.md` | RLS, isolation, storage, audit, threat model |
 | `09-build-plan.md` | STEP 2 → STEP 15 execution order with definitions of done |
 | `10-risks-decisions.md` | Design decisions, risks, and gaps in the original brief |
+| `11-step2-implementation-notes.md` | What STEP 2 actually built and how it deviated |
+| `12-service-role-boundary.md` | Where the RLS-bypassing key is allowed, and how that is enforced |
+| `13-authorization-model.md` | **The authorization model**: two questions, the capability matrix, guardian levels, grant scoping, document visibility, performance rules |
+| `STEP-2-REPORT.md` / `STEP-2.5-REPORT.md` | Deliverable reports |
 
 ---
 
@@ -70,8 +74,8 @@ External adapters (all behind interfaces)
 
 Everything in this product hangs off three ideas. If you understand these, you understand the system.
 
-**Spine 1 — Student access resolution.**
-Every student-scoped read and write in the entire product resolves through one SQL function, `app.student_access(student_id, user_id)`, returning `none | read | write | admin`. Guardianship, org membership, explicit staff assignment, and temporary evaluator grants all feed that one function. RLS policies never re-implement access logic; they call it. Adding a new role means teaching that function about the role — not editing 40 policies.
+**Spine 1 — Two-question authorization.** *(refined in STEP 2.5)*
+Every student-scoped access answers two questions. **Q1**, `app.student_access(student)`, is the gate: can this user reach this student at all. **Q2**, `app.can_student_action(student, resource, action)`, is the authorization: may they do this specific thing. Both read from one relationship resolver, `app.my_student_relationships()`; Q2 consults an explicit capability matrix (`app.capabilities`) you can read as a table. RLS policies never re-implement access logic. Adding a role means one resolver branch plus matrix rows — not editing 40 policies.
 
 **Spine 2 — Proposal, not mutation (the AI safety spine).**
 AI never writes to a domain table. AI writes to `ai_suggestions` (a proposal, with confidence, rationale, and a target action payload). A human accepts it and *the application* performs the write, in a transaction, with an audit row and `source = 'ai_confirmed'`. This one rule satisfies §7, §8, §9, §17, §18, §39 simultaneously, and makes "AI made a mess" recoverable by definition.

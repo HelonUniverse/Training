@@ -2,6 +2,9 @@
 
 PostgreSQL 16 (Supabase). Migrations are plain SQL, applied in filename order.
 
+49 migrations · 76 tables · 182 RLS policies · 409 capability rows.
+The authorization model is documented in `docs/architecture/13-authorization-model.md`.
+
 ```
 supabase/
 ├── migrations/          37 migrations, timestamp-ordered
@@ -42,6 +45,14 @@ the migrations touch (`auth.users`, `auth.uid()`, the storage tables, and the
 | `01_access_matrix.sql` | Read scope for every role, revocation, membership end |
 | `02_invariants.sql` | The 15 database-enforced product rules |
 | `03_write_policies.sql` | Write and denial paths, audit visibility |
+| `04_resource_authorization.sql` | Resource/action capabilities per relationship |
+| `05_evaluator_and_documents.sql` | Grant section scoping and document visibility |
+| `06_privilege_escalation.sql` | Escalation attempts, partitions, org exit, export boundary |
+| `07_schema_invariants.sql` | Deploy invariants re-asserted as a test |
+
+`tests/perf/run.sh` loads a 10,000-student fixture and runs the authorization
+EXPLAIN suite. Any authorization helper appearing per-row in a policy on a large
+table is a production outage - see `docs/architecture/13-authorization-model.md` §6.
 
 ## Conventions
 

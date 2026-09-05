@@ -5,13 +5,16 @@ This system holds children's educational records. Assume every bug is a disclosu
 ## 1. Defense in depth
 1. **Route guards** — layout-level access resolution; unauthorized student IDs → 404.
 2. **Server actions** — `withPermission()` + zod input validation + audit write. Enforced by lint.
-3. **RLS** — enabled on every table (and on every partition separately); policies call the `app.student_access` spine. `force` is intentionally not used - see 02-database-schema.md.
+3. **RLS** — enabled on every table (and on every partition separately). Policies ask both authorization questions: `app.my_student_ids_for(resource, action)` in `USING`, `app.can_student_action(...)` in `WITH CHECK`. `force` is intentionally not used - see 02-database-schema.md.
+4. **Workflow guards** — triggers that gate state transitions (accepting an evaluation, filing an official document, deleting a record, activating a learning plan), because RLS answers "may you touch this row", not "may you make this transition".
 4. **Storage** — private buckets only; access exclusively through a server route that re-checks permission, signs a ≤5-minute URL, and writes an audit row.
 
 The RLS test suite (`tests/rls/`) is the highest-value test asset in the repo. For every table it asserts: another family cannot read; an unassigned teacher cannot read; an org admin of a *different* org cannot read; an expired evaluator grant cannot read; a revoked guardian cannot read. New table without RLS tests → CI fails.
 
 ## 2. Isolation
 - **Organization isolation:** every org-scoped table carries `organization_id`; policies require `app.is_org_member(organization_id, …)`.
+- **Service-role boundary:** the key that bypasses RLS is confined to named background jobs; see [`12-service-role-boundary.md`](12-service-role-boundary.md).
+- **Document visibility:** reaching a student never implies reading every document of that student; see [`13-authorization-model.md`](13-authorization-model.md) §5.
 - **Record ownership:** `data_ownership_registry` classifies every table as family-owned (student educational record), organization-owned (operational record), shared, or platform, and states whether each side retains access when a membership ends.
 - **Family isolation:** family-scoped data with `organization_id is null` is reachable only through guardianship.
 - **Cross-tenant students:** a student in an org is visible to that org only while `organization_memberships.status='active'`. The family owns the record; ending the relationship ends org access without deleting anything.

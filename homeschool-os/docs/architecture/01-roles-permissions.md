@@ -23,53 +23,30 @@ Notes that matter:
 
 ## 2. The access spine
 
-```sql
--- returns 'none' | 'read' | 'write' | 'admin'
-create function app.student_access(p_student uuid, p_user uuid default auth.uid())
-returns app.access_level
-language sql stable security definer set search_path = '' as $$
-  select coalesce(
-    -- 1. the student themself
-    (select 'read'::app.access_level from public.students s
-      where s.id = p_student and s.user_id = p_user),
-    -- 2. guardian
-    (select case when sg.access_level = 'full' then 'admin' else 'write' end
-       from public.student_guardians sg
-      where sg.student_id = p_student and sg.user_id = p_user
-        and sg.revoked_at is null),
-    -- 3. explicit staff assignment (teacher/tutor)
-    (select ssa.access_level from public.student_staff_assignments ssa
-      where ssa.student_id = p_student and ssa.user_id = p_user
-        and ssa.active and (ssa.ends_on is null or ssa.ends_on >= current_date)),
-    -- 4. derived: staff on a class the student is enrolled in
-    (select 'write'::app.access_level from public.class_students cs
-       join public.class_staff cst on cst.class_id = cs.class_id
-      where cs.student_id = p_student and cst.user_id = p_user
-        and cs.active and cst.active),
-    -- 5. org admin over the student's organization
-    (select 'admin'::app.access_level from public.organization_members om
-      join public.students s on s.organization_id = om.organization_id
-     where s.id = p_student and om.user_id = p_user
-       and om.role in ('org_admin') and om.status = 'active'),
-    -- 6. time-boxed grant (evaluator, temporary reviewer)
-    (select sag.access_level from public.student_access_grants sag
-      where sag.student_id = p_student and sag.grantee_user_id = p_user
-        and sag.status = 'active' and sag.expires_at > now()),
-    -- 7. break-glass support session
-    (select 'read'::app.access_level from public.support_access_sessions sas
-      where sas.user_id = p_user and sas.expires_at > now()
-        and (sas.student_id = p_student or sas.student_id is null)),
-    'none'::app.access_level
-  );
-$$;
-```
-
-Companion helpers, all `security definer`, all `stable`:
-`app.can_read_student(uuid)`, `app.can_write_student(uuid)`, `app.can_admin_student(uuid)`,
-`app.is_org_member(uuid, app.org_role[])`, `app.my_student_ids()` (returns setof uuid; used for fast IN-list policies on high-volume child tables),
-`app.can_read_org(uuid)`, `app.current_profile()`.
-
-Performance note: `app.my_student_ids()` is materialized per statement via a `stable` function; child-table policies (`portfolio_items`, `activity_logs`, `assignments`, …) use `student_id in (select app.my_student_ids())` rather than re-running the full resolution per row. Verified with `EXPLAIN` in the RLS test suite.
+> **Updated in STEP 2.5.** This section described a single `student_access()`
+> gate. The implemented model splits authorization into two questions:
+>
+> * **Q1 — can this user reach this student at all?** `app.student_access(student)`
+>   returns `none < read < write < admin`, resolved from
+>   `app.my_student_relationships()`.
+> * **Q2 — may this user perform this ACTION on this RESOURCE for this student?**
+>   `app.can_student_action(student, resource, action)`, answered from the
+>   explicit capability matrix in `app.capabilities`.
+>
+> Two behaviours changed from the STEP 1 sketch:
+>
+> 1. **Class membership resolves to `read`, not `write`.** A class teacher's
+>    academic write authority comes from the capability matrix, so it covers
+>    attendance, portfolio, assignments, skills and notes — and nothing on the
+>    guardian / consent / compliance / evaluation / access-grant surface.
+> 2. **No authorization function takes a `p_user` argument.** Asking "what may
+>    this OTHER user do?" was itself an enumeration surface. Every function
+>    answers only for `auth.uid()`.
+>
+> The full model — relationships, the capability matrix, guardian access levels,
+> grant sections, document visibility and the performance rules — is documented
+> in [`13-authorization-model.md`](13-authorization-model.md), and the
+> implementation is migrations 0038-0049.
 
 ## 3. Permission matrix
 

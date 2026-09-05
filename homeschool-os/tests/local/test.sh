@@ -9,7 +9,9 @@ PSQL="/usr/lib/postgresql/16/bin/psql -h $PGDIR/run -p 5433 -U postgres -v ON_ER
 "$ROOT/tests/local/run.sh" >/dev/null
 echo "migrations: ok"
 
-su postgres -c "$PSQL -d $DB -f $ROOT/tests/rls/00_fixtures.sql" >/dev/null
+for f in "$ROOT"/tests/rls/00*_fixtures.sql; do
+  su postgres -c "$PSQL -d $DB -f $f" >/dev/null
+done
 echo "fixtures:   ok"
 
 status=0

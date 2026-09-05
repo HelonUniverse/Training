@@ -79,8 +79,10 @@ commit;
 -- --- 6. evaluator: time-boxed, single student --------------------------------
 begin;
 select t.login(:'EVA');
-select t.assert_eq((select count(*) from public.students), 1::bigint,
-  'an evaluator sees only the student they were granted');
+select t.assert_eq((select count(*) from public.students), 2::bigint,
+  'an evaluator sees exactly the students they hold a live grant for');
+select t.assert_eq((select count(*) from public.students where id = :'SOFIA'::uuid), 0::bigint,
+  'the student behind an expired grant is not among them');
 select t.assert_eq(app.student_access(:'MARLA'::uuid), 'read'::app.access_level,
   'an active grant yields read access');
 select t.assert_eq(app.student_access(:'SOFIA'::uuid), 'none'::app.access_level,

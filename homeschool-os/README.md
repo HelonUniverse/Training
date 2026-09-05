@@ -6,10 +6,11 @@ An operating system for homeschooling families, support programs, microschools, 
 tutors, evaluators, and education organizations. First launch market: Florida.
 State-agnostic core with pluggable compliance packs.
 
-**Current status: STEP 2 complete — database schema.** No application code yet.
+**Current status: STEP 2.5 complete — schema, authorization model and hardening.** No application code yet.
 
 - Architecture: [`docs/architecture/`](docs/architecture/README.md)
-- Schema: [`supabase/`](supabase/README.md) — 37 migrations, 75 tables, 155 RLS policies
-- Tests: `./tests/local/test.sh` (runs against a stock PostgreSQL 16 cluster)
+- Schema: [`supabase/`](supabase/README.md) — 49 migrations, 76 tables, 182 RLS policies
+- Authorization: [`docs/architecture/13-authorization-model.md`](docs/architecture/13-authorization-model.md)
+- Tests: `./tests/local/test.sh` · Performance: `./tests/perf/run.sh` (stock PostgreSQL 16)
 
 Start here: [`docs/architecture/README.md`](docs/architecture/README.md)
