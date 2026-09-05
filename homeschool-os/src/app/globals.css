@@ -1,0 +1,153 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Palette is defined once here as RGB triples so Tailwind's <alpha-value>
+ * works. Light is the primary design; dark redefines only the tokens.
+ */
+@layer base {
+  :root {
+    --canvas: 250 249 246;          /* warm off-white paper */
+    --surface: 255 255 255;
+    --surface-sunken: 244 243 239;
+    --surface-raised: 255 255 255;
+    --hairline: 231 229 222;
+
+    --ink: 27 32 28;                /* near-black, faint green cast */
+    --ink-muted: 91 99 92;
+    --ink-subtle: 134 141 133;
+    --ink-inverse: 255 255 255;
+
+    --primary: 47 106 79;           /* sage forest */
+    --primary-hover: 38 88 65;
+    --primary-soft: 232 241 235;
+    --primary-ink: 27 68 49;
+
+    --attention: 180 121 20;        /* amber - reserved for real attention */
+    --attention-soft: 252 244 228;
+    --attention-ink: 124 82 10;
+
+    --positive: 47 122 74;
+    --positive-soft: 233 244 236;
+    --positive-ink: 30 84 50;
+
+    --critical: 173 54 45;
+    --critical-soft: 251 236 234;
+    --critical-ink: 124 36 30;
+
+    --info: 44 94 138;
+    --info-soft: 233 240 247;
+    --info-ink: 30 68 102;
+
+    --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  :root:not([data-theme='light']) {
+    @media (prefers-color-scheme: dark) {
+      --canvas: 16 20 17;
+      --surface: 25 30 26;
+      --surface-sunken: 20 25 21;
+      --surface-raised: 32 38 33;
+      --hairline: 48 56 49;
+
+      --ink: 236 238 234;
+      --ink-muted: 168 175 167;
+      --ink-subtle: 130 139 130;
+      --ink-inverse: 16 20 17;
+
+      --primary: 126 186 148;
+      --primary-hover: 148 202 168;
+      --primary-soft: 32 48 38;
+      --primary-ink: 190 222 202;
+
+      --attention: 224 168 68;
+      --attention-soft: 56 44 20;
+      --attention-ink: 240 205 145;
+
+      --positive: 116 183 138;
+      --positive-soft: 28 46 33;
+      --positive-ink: 178 217 192;
+
+      --critical: 226 122 112;
+      --critical-soft: 55 28 26;
+      --critical-ink: 243 183 176;
+
+      --info: 128 174 219;
+      --info-soft: 24 38 52;
+      --info-ink: 184 212 238;
+    }
+  }
+
+  :root[data-theme='dark'] {
+    --canvas: 16 20 17;
+    --surface: 25 30 26;
+    --surface-sunken: 20 25 21;
+    --surface-raised: 32 38 33;
+    --hairline: 48 56 49;
+
+    --ink: 236 238 234;
+    --ink-muted: 168 175 167;
+    --ink-subtle: 130 139 130;
+    --ink-inverse: 16 20 17;
+
+    --primary: 126 186 148;
+    --primary-hover: 148 202 168;
+    --primary-soft: 32 48 38;
+    --primary-ink: 190 222 202;
+
+    --attention: 224 168 68;
+    --attention-soft: 56 44 20;
+    --attention-ink: 240 205 145;
+
+    --positive: 116 183 138;
+    --positive-soft: 28 46 33;
+    --positive-ink: 178 217 192;
+
+    --critical: 226 122 112;
+    --critical-soft: 55 28 26;
+    --critical-ink: 243 183 176;
+
+    --info: 128 174 219;
+    --info-soft: 24 38 52;
+    --info-ink: 184 212 238;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: rgb(var(--canvas));
+    color: rgb(var(--ink));
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Accessibility: focus must always be visible and never colour-only. */
+  :focus-visible {
+    outline: 2px solid rgb(var(--primary));
+    outline-offset: 2px;
+    border-radius: 0.375rem;
+  }
+
+  /* Respect reduced motion. */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Skip link - keyboard users land here first. */
+  .skip-link {
+    @apply sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50
+           focus:rounded-field focus:bg-surface focus:px-4 focus:py-2 focus:text-ink
+           focus:shadow-pop;
+  }
+}

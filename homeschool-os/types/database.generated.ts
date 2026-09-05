@@ -7,11 +7,6 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instantiate createClient with right options
-  // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
-  __InternalSupabase: {
-    PostgrestVersion: "14.5"
-  }
   public: {
     Tables: {
       academic_years: {
@@ -106,7 +101,7 @@ export type Database = {
           materials: string | null
           organization_id: string | null
           portfolio_item_id: string | null
-          resources: Json
+          resources: NonNullable<Json>
           skill_ids: string[]
           source_id: string | null
           source_type:
@@ -151,7 +146,7 @@ export type Database = {
           materials?: string | null
           organization_id?: string | null
           portfolio_item_id?: string | null
-          resources?: Json
+          resources?: NonNullable<Json>
           skill_ids?: string[]
           source_id?: string | null
           source_type?:
@@ -196,7 +191,7 @@ export type Database = {
           materials?: string | null
           organization_id?: string | null
           portfolio_item_id?: string | null
-          resources?: Json
+          resources?: NonNullable<Json>
           skill_ids?: string[]
           source_id?: string | null
           source_type?:
@@ -337,7 +332,7 @@ export type Database = {
             | "create_lesson"
             | "link_document_to_student"
           organization_id: string | null
-          payload: Json
+          payload: NonNullable<Json>
           rationale: string | null
           requires_confirmation: boolean
           source_record_id: string | null
@@ -390,7 +385,7 @@ export type Database = {
             | "create_lesson"
             | "link_document_to_student"
           organization_id?: string | null
-          payload: Json
+          payload: NonNullable<Json>
           rationale?: string | null
           requires_confirmation?: boolean
           source_record_id?: string | null
@@ -448,7 +443,7 @@ export type Database = {
             | "create_lesson"
             | "link_document_to_student"
           organization_id?: string | null
-          payload?: Json
+          payload?: NonNullable<Json>
           rationale?: string | null
           requires_confirmation?: boolean
           source_record_id?: string | null
@@ -655,7 +650,7 @@ export type Database = {
           organization_id: string | null
           output_summary: string | null
           output_tokens: number | null
-          permission_scope: Json
+          permission_scope: NonNullable<Json>
           prompt_version: string | null
           provider: string
           status:
@@ -697,7 +692,7 @@ export type Database = {
           organization_id?: string | null
           output_summary?: string | null
           output_tokens?: number | null
-          permission_scope?: Json
+          permission_scope?: NonNullable<Json>
           prompt_version?: string | null
           provider: string
           status?:
@@ -739,7 +734,7 @@ export type Database = {
           organization_id?: string | null
           output_summary?: string | null
           output_tokens?: number | null
-          permission_scope?: Json
+          permission_scope?: NonNullable<Json>
           prompt_version?: string | null
           provider?: string
           status?:
@@ -800,7 +795,7 @@ export type Database = {
       }
       announcements: {
         Row: {
-          audience: Json
+          audience: NonNullable<Json>
           body: string
           created_at: string
           created_by: string | null
@@ -816,7 +811,7 @@ export type Database = {
           updated_by: string | null
         }
         Insert: {
-          audience?: Json
+          audience?: NonNullable<Json>
           body: string
           created_at?: string
           created_by?: string | null
@@ -832,7 +827,7 @@ export type Database = {
           updated_by?: string | null
         }
         Update: {
-          audience?: Json
+          audience?: NonNullable<Json>
           body?: string
           created_at?: string
           created_by?: string | null
@@ -897,7 +892,7 @@ export type Database = {
           id: string
           notes: string | null
           organization_id: string | null
-          per_skill: Json
+          per_skill: NonNullable<Json>
           percentage: number | null
           points_earned: number | null
           recorded_by: string | null
@@ -940,7 +935,7 @@ export type Database = {
           id?: string
           notes?: string | null
           organization_id?: string | null
-          per_skill?: Json
+          per_skill?: NonNullable<Json>
           percentage?: number | null
           points_earned?: number | null
           recorded_by?: string | null
@@ -983,7 +978,7 @@ export type Database = {
           id?: string
           notes?: string | null
           organization_id?: string | null
-          per_skill?: Json
+          per_skill?: NonNullable<Json>
           percentage?: number | null
           points_earned?: number | null
           recorded_by?: string | null
@@ -1782,7 +1777,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -1833,7 +1828,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -1884,7 +1879,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -1946,7 +1941,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -1997,7 +1992,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -2048,7 +2043,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -2102,7 +2097,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -2153,7 +2148,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -2204,7 +2199,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -2258,7 +2253,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -2309,7 +2304,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -2360,7 +2355,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -2414,7 +2409,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -2465,7 +2460,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -2516,7 +2511,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -2570,7 +2565,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -2621,7 +2616,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -2672,7 +2667,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -2726,7 +2721,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -2777,7 +2772,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -2828,7 +2823,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -2882,7 +2877,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -2933,7 +2928,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -2984,7 +2979,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -3038,7 +3033,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -3089,7 +3084,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -3140,7 +3135,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -3194,7 +3189,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -3245,7 +3240,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -3296,7 +3291,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -3350,7 +3345,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -3401,7 +3396,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -3452,7 +3447,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -3506,7 +3501,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -3557,7 +3552,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -3608,7 +3603,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -3662,7 +3657,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -3713,7 +3708,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -3764,7 +3759,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -3818,7 +3813,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -3869,7 +3864,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -3920,7 +3915,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -3974,7 +3969,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -4025,7 +4020,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -4076,7 +4071,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -4130,7 +4125,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -4181,7 +4176,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -4232,7 +4227,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -4286,7 +4281,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -4337,7 +4332,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -4388,7 +4383,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -4442,7 +4437,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -4493,7 +4488,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -4544,7 +4539,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -4598,7 +4593,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -4649,7 +4644,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -4700,7 +4695,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -4754,7 +4749,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -4805,7 +4800,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -4856,7 +4851,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -4910,7 +4905,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -4961,7 +4956,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -5012,7 +5007,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -5066,7 +5061,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -5117,7 +5112,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -5168,7 +5163,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -5222,7 +5217,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -5273,7 +5268,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -5324,7 +5319,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -5378,7 +5373,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -5429,7 +5424,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -5480,7 +5475,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -5534,7 +5529,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -5585,7 +5580,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -5636,7 +5631,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -5690,7 +5685,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -5741,7 +5736,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -5792,7 +5787,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -5846,7 +5841,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -5897,7 +5892,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -5948,7 +5943,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -6002,7 +5997,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -6053,7 +6048,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -6104,7 +6099,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -6158,7 +6153,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -6209,7 +6204,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -6260,7 +6255,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -6314,7 +6309,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -6365,7 +6360,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -6416,7 +6411,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -6470,7 +6465,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -6521,7 +6516,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -6572,7 +6567,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -6626,7 +6621,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -6677,7 +6672,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -6728,7 +6723,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -6782,7 +6777,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -6833,7 +6828,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -6884,7 +6879,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -6938,7 +6933,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -6989,7 +6984,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -7040,7 +7035,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -7094,7 +7089,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -7145,7 +7140,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -7196,7 +7191,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -7250,7 +7245,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -7301,7 +7296,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -7352,7 +7347,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -7406,7 +7401,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -7457,7 +7452,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -7508,7 +7503,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -7562,7 +7557,7 @@ export type Database = {
           family_id: string | null
           id: string
           ip: unknown
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           request_id: string | null
           student_id: string | null
@@ -7613,7 +7608,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -7664,7 +7659,7 @@ export type Database = {
           family_id?: string | null
           id?: string
           ip?: unknown
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           request_id?: string | null
           student_id?: string | null
@@ -7764,7 +7759,7 @@ export type Database = {
           id: string
           lesson_id: string | null
           location_id: string | null
-          metadata: Json
+          metadata: NonNullable<Json>
           organization_id: string | null
           recurrence_end_date: string | null
           recurrence_parent_id: string | null
@@ -7807,7 +7802,7 @@ export type Database = {
           id?: string
           lesson_id?: string | null
           location_id?: string | null
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           recurrence_end_date?: string | null
           recurrence_parent_id?: string | null
@@ -7850,7 +7845,7 @@ export type Database = {
           id?: string
           lesson_id?: string | null
           location_id?: string | null
-          metadata?: Json
+          metadata?: NonNullable<Json>
           organization_id?: string | null
           recurrence_end_date?: string | null
           recurrence_parent_id?: string | null
@@ -8103,7 +8098,7 @@ export type Database = {
           location_id: string | null
           name: string
           organization_id: string
-          schedule: Json
+          schedule: NonNullable<Json>
           status: string
           subject_id: string | null
           type:
@@ -8131,7 +8126,7 @@ export type Database = {
           location_id?: string | null
           name: string
           organization_id: string
-          schedule?: Json
+          schedule?: NonNullable<Json>
           status?: string
           subject_id?: string | null
           type?:
@@ -8159,7 +8154,7 @@ export type Database = {
           location_id?: string | null
           name?: string
           organization_id?: string
-          schedule?: Json
+          schedule?: NonNullable<Json>
           status?: string
           subject_id?: string | null
           type?:
@@ -8311,7 +8306,7 @@ export type Database = {
         Row: {
           academic_year_id: string | null
           computed_at: string
-          computed_inputs: Json
+          computed_inputs: NonNullable<Json>
           created_at: string
           due_on: string | null
           grace_until: string | null
@@ -8338,7 +8333,7 @@ export type Database = {
         Insert: {
           academic_year_id?: string | null
           computed_at?: string
-          computed_inputs?: Json
+          computed_inputs?: NonNullable<Json>
           created_at?: string
           due_on?: string | null
           grace_until?: string | null
@@ -8365,7 +8360,7 @@ export type Database = {
         Update: {
           academic_year_id?: string | null
           computed_at?: string
-          computed_inputs?: Json
+          computed_inputs?: NonNullable<Json>
           created_at?: string
           due_on?: string | null
           grace_until?: string | null
@@ -8424,7 +8419,7 @@ export type Database = {
         Row: {
           active: boolean
           admin_notes: string | null
-          applies_to: Json
+          applies_to: NonNullable<Json>
           authoritative_source_url: string
           authority_citation: string
           category:
@@ -8440,22 +8435,22 @@ export type Database = {
           created_at: string
           created_by: string | null
           document_template_id: string | null
-          due_date_logic: Json
+          due_date_logic: NonNullable<Json>
           id: string
           last_verified_on: string | null
           obligation_level: "required" | "recommended" | "optional" | "unknown"
           pack_id: string
-          reminder_schedule: Json
-          required_fields: Json
+          reminder_schedule: NonNullable<Json>
+          required_fields: NonNullable<Json>
           requirement_text: string
-          retention: Json
-          satisfied_by: Json
+          retention: NonNullable<Json>
+          satisfied_by: NonNullable<Json>
           sequence: number
           state_code: string
-          submission_destination: Json
+          submission_destination: NonNullable<Json>
           submission_method: "email" | "mail" | "portal" | "in_person" | "none"
           title: string
-          trigger: Json
+          trigger: NonNullable<Json>
           updated_at: string
           updated_by: string | null
           verified_by: string | null
@@ -8463,7 +8458,7 @@ export type Database = {
         Insert: {
           active?: boolean
           admin_notes?: string | null
-          applies_to?: Json
+          applies_to?: NonNullable<Json>
           authoritative_source_url: string
           authority_citation: string
           category:
@@ -8479,22 +8474,22 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           document_template_id?: string | null
-          due_date_logic?: Json
+          due_date_logic?: NonNullable<Json>
           id?: string
           last_verified_on?: string | null
           obligation_level?: "required" | "recommended" | "optional" | "unknown"
           pack_id: string
-          reminder_schedule?: Json
-          required_fields?: Json
+          reminder_schedule?: NonNullable<Json>
+          required_fields?: NonNullable<Json>
           requirement_text: string
-          retention?: Json
-          satisfied_by?: Json
+          retention?: NonNullable<Json>
+          satisfied_by?: NonNullable<Json>
           sequence?: number
           state_code: string
-          submission_destination?: Json
+          submission_destination?: NonNullable<Json>
           submission_method?: "email" | "mail" | "portal" | "in_person" | "none"
           title: string
-          trigger?: Json
+          trigger?: NonNullable<Json>
           updated_at?: string
           updated_by?: string | null
           verified_by?: string | null
@@ -8502,7 +8497,7 @@ export type Database = {
         Update: {
           active?: boolean
           admin_notes?: string | null
-          applies_to?: Json
+          applies_to?: NonNullable<Json>
           authoritative_source_url?: string
           authority_citation?: string
           category?:
@@ -8518,22 +8513,22 @@ export type Database = {
           created_at?: string
           created_by?: string | null
           document_template_id?: string | null
-          due_date_logic?: Json
+          due_date_logic?: NonNullable<Json>
           id?: string
           last_verified_on?: string | null
           obligation_level?: "required" | "recommended" | "optional" | "unknown"
           pack_id?: string
-          reminder_schedule?: Json
-          required_fields?: Json
+          reminder_schedule?: NonNullable<Json>
+          required_fields?: NonNullable<Json>
           requirement_text?: string
-          retention?: Json
-          satisfied_by?: Json
+          retention?: NonNullable<Json>
+          satisfied_by?: NonNullable<Json>
           sequence?: number
           state_code?: string
-          submission_destination?: Json
+          submission_destination?: NonNullable<Json>
           submission_method?: "email" | "mail" | "portal" | "in_person" | "none"
           title?: string
-          trigger?: Json
+          trigger?: NonNullable<Json>
           updated_at?: string
           updated_by?: string | null
           verified_by?: string | null
@@ -8699,7 +8694,7 @@ export type Database = {
           guardian_id: string | null
           id: string
           locale: string | null
-          metadata: Json
+          metadata: NonNullable<Json>
           method:
             | "web_checkbox"
             | "web_signature"
@@ -8711,7 +8706,7 @@ export type Database = {
           policy_version: string | null
           recorded_by: string | null
           revoked_at: string | null
-          scope: Json
+          scope: NonNullable<Json>
           seq: number
           subject_student_id: string | null
           subject_user_id: string | null
@@ -8740,7 +8735,7 @@ export type Database = {
           guardian_id?: string | null
           id?: string
           locale?: string | null
-          metadata?: Json
+          metadata?: NonNullable<Json>
           method?:
             | "web_checkbox"
             | "web_signature"
@@ -8752,7 +8747,7 @@ export type Database = {
           policy_version?: string | null
           recorded_by?: string | null
           revoked_at?: string | null
-          scope?: Json
+          scope?: NonNullable<Json>
           seq?: never
           subject_student_id?: string | null
           subject_user_id?: string | null
@@ -8781,7 +8776,7 @@ export type Database = {
           guardian_id?: string | null
           id?: string
           locale?: string | null
-          metadata?: Json
+          metadata?: NonNullable<Json>
           method?:
             | "web_checkbox"
             | "web_signature"
@@ -8793,7 +8788,7 @@ export type Database = {
           policy_version?: string | null
           recorded_by?: string | null
           revoked_at?: string | null
-          scope?: Json
+          scope?: NonNullable<Json>
           seq?: never
           subject_student_id?: string | null
           subject_user_id?: string | null
@@ -9091,25 +9086,25 @@ export type Database = {
           confidence: number | null
           confidence_band: "low" | "medium" | "high" | null
           created_at: string
-          detected_entities: Json
+          detected_entities: NonNullable<Json>
           document_id: string
           duration_ms: number | null
           error: string | null
-          extracted: Json
+          extracted: NonNullable<Json>
           family_id: string | null
           id: string
-          missing_fields: Json
+          missing_fields: NonNullable<Json>
           model: string
           ocr_used: boolean
           organization_id: string | null
-          page_confidences: Json
+          page_confidences: NonNullable<Json>
           prompt_version: string
           provider: string
           raw_response: Json | null
           schema_version: string
           status: string
           text_content: string | null
-          unreadable_regions: Json
+          unreadable_regions: NonNullable<Json>
           updated_at: string
         }
         Insert: {
@@ -9117,25 +9112,25 @@ export type Database = {
           confidence?: number | null
           confidence_band?: "low" | "medium" | "high" | null
           created_at?: string
-          detected_entities?: Json
+          detected_entities?: NonNullable<Json>
           document_id: string
           duration_ms?: number | null
           error?: string | null
-          extracted?: Json
+          extracted?: NonNullable<Json>
           family_id?: string | null
           id?: string
-          missing_fields?: Json
+          missing_fields?: NonNullable<Json>
           model: string
           ocr_used?: boolean
           organization_id?: string | null
-          page_confidences?: Json
+          page_confidences?: NonNullable<Json>
           prompt_version: string
           provider: string
           raw_response?: Json | null
           schema_version?: string
           status?: string
           text_content?: string | null
-          unreadable_regions?: Json
+          unreadable_regions?: NonNullable<Json>
           updated_at?: string
         }
         Update: {
@@ -9143,25 +9138,25 @@ export type Database = {
           confidence?: number | null
           confidence_band?: "low" | "medium" | "high" | null
           created_at?: string
-          detected_entities?: Json
+          detected_entities?: NonNullable<Json>
           document_id?: string
           duration_ms?: number | null
           error?: string | null
-          extracted?: Json
+          extracted?: NonNullable<Json>
           family_id?: string | null
           id?: string
-          missing_fields?: Json
+          missing_fields?: NonNullable<Json>
           model?: string
           ocr_used?: boolean
           organization_id?: string | null
-          page_confidences?: Json
+          page_confidences?: NonNullable<Json>
           prompt_version?: string
           provider?: string
           raw_response?: Json | null
           schema_version?: string
           status?: string
           text_content?: string | null
-          unreadable_regions?: Json
+          unreadable_regions?: NonNullable<Json>
           updated_at?: string
         }
         Relationships: [
@@ -9315,12 +9310,12 @@ export type Database = {
           confirmation_note: string | null
           created_at: string
           created_by: string | null
-          destination: Json
+          destination: NonNullable<Json>
           district_contact_id: string | null
           document_id: string | null
           failure_reason: string | null
           family_id: string | null
-          form_data: Json
+          form_data: NonNullable<Json>
           id: string
           idempotency_key: string | null
           method: "email" | "mail" | "portal" | "in_person" | "none"
@@ -9342,7 +9337,7 @@ export type Database = {
             | "failed"
             | "manual"
           student_id: string
-          transmission_evidence: Json
+          transmission_evidence: NonNullable<Json>
           updated_at: string
           updated_by: string | null
         }
@@ -9354,12 +9349,12 @@ export type Database = {
           confirmation_note?: string | null
           created_at?: string
           created_by?: string | null
-          destination?: Json
+          destination?: NonNullable<Json>
           district_contact_id?: string | null
           document_id?: string | null
           failure_reason?: string | null
           family_id?: string | null
-          form_data?: Json
+          form_data?: NonNullable<Json>
           id?: string
           idempotency_key?: string | null
           method: "email" | "mail" | "portal" | "in_person" | "none"
@@ -9381,7 +9376,7 @@ export type Database = {
             | "failed"
             | "manual"
           student_id: string
-          transmission_evidence?: Json
+          transmission_evidence?: NonNullable<Json>
           updated_at?: string
           updated_by?: string | null
         }
@@ -9393,12 +9388,12 @@ export type Database = {
           confirmation_note?: string | null
           created_at?: string
           created_by?: string | null
-          destination?: Json
+          destination?: NonNullable<Json>
           district_contact_id?: string | null
           document_id?: string | null
           failure_reason?: string | null
           family_id?: string | null
-          form_data?: Json
+          form_data?: NonNullable<Json>
           id?: string
           idempotency_key?: string | null
           method?: "email" | "mail" | "portal" | "in_person" | "none"
@@ -9420,7 +9415,7 @@ export type Database = {
             | "failed"
             | "manual"
           student_id?: string
-          transmission_evidence?: Json
+          transmission_evidence?: NonNullable<Json>
           updated_at?: string
           updated_by?: string | null
         }
@@ -9608,7 +9603,7 @@ export type Database = {
           id: string
           is_official: boolean
           legal_hold: boolean
-          metadata: Json
+          metadata: NonNullable<Json>
           mime_type: string
           organization_id: string | null
           original_filename: string
@@ -9681,7 +9676,7 @@ export type Database = {
           id?: string
           is_official?: boolean
           legal_hold?: boolean
-          metadata?: Json
+          metadata?: NonNullable<Json>
           mime_type: string
           organization_id?: string | null
           original_filename: string
@@ -9754,7 +9749,7 @@ export type Database = {
           id?: string
           is_official?: boolean
           legal_hold?: boolean
-          metadata?: Json
+          metadata?: NonNullable<Json>
           mime_type?: string
           organization_id?: string | null
           original_filename?: string
@@ -9900,7 +9895,7 @@ export type Database = {
           report_document_id: string | null
           requested_at: string
           scheduled_for: string | null
-          shared_sections: Json
+          shared_sections: NonNullable<Json>
           status:
             | "requested"
             | "accepted"
@@ -9946,7 +9941,7 @@ export type Database = {
           report_document_id?: string | null
           requested_at?: string
           scheduled_for?: string | null
-          shared_sections?: Json
+          shared_sections?: NonNullable<Json>
           status?:
             | "requested"
             | "accepted"
@@ -9992,7 +9987,7 @@ export type Database = {
           report_document_id?: string | null
           requested_at?: string
           scheduled_for?: string | null
-          shared_sections?: Json
+          shared_sections?: NonNullable<Json>
           status?:
             | "requested"
             | "accepted"
@@ -10106,7 +10101,7 @@ export type Database = {
         Row: {
           accepting_new: boolean
           approval_status: string
-          availability: Json
+          availability: NonNullable<Json>
           bio: string | null
           created_at: string
           created_by: string | null
@@ -10125,7 +10120,7 @@ export type Database = {
           price_cents: number | null
           rating_avg: number | null
           rating_count: number
-          service_areas: Json
+          service_areas: NonNullable<Json>
           subject_ids: string[]
           updated_at: string
           updated_by: string | null
@@ -10142,7 +10137,7 @@ export type Database = {
         Insert: {
           accepting_new?: boolean
           approval_status?: string
-          availability?: Json
+          availability?: NonNullable<Json>
           bio?: string | null
           created_at?: string
           created_by?: string | null
@@ -10161,7 +10156,7 @@ export type Database = {
           price_cents?: number | null
           rating_avg?: number | null
           rating_count?: number
-          service_areas?: Json
+          service_areas?: NonNullable<Json>
           subject_ids?: string[]
           updated_at?: string
           updated_by?: string | null
@@ -10178,7 +10173,7 @@ export type Database = {
         Update: {
           accepting_new?: boolean
           approval_status?: string
-          availability?: Json
+          availability?: NonNullable<Json>
           bio?: string | null
           created_at?: string
           created_by?: string | null
@@ -10197,7 +10192,7 @@ export type Database = {
           price_cents?: number | null
           rating_avg?: number | null
           rating_count?: number
-          service_areas?: Json
+          service_areas?: NonNullable<Json>
           subject_ids?: string[]
           updated_at?: string
           updated_by?: string | null
@@ -10413,7 +10408,7 @@ export type Database = {
           is_independent: boolean
           name: string
           primary_guardian_id: string | null
-          settings: Json
+          settings: NonNullable<Json>
           state_code: string | null
           timezone: string
           updated_at: string
@@ -10432,7 +10427,7 @@ export type Database = {
           is_independent?: boolean
           name: string
           primary_guardian_id?: string | null
-          settings?: Json
+          settings?: NonNullable<Json>
           state_code?: string | null
           timezone?: string
           updated_at?: string
@@ -10451,7 +10446,7 @@ export type Database = {
           is_independent?: boolean
           name?: string
           primary_guardian_id?: string | null
-          settings?: Json
+          settings?: NonNullable<Json>
           state_code?: string | null
           timezone?: string
           updated_at?: string
@@ -10554,7 +10549,7 @@ export type Database = {
         Row: {
           created_at: string
           created_by: string | null
-          data_sharing: Json
+          data_sharing: NonNullable<Json>
           end_reason: string | null
           ended_on: string | null
           family_id: string
@@ -10568,7 +10563,7 @@ export type Database = {
         Insert: {
           created_at?: string
           created_by?: string | null
-          data_sharing?: Json
+          data_sharing?: NonNullable<Json>
           end_reason?: string | null
           ended_on?: string | null
           family_id: string
@@ -10582,7 +10577,7 @@ export type Database = {
         Update: {
           created_at?: string
           created_by?: string | null
-          data_sharing?: Json
+          data_sharing?: NonNullable<Json>
           end_reason?: string | null
           ended_on?: string | null
           family_id?: string
@@ -10771,7 +10766,7 @@ export type Database = {
           invite_kind: string
           locale: string
           organization_id: string | null
-          payload: Json
+          payload: NonNullable<Json>
           revoked_at: string | null
           role: "org_admin" | "teacher" | "tutor" | "staff" | "evaluator" | null
           student_id: string | null
@@ -10790,7 +10785,7 @@ export type Database = {
           invite_kind?: string
           locale?: string
           organization_id?: string | null
-          payload?: Json
+          payload?: NonNullable<Json>
           revoked_at?: string | null
           role?:
             | "org_admin"
@@ -10815,7 +10810,7 @@ export type Database = {
           invite_kind?: string
           locale?: string
           organization_id?: string | null
-          payload?: Json
+          payload?: NonNullable<Json>
           revoked_at?: string | null
           role?:
             | "org_admin"
@@ -10886,7 +10881,7 @@ export type Database = {
           locked_by: string | null
           max_attempts: number
           organization_id: string | null
-          payload: Json
+          payload: NonNullable<Json>
           run_after: string
           status: "queued" | "running" | "done" | "failed" | "dead"
           updated_at: string
@@ -10903,7 +10898,7 @@ export type Database = {
           locked_by?: string | null
           max_attempts?: number
           organization_id?: string | null
-          payload?: Json
+          payload?: NonNullable<Json>
           run_after?: string
           status?: "queued" | "running" | "done" | "failed" | "dead"
           updated_at?: string
@@ -10920,7 +10915,7 @@ export type Database = {
           locked_by?: string | null
           max_attempts?: number
           organization_id?: string | null
-          payload?: Json
+          payload?: NonNullable<Json>
           run_after?: string
           status?: "queued" | "running" | "done" | "failed" | "dead"
           updated_at?: string
@@ -11156,20 +11151,20 @@ export type Database = {
         Row: {
           academic_year_id: string | null
           ai_generated: boolean
-          ai_recommendations: Json
+          ai_recommendations: NonNullable<Json>
           ai_suggestion_id: string | null
           approved_at: string | null
           approved_by: string | null
           areas_of_need: string | null
           created_at: string
           created_by: string | null
-          current_level: Json
+          current_level: NonNullable<Json>
           entered_by: string | null
           family_id: string | null
           human_confirmed_at: string | null
           human_confirmed_by: string | null
           id: string
-          learning_preferences: Json
+          learning_preferences: NonNullable<Json>
           organization_id: string | null
           parent_goals: string | null
           priority_skill_ids: string[]
@@ -11204,20 +11199,20 @@ export type Database = {
         Insert: {
           academic_year_id?: string | null
           ai_generated?: boolean
-          ai_recommendations?: Json
+          ai_recommendations?: NonNullable<Json>
           ai_suggestion_id?: string | null
           approved_at?: string | null
           approved_by?: string | null
           areas_of_need?: string | null
           created_at?: string
           created_by?: string | null
-          current_level?: Json
+          current_level?: NonNullable<Json>
           entered_by?: string | null
           family_id?: string | null
           human_confirmed_at?: string | null
           human_confirmed_by?: string | null
           id?: string
-          learning_preferences?: Json
+          learning_preferences?: NonNullable<Json>
           organization_id?: string | null
           parent_goals?: string | null
           priority_skill_ids?: string[]
@@ -11252,20 +11247,20 @@ export type Database = {
         Update: {
           academic_year_id?: string | null
           ai_generated?: boolean
-          ai_recommendations?: Json
+          ai_recommendations?: NonNullable<Json>
           ai_suggestion_id?: string | null
           approved_at?: string | null
           approved_by?: string | null
           areas_of_need?: string | null
           created_at?: string
           created_by?: string | null
-          current_level?: Json
+          current_level?: NonNullable<Json>
           entered_by?: string | null
           family_id?: string | null
           human_confirmed_at?: string | null
           human_confirmed_by?: string | null
           id?: string
-          learning_preferences?: Json
+          learning_preferences?: NonNullable<Json>
           organization_id?: string | null
           parent_goals?: string | null
           priority_skill_ids?: string[]
@@ -11513,12 +11508,12 @@ export type Database = {
           is_template: boolean
           learning_style: string | null
           locale: string | null
-          materials: Json
+          materials: NonNullable<Json>
           objective: string | null
           organization_id: string | null
           portfolio_recommendation: string | null
           scheduled_for: string | null
-          sections: Json
+          sections: NonNullable<Json>
           skill_ids: string[]
           source:
             | "manual"
@@ -11544,7 +11539,7 @@ export type Database = {
             | "system_calculation"
             | "import"
             | "manual"
-          standards: Json
+          standards: NonNullable<Json>
           status: "draft" | "planned" | "in_progress" | "completed" | "archived"
           subject_id: string | null
           template_of_id: string | null
@@ -11573,12 +11568,12 @@ export type Database = {
           is_template?: boolean
           learning_style?: string | null
           locale?: string | null
-          materials?: Json
+          materials?: NonNullable<Json>
           objective?: string | null
           organization_id?: string | null
           portfolio_recommendation?: string | null
           scheduled_for?: string | null
-          sections?: Json
+          sections?: NonNullable<Json>
           skill_ids?: string[]
           source?:
             | "manual"
@@ -11604,7 +11599,7 @@ export type Database = {
             | "system_calculation"
             | "import"
             | "manual"
-          standards?: Json
+          standards?: NonNullable<Json>
           status?:
             | "draft"
             | "planned"
@@ -11638,12 +11633,12 @@ export type Database = {
           is_template?: boolean
           learning_style?: string | null
           locale?: string | null
-          materials?: Json
+          materials?: NonNullable<Json>
           objective?: string | null
           organization_id?: string | null
           portfolio_recommendation?: string | null
           scheduled_for?: string | null
-          sections?: Json
+          sections?: NonNullable<Json>
           skill_ids?: string[]
           source?:
             | "manual"
@@ -11669,7 +11664,7 @@ export type Database = {
             | "system_calculation"
             | "import"
             | "manual"
-          standards?: Json
+          standards?: NonNullable<Json>
           status?:
             | "draft"
             | "planned"
@@ -11998,7 +11993,7 @@ export type Database = {
       }
       messages: {
         Row: {
-          attachments: Json
+          attachments: NonNullable<Json>
           body: string | null
           created_at: string
           deleted_at: string | null
@@ -12010,7 +12005,7 @@ export type Database = {
           thread_id: string
         }
         Insert: {
-          attachments?: Json
+          attachments?: NonNullable<Json>
           body?: string | null
           created_at?: string
           deleted_at?: string | null
@@ -12022,7 +12017,7 @@ export type Database = {
           thread_id: string
         }
         Update: {
-          attachments?: Json
+          attachments?: NonNullable<Json>
           body?: string | null
           created_at?: string
           deleted_at?: string | null
@@ -12148,9 +12143,9 @@ export type Database = {
       notifications: {
         Row: {
           body: string | null
-          channels_sent: Json
+          channels_sent: NonNullable<Json>
           created_at: string
-          data: Json
+          data: NonNullable<Json>
           dedupe_key: string | null
           expires_at: string | null
           id: string
@@ -12181,9 +12176,9 @@ export type Database = {
         }
         Insert: {
           body?: string | null
-          channels_sent?: Json
+          channels_sent?: NonNullable<Json>
           created_at?: string
-          data?: Json
+          data?: NonNullable<Json>
           dedupe_key?: string | null
           expires_at?: string | null
           id?: string
@@ -12214,9 +12209,9 @@ export type Database = {
         }
         Update: {
           body?: string | null
-          channels_sent?: Json
+          channels_sent?: NonNullable<Json>
           created_at?: string
-          data?: Json
+          data?: NonNullable<Json>
           dedupe_key?: string | null
           expires_at?: string | null
           id?: string
@@ -12551,7 +12546,7 @@ export type Database = {
       }
       organizations: {
         Row: {
-          branding: Json
+          branding: NonNullable<Json>
           compliance_pack_id: string | null
           county: string | null
           created_at: string
@@ -12562,7 +12557,7 @@ export type Database = {
           id: string
           name: string
           plan: string
-          settings: Json
+          settings: NonNullable<Json>
           slug: string
           state_code: string
           status: string
@@ -12579,7 +12574,7 @@ export type Database = {
           updated_by: string | null
         }
         Insert: {
-          branding?: Json
+          branding?: NonNullable<Json>
           compliance_pack_id?: string | null
           county?: string | null
           created_at?: string
@@ -12590,7 +12585,7 @@ export type Database = {
           id?: string
           name: string
           plan?: string
-          settings?: Json
+          settings?: NonNullable<Json>
           slug: string
           state_code: string
           status?: string
@@ -12607,7 +12602,7 @@ export type Database = {
           updated_by?: string | null
         }
         Update: {
-          branding?: Json
+          branding?: NonNullable<Json>
           compliance_pack_id?: string | null
           county?: string | null
           created_at?: string
@@ -12618,7 +12613,7 @@ export type Database = {
           id?: string
           name?: string
           plan?: string
-          settings?: Json
+          settings?: NonNullable<Json>
           slug?: string
           state_code?: string
           status?: string
@@ -12972,7 +12967,7 @@ export type Database = {
           last_seen_at: string | null
           locale: string
           notification_quiet_hours: Json | null
-          onboarding_state: Json
+          onboarding_state: NonNullable<Json>
           phone: string | null
           preferred_name: string | null
           timezone: string
@@ -12989,7 +12984,7 @@ export type Database = {
           last_seen_at?: string | null
           locale?: string
           notification_quiet_hours?: Json | null
-          onboarding_state?: Json
+          onboarding_state?: NonNullable<Json>
           phone?: string | null
           preferred_name?: string | null
           timezone?: string
@@ -13006,7 +13001,7 @@ export type Database = {
           last_seen_at?: string | null
           locale?: string
           notification_quiet_hours?: Json | null
-          onboarding_state?: Json
+          onboarding_state?: NonNullable<Json>
           phone?: string | null
           preferred_name?: string | null
           timezone?: string
@@ -15219,12 +15214,12 @@ export type Database = {
             | "family_data_export"
           locale: string | null
           organization_id: string | null
-          parameters: Json
+          parameters: NonNullable<Json>
           period_end: string | null
           period_start: string | null
           share_expires_at: string | null
           share_token_hash: string | null
-          shared_with: Json
+          shared_with: NonNullable<Json>
           status: "queued" | "generating" | "ready" | "failed" | "expired"
           student_id: string | null
           title: string | null
@@ -15260,12 +15255,12 @@ export type Database = {
             | "family_data_export"
           locale?: string | null
           organization_id?: string | null
-          parameters?: Json
+          parameters?: NonNullable<Json>
           period_end?: string | null
           period_start?: string | null
           share_expires_at?: string | null
           share_token_hash?: string | null
-          shared_with?: Json
+          shared_with?: NonNullable<Json>
           status?: "queued" | "generating" | "ready" | "failed" | "expired"
           student_id?: string | null
           title?: string | null
@@ -15301,12 +15296,12 @@ export type Database = {
             | "family_data_export"
           locale?: string | null
           organization_id?: string | null
-          parameters?: Json
+          parameters?: NonNullable<Json>
           period_end?: string | null
           period_start?: string | null
           share_expires_at?: string | null
           share_token_hash?: string | null
-          shared_with?: Json
+          shared_with?: NonNullable<Json>
           status?: "queued" | "generating" | "ready" | "failed" | "expired"
           student_id?: string | null
           title?: string | null
@@ -15838,7 +15833,7 @@ export type Database = {
       student_compliance_records: {
         Row: {
           academic_year_id: string | null
-          by_category: Json
+          by_category: NonNullable<Json>
           computed_at: string
           county: string | null
           created_at: string
@@ -15862,7 +15857,7 @@ export type Database = {
         }
         Insert: {
           academic_year_id?: string | null
-          by_category?: Json
+          by_category?: NonNullable<Json>
           computed_at?: string
           county?: string | null
           created_at?: string
@@ -15886,7 +15881,7 @@ export type Database = {
         }
         Update: {
           academic_year_id?: string | null
-          by_category?: Json
+          by_category?: NonNullable<Json>
           computed_at?: string
           county?: string | null
           created_at?: string
@@ -16054,7 +16049,7 @@ export type Database = {
           academic_year_id: string | null
           created_at: string
           created_by: string | null
-          data_sharing: Json
+          data_sharing: NonNullable<Json>
           end_date: string | null
           end_reason: string | null
           enrollment_type:
@@ -16079,7 +16074,7 @@ export type Database = {
           academic_year_id?: string | null
           created_at?: string
           created_by?: string | null
-          data_sharing?: Json
+          data_sharing?: NonNullable<Json>
           end_date?: string | null
           end_reason?: string | null
           enrollment_type?:
@@ -16104,7 +16099,7 @@ export type Database = {
           academic_year_id?: string | null
           created_at?: string
           created_by?: string | null
-          data_sharing?: Json
+          data_sharing?: NonNullable<Json>
           end_date?: string | null
           end_reason?: string | null
           enrollment_type?:
@@ -16706,11 +16701,11 @@ export type Database = {
           deleted_by: string | null
           family_id: string
           goals: string | null
-          grade_equivalent: Json
+          grade_equivalent: NonNullable<Json>
           grade_level: string | null
           homeschool_start_date: string | null
           id: string
-          learning_preferences: Json
+          learning_preferences: NonNullable<Json>
           legal_first_name: string
           legal_last_name: string
           legal_middle_name: string | null
@@ -16720,7 +16715,7 @@ export type Database = {
           primary_organization_id: string | null
           state_code: string | null
           status: "active" | "inactive" | "graduated" | "withdrawn"
-          support_needs: Json
+          support_needs: NonNullable<Json>
           updated_at: string
           updated_by: string | null
           user_id: string | null
@@ -16736,11 +16731,11 @@ export type Database = {
           deleted_by?: string | null
           family_id: string
           goals?: string | null
-          grade_equivalent?: Json
+          grade_equivalent?: NonNullable<Json>
           grade_level?: string | null
           homeschool_start_date?: string | null
           id?: string
-          learning_preferences?: Json
+          learning_preferences?: NonNullable<Json>
           legal_first_name: string
           legal_last_name: string
           legal_middle_name?: string | null
@@ -16750,7 +16745,7 @@ export type Database = {
           primary_organization_id?: string | null
           state_code?: string | null
           status?: "active" | "inactive" | "graduated" | "withdrawn"
-          support_needs?: Json
+          support_needs?: NonNullable<Json>
           updated_at?: string
           updated_by?: string | null
           user_id?: string | null
@@ -16766,11 +16761,11 @@ export type Database = {
           deleted_by?: string | null
           family_id?: string
           goals?: string | null
-          grade_equivalent?: Json
+          grade_equivalent?: NonNullable<Json>
           grade_level?: string | null
           homeschool_start_date?: string | null
           id?: string
-          learning_preferences?: Json
+          learning_preferences?: NonNullable<Json>
           legal_first_name?: string
           legal_last_name?: string
           legal_middle_name?: string | null
@@ -16780,7 +16775,7 @@ export type Database = {
           primary_organization_id?: string | null
           state_code?: string | null
           status?: "active" | "inactive" | "graduated" | "withdrawn"
-          support_needs?: Json
+          support_needs?: NonNullable<Json>
           updated_at?: string
           updated_by?: string | null
           user_id?: string | null
@@ -17379,7 +17374,53 @@ export type Database = {
       }
     }
     Functions: {
-      [_ in never]: never
+      add_child: {
+        Args: {
+          p_child_dob: string
+          p_child_first: string
+          p_child_last: string
+          p_child_preferred: string
+          p_family_id: string
+        }
+        Returns: string
+      }
+      can_student_action: {
+        Args: { p_action: string; p_resource: string; p_student: string }
+        Returns: boolean
+      }
+      onboard_organization: {
+        Args: {
+          p_county: string
+          p_goals: string[]
+          p_location_name: string
+          p_name: string
+          p_size: string
+          p_state_code: string
+          p_type:
+            | "microschool"
+            | "support_program"
+            | "coop"
+            | "tutoring"
+            | "evaluation_practice"
+            | "other"
+        }
+        Returns: string
+      }
+      onboard_parent: {
+        Args: {
+          p_child_dob: string
+          p_child_first: string
+          p_child_last: string
+          p_child_preferred: string
+          p_county: string
+          p_family_name: string
+          p_goals: string[]
+          p_start_date: string
+          p_state_code: string
+          p_subjects: string[]
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never

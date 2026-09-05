@@ -1,0 +1,21 @@
+node_modules/
+.next/
+out/
+build/
+next-env.d.ts
+
+# test output
+test-results/
+playwright-report/
+tests/e2e/.auth/
+
+# local env
+.env
+.env*.local
+
+# OS
+.DS_Store
+
+# supabase cli scratch
+supabase/.temp/
+tsconfig.tsbuildinfo

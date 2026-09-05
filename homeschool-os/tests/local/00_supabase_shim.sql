@@ -17,6 +17,13 @@ do $$ begin
 exception when duplicate_object then null; end $$;
 
 create schema if not exists extensions;
+
+-- Supabase grants the API roles USAGE on auth and storage. Without this a
+-- SECURITY INVOKER function body calling auth.uid() as `authenticated` fails
+-- with "permission denied for schema auth", which real Supabase does not do.
+grant usage on schema auth to anon, authenticated, service_role;
+grant usage on schema storage to anon, authenticated, service_role;
+grant usage on schema extensions to anon, authenticated, service_role;
 create extension if not exists pgcrypto with schema extensions;
 
 -- Mirrors the columns of Supabase's auth.users that the migrations and the

@@ -1,0 +1,411 @@
+{
+  "common": {
+    "appName": "Homeschool OS",
+    "tagline": "Teach. Document. Stay organized.",
+    "continue": "Continue",
+    "back": "Back",
+    "skip": "Skip for now",
+    "save": "Save",
+    "cancel": "Cancel",
+    "done": "Done",
+    "loading": "Loading",
+    "search": "Search",
+    "optional": "optional",
+    "required": "Required",
+    "signOut": "Sign out",
+    "settings": "Settings",
+    "close": "Close",
+    "more": "More",
+    "add": "Add",
+    "openMenu": "Open menu",
+    "skipToContent": "Skip to content"
+  },
+  "auth": {
+    "signIn": {
+      "title": "Welcome back",
+      "subtitle": "Sign in to your homeschool.",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign in",
+      "forgot": "Forgot your password?",
+      "noAccount": "New here?",
+      "createAccount": "Create an account",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password"
+    },
+    "signUp": {
+      "title": "Create your account",
+      "subtitle": "A calmer way to run your homeschool.",
+      "name": "Your name",
+      "email": "Email",
+      "password": "Password",
+      "passwordHint": "At least 8 characters.",
+      "submit": "Create account",
+      "haveAccount": "Already have an account?",
+      "signInLink": "Sign in",
+      "checkEmail": "Check your email",
+      "checkEmailBody": "We sent a confirmation link to {email}. Open it to finish setting up your account.",
+      "resend": "Resend the email"
+    },
+    "forgot": {
+      "title": "Reset your password",
+      "subtitle": "We'll email you a link to choose a new one.",
+      "submit": "Send reset link",
+      "sent": "Check your email",
+      "sentBody": "If an account exists for {email}, a reset link is on its way.",
+      "backToSignIn": "Back to sign in"
+    },
+    "reset": {
+      "title": "Choose a new password",
+      "subtitle": "Pick something you'll remember.",
+      "password": "New password",
+      "confirm": "Confirm password",
+      "submit": "Update password",
+      "success": "Your password has been updated."
+    },
+    "verify": {
+      "banner": "Confirm your email to secure your account.",
+      "action": "Resend link",
+      "sent": "Sent. Check your inbox."
+    },
+    "errors": {
+      "invalidCredentials": "That email and password don't match. Please try again.",
+      "emailInUse": "An account already exists for this email.",
+      "weakPassword": "Please use at least 8 characters.",
+      "passwordMismatch": "Those passwords don't match.",
+      "invalidEmail": "Please enter a valid email address.",
+      "nameRequired": "Please tell us your name.",
+      "generic": "Something went wrong. Please try again.",
+      "expiredLink": "That link has expired. Request a new one."
+    }
+  },
+  "onboarding": {
+    "role": {
+      "title": "What best describes you?",
+      "subtitle": "This sets up the right workspace. You can add the other later.",
+      "parent": "I'm a Parent",
+      "parentBody": "Manage my children's homeschool.",
+      "organization": "I run a Homeschool Program",
+      "organizationBody": "Manage families, students, teachers and operations."
+    },
+    "progress": "Step {current} of {total}",
+    "parent": {
+      "child": {
+        "title": "Tell us about your child.",
+        "subtitle": "You can add more children later.",
+        "firstName": "Legal first name",
+        "lastName": "Legal last name",
+        "preferredName": "Preferred name",
+        "preferredHint": "What you actually call them.",
+        "dob": "Date of birth"
+      },
+      "location": {
+        "title": "Where do you homeschool?",
+        "subtitle": "This helps us organize the right records for you.",
+        "country": "Country",
+        "state": "State",
+        "statePlaceholder": "Select your state",
+        "county": "County",
+        "countyPlaceholder": "Search for your county"
+      },
+      "start": {
+        "title": "When did you start homeschooling?",
+        "subtitle": "We use this to help organize your homeschool timeline and important records.",
+        "thisYear": "This school year",
+        "lastYear": "Previous school year",
+        "custom": "Choose another date",
+        "customLabel": "Start date"
+      },
+      "subjects": {
+        "title": "What are you working on?",
+        "subtitle": "Pick what fits today. Nothing here is a formal declaration, and you can change it any time.",
+        "core": "Common subjects",
+        "more": "More subjects"
+      },
+      "goals": {
+        "title": "What would you like help with?",
+        "subtitle": "We'll arrange your dashboard around this. Every feature stays available either way.",
+        "allOfTheAbove": "All of the above"
+      },
+      "complete": {
+        "title": "You're ready.",
+        "subtitle": "We'll help keep everything organized in one place.",
+        "learning": "Learning",
+        "portfolio": "Portfolio",
+        "records": "Important records",
+        "calendar": "Calendar",
+        "progress": "Progress",
+        "florida": "Florida homeschool organization tools",
+        "cta": "Go to my dashboard"
+      }
+    },
+    "organization": {
+      "profile": {
+        "title": "Tell us about your program.",
+        "subtitle": "You can refine all of this later.",
+        "name": "Organization name",
+        "namePlaceholder": "Helon Learning Program",
+        "type": "Program type"
+      },
+      "location": {
+        "title": "Where are you located?",
+        "subtitle": "A physical facility is not required.",
+        "state": "State",
+        "county": "County",
+        "locationName": "Primary location name",
+        "locationHint": "If you meet somewhere regularly."
+      },
+      "size": {
+        "title": "How many students do you currently support?",
+        "subtitle": "This only personalizes your setup."
+      },
+      "goals": {
+        "title": "What do you want Homeschool OS to help manage?",
+        "subtitle": "Pick everything that applies."
+      },
+      "cta": "Go to Command Center"
+    },
+    "errors": {
+      "incomplete": "Some answers are missing. Please go back and complete the earlier steps."
+    }
+  },
+  "goals": {
+    "organized": "Stay organized",
+    "portfolio": "Build our portfolio",
+    "lessons": "Plan lessons",
+    "progress": "Track progress",
+    "records": "Manage important records",
+    "evaluation": "Prepare for annual evaluation",
+    "attention": "Understand what needs attention"
+  },
+  "subjects": {
+    "math": "Math",
+    "reading": "Reading",
+    "writing": "Writing",
+    "science": "Science",
+    "social_studies": "Social Studies",
+    "art": "Art",
+    "music": "Music",
+    "physical_education": "Physical Education",
+    "foreign_language": "Foreign Language",
+    "technology": "Technology",
+    "life_skills": "Life Skills",
+    "other": "Other"
+  },
+  "orgType": {
+    "support_program": "Homeschool Support Program",
+    "microschool": "Microschool",
+    "learning_pod": "Learning Pod",
+    "tutoring": "Tutoring Program",
+    "hybrid": "Hybrid Program",
+    "enrichment": "Enrichment Program",
+    "other": "Other"
+  },
+  "orgGoals": {
+    "students": "Students",
+    "families": "Families",
+    "teachers": "Teachers",
+    "classes": "Classes",
+    "calendar": "Calendar",
+    "lessons": "Lesson Plans",
+    "portfolio": "Portfolio",
+    "academics": "Academic Progress",
+    "records": "Records",
+    "evaluations": "Evaluations",
+    "communication": "Communication",
+    "operations": "Operations"
+  },
+  "nav": {
+    "home": "Home",
+    "learning": "Learning",
+    "learn": "Learn",
+    "calendar": "Calendar",
+    "portfolio": "Portfolio",
+    "documents": "Documents",
+    "progress": "Progress",
+    "messages": "Messages",
+    "records": "Homeschool Records",
+    "reports": "Reports",
+    "settings": "Settings",
+    "more": "More",
+    "students": "Students",
+    "families": "Families",
+    "staff": "Staff",
+    "classes": "Classes",
+    "academics": "Academics"
+  },
+  "actions": {
+    "title": "Add",
+    "uploadWork": "Upload Work",
+    "uploadDocument": "Upload Document",
+    "addActivity": "Add Activity",
+    "planLesson": "Plan Lesson",
+    "createEvent": "Create Event",
+    "askAi": "Ask AI",
+    "inviteFamily": "Invite Family",
+    "addStudent": "Add Student",
+    "createClass": "Create Class",
+    "inviteStaff": "Invite Staff",
+    "inviteTeacher": "Invite Teacher"
+  },
+  "dashboard": {
+    "greeting": {
+      "morning": "Good morning, {name}",
+      "afternoon": "Good afternoon, {name}",
+      "evening": "Good evening, {name}"
+    },
+    "today": "Today",
+    "noLessons": "No lessons scheduled yet.",
+    "planFirstLesson": "Plan our first lesson",
+    "yourHomeschool": "Your homeschool",
+    "nextStep": "Next step",
+    "buildFirstWeek": "Let's build your first week.",
+    "buildFirstWeekBody": "AI can help create a simple plan based on your child's age, subjects and schedule.",
+    "createFirstWeek": "Create my first week",
+    "quickActions": "Quick actions",
+    "cards": {
+      "portfolio": "Portfolio",
+      "portfolioEmpty": "No evidence yet",
+      "portfolioItems": "{count, plural, =0 {0 items} one {# item} other {# items}}",
+      "addWork": "Add work",
+      "learning": "Learning",
+      "learningEmpty": "Getting started",
+      "viewPlan": "View learning plan",
+      "records": "Records",
+      "recordsEmpty": "Getting organized",
+      "viewRecords": "View records",
+      "calendar": "Calendar",
+      "calendarEmpty": "Nothing scheduled",
+      "openCalendar": "Open calendar"
+    }
+  },
+  "students": {
+    "switcher": "Change child",
+    "allChildren": "All children",
+    "addChild": "Add another child",
+    "addTitle": "Add a child",
+    "addSubtitle": "Just the basics for now."
+  },
+  "org": {
+    "admin": "Admin",
+    "commandCenter": "Command Center",
+    "students": "Students",
+    "families": "Families",
+    "teachers": "Teachers",
+    "classesToday": "Classes today",
+    "getStarted": "Get started",
+    "setupProgress": "Organization setup",
+    "setupComplete": "{done} of {total} complete",
+    "step1": "Add or invite your first family",
+    "step2": "Create your first class",
+    "step3": "Invite a teacher",
+    "step4": "Add your first student",
+    "noClasses": "No classes scheduled.",
+    "needsAttention": "Needs attention",
+    "allGood": "Everything looks good.",
+    "allGoodBody": "Once students and classes are added, this area will show things requiring attention.",
+    "invite": {
+      "title": "Invite to {org}",
+      "family": "Invite a family",
+      "teacher": "Invite a teacher",
+      "staff": "Invite staff",
+      "email": "Email address",
+      "role": "Role",
+      "send": "Send invitation",
+      "sent": "Invitation sent to {email}.",
+      "pending": "Pending",
+      "accepted": "Accepted",
+      "expired": "Expired",
+      "cancelled": "Cancelled",
+      "noneTitle": "No invitations yet",
+      "noneBody": "Invite a family, teacher or staff member to get started.",
+      "listTitle": "Invitations",
+      "cancel": "Cancel invitation"
+    }
+  },
+  "context": {
+    "switch": "Switch workspace",
+    "personal": "Personal Homeschool",
+    "parentRole": "Parent",
+    "yourWorkspaces": "Your workspaces"
+  },
+  "empty": {
+    "portfolio": {
+      "title": "Your portfolio starts here.",
+      "body": "Save photos, worksheets, projects and learning activities throughout the year. Later, Homeschool OS will help organize them automatically.",
+      "cta": "Add first portfolio item"
+    },
+    "documents": {
+      "title": "Keep important papers in one place.",
+      "body": "Upload letters, certificates, test results and anything else worth keeping. You'll be able to find them by child and by year.",
+      "cta": "Upload a document"
+    },
+    "calendar": {
+      "title": "Nothing scheduled yet.",
+      "body": "Add lessons, activities, field trips and appointments so everyone knows what's happening.",
+      "cta": "Create an event"
+    },
+    "learning": {
+      "title": "Plan what you're teaching.",
+      "body": "Build a simple plan by subject. You can start with a single week and grow it from there.",
+      "cta": "Plan our first lesson"
+    },
+    "progress": {
+      "title": "Progress appears as you go.",
+      "body": "Once you've logged some work, you'll see how each subject is coming along. We won't show a score until there's enough to be meaningful.",
+      "cta": "Add work"
+    },
+    "messages": {
+      "title": "No messages yet.",
+      "body": "When you're connected with a teacher, tutor or program, your conversations will appear here."
+    },
+    "records": {
+      "title": "Florida homeschool records",
+      "body": "We'll help you organize important homeschool documents and dates. Nothing here is filed for you, and we'll never tell you that you're compliant.",
+      "cta": "Upload a record"
+    },
+    "reports": {
+      "title": "Reports are coming.",
+      "body": "When you have lessons, work and progress recorded, you'll be able to generate a clean summary for any date range."
+    },
+    "orgStudents": {
+      "title": "No students yet.",
+      "body": "Students join when a family enrolls, or you can add one directly.",
+      "cta": "Add student"
+    },
+    "orgFamilies": {
+      "title": "No families yet.",
+      "body": "Invite a family to connect their students to your program.",
+      "cta": "Invite family"
+    },
+    "orgStaff": {
+      "title": "No staff yet.",
+      "body": "Invite teachers and staff so they can take attendance, plan lessons and record progress.",
+      "cta": "Invite staff"
+    },
+    "orgClasses": {
+      "title": "No classes yet.",
+      "body": "Create a class or pod, then add the students who attend it.",
+      "cta": "Create class"
+    }
+  },
+  "status": {
+    "gettingStarted": "Getting started",
+    "noEvidenceYet": "No evidence yet",
+    "readyToBegin": "Ready to begin",
+    "needsSetup": "Needs setup",
+    "gettingOrganized": "Getting organized",
+    "nothingScheduled": "Nothing scheduled"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "languageBody": "Choose the language for your workspace.",
+    "account": "Account",
+    "accountBody": "Your name and sign-in details.",
+    "name": "Name",
+    "email": "Email",
+    "theme": "Appearance",
+    "saved": "Saved."
+  }
+}

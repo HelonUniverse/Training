@@ -12,14 +12,22 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 status=0
 fail() { echo "FAIL: $1"; status=1; }
 
-# Paths permitted to import the service-role client.
-ALLOWED='^(supabase/functions/|app/api/cron/|app/api/webhooks/|lib/supabase/service\.ts|scripts/)'
+# Paths permitted to import the service-role client. Both a root-level and a
+# src/ layout are matched, because the app uses src/ and an earlier version of
+# this guard silently passed over it.
+ALLOWED='^(supabase/functions/|(src/)?app/api/cron/|(src/)?app/api/webhooks/|(src/)?lib/supabase/service\.ts|scripts/|tests/)'
+
+# Where application code actually lives.
+SRC_DIRS=""
+for d in app lib components server config src; do
+  [ -d "$ROOT/$d" ] && SRC_DIRS="$SRC_DIRS $d"
+done
 
 echo "== service-role import boundary =="
-if [ -d "$ROOT/app" ] || [ -d "$ROOT/lib" ]; then
+if [ -n "$SRC_DIRS" ]; then
   hits=$(cd "$ROOT" && grep -rIl --include='*.ts' --include='*.tsx' --include='*.js' --include='*.mjs' \
         -e 'supabase/service' -e 'createServiceClient' -e 'SERVICE_ROLE' \
-        app lib components server config 2>/dev/null | grep -Ev "$ALLOWED" || true)
+        $SRC_DIRS 2>/dev/null | grep -Ev "$ALLOWED" || true)
   if [ -n "$hits" ]; then
     fail "service-role usage outside the allowed entry points:"; echo "$hits"
   else
@@ -30,18 +38,18 @@ else
 fi
 
 echo "== service-role key never in a client bundle =="
-if [ -d "$ROOT/app" ]; then
+if [ -n "$SRC_DIRS" ]; then
   hits=$(cd "$ROOT" && grep -rIn --include='*.ts' --include='*.tsx' \
         -e 'NEXT_PUBLIC_[A-Z_]*SERVICE' -e 'NEXT_PUBLIC_[A-Z_]*SECRET' \
-        app lib components 2>/dev/null || true)
+        $SRC_DIRS 2>/dev/null || true)
   [ -n "$hits" ] && { fail "a secret is exposed through a NEXT_PUBLIC_ variable:"; echo "$hits"; } || echo "  ok"
 else
   echo "  skipped (no application code yet)"
 fi
 
 echo "== 'use client' files must not touch server-only modules =="
-if [ -d "$ROOT/components" ] || [ -d "$ROOT/app" ]; then
-  for f in $(cd "$ROOT" && grep -rIl --include='*.tsx' --include='*.ts' "'use client'" app components 2>/dev/null || true); do
+if [ -n "$SRC_DIRS" ]; then
+  for f in $(cd "$ROOT" && grep -rIl --include='*.tsx' --include='*.ts' "'use client'" $SRC_DIRS 2>/dev/null || true); do
     if grep -qE "supabase/service|lib/supabase/server|server/actions/.*service" "$ROOT/$f"; then
       fail "client component imports a server-only module: $f"
     fi
@@ -52,8 +60,17 @@ else
 fi
 
 echo "== every server action is permission-wrapped =="
-if [ -d "$ROOT/server/actions" ]; then
-  for f in $(cd "$ROOT" && grep -rIl "'use server'" server/actions 2>/dev/null || true); do
+ACTION_DIR=""
+[ -d "$ROOT/server/actions" ] && ACTION_DIR="server/actions"
+[ -d "$ROOT/src/server/actions" ] && ACTION_DIR="src/server/actions"
+if [ -n "$ACTION_DIR" ]; then
+  for f in $(cd "$ROOT" && grep -rIl "'use server'" "$ACTION_DIR" 2>/dev/null || true); do
+    # A file may opt out only with an explicit, visible marker (pre-auth entry
+    # points such as sign-in have no session to check a permission against).
+    if grep -q 'PRE-AUTH ENTRY POINT' "$ROOT/$f"; then
+      echo "  exempt (pre-auth): $f"
+      continue
+    fi
     grep -q 'withPermission\|requirePermission' "$ROOT/$f" || fail "server action without a permission wrapper: $f"
   done
   echo "  checked"
