@@ -39,6 +39,16 @@ begin
   execute 'set local role authenticated';
 end $$;
 
+-- Back to the table owner, with no identity claimed. Needed wherever a test
+-- must act as the scanning worker or as maintenance: several functions key off
+-- auth.uid() being null, so "no user" is a distinct state from "some user".
+create or replace function t.logout()
+returns void language plpgsql as $$
+begin
+  execute 'reset role';
+  perform set_config('request.jwt.claim.sub', '', false);
+end $$;
+
 grant usage on schema t to authenticated;
 grant execute on all functions in schema t to authenticated;
 

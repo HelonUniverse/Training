@@ -4,11 +4,18 @@
 -- Part 2 exercises the policies themselves by writing and reading real rows in
 -- storage.objects as impersonated users, which is the check that matters.
 --
--- NOTE ON DESIGN: the document buckets have NO SELECT policy. That is
--- deliberate (STEP-2-REPORT.md): all reads are server-minted signed URLs so
--- that every view is audited. A test asserting that an uploader can read their
--- own quarantined object back is therefore asserting the OPPOSITE of the
--- architecture, and will correctly fail.
+-- NOTE ON DESIGN: through STEP 3 the document buckets had NO SELECT policy at
+-- all, on the theory that a route handler would mint every signed URL under
+-- service_role. STEP 4 replaced that (migration 0060) because service-role
+-- credentials must not sit in a normal request path. Reads are now authorised
+-- by RLS, derived from the document row rather than restated:
+--
+--     may I read these bytes?  <=>  can I see the documents row that owns them,
+--                                   and has it come back clean?
+--
+-- So an object with no documents row is still unreadable by anyone, and a
+-- pending or infected document has no readable bytes even for its uploader.
+-- Case 5 below pins all three halves of that.
 --
 -- NOTE ON THE PLATFORM: managed Supabase installs storage.protect_delete(),
 -- which blocks every direct SQL DELETE from storage.objects - including as
@@ -68,6 +75,8 @@ declare
   FAM_A text := '22222222-2222-4222-8222-00000000000a';
   FAM_B text := '22222222-2222-4222-8222-00000000000b';
   ORG   text := '33333333-3333-4333-8333-00000000000c';
+  LUCAS uuid := '44444444-4444-4444-8444-00000000000d';
+  DOC_P uuid := '66666666-6666-4666-8666-000000000041';
   n int;
 begin
   -- 1. guardian uploads into their own family prefix -> ALLOWED
@@ -106,15 +115,47 @@ begin
   end;
   perform t.logout();
 
-  -- 5. quarantine is write-only BY DESIGN, even for the uploader
+  -- 5. readability follows the owning document row, and only when clean.
+  --    5a. an object with no documents row is bytes nobody claims -> invisible
   perform t.login(CARLA);
   select count(*) into n from storage.objects where bucket_id = 'uploads-quarantine';
-  perform t.assert_eq(n, 0, 'quarantine is not directly readable, even by the uploader');
+  perform t.assert_eq(n, 0, 'an unclaimed quarantined object is readable by nobody');
   perform t.logout();
+
+  --    5b. claim it with a PENDING document -> still invisible, even to its uploader
+  insert into public.documents (id, family_id, student_id, uploaded_by, created_by,
+                                storage_bucket, storage_path, original_filename,
+                                mime_type, byte_size, sha256, scan_status, status)
+  values (DOC_P, FAM_A::uuid, LUCAS, CARLA, CARLA,
+          'uploads-quarantine', FAM_A || '/lucas/real-upload.pdf', 'real-upload.pdf',
+          'application/pdf', 4096, repeat('4', 64), 'pending', 'uploaded');
+  perform t.login(CARLA);
+  select count(*) into n from storage.objects where bucket_id = 'uploads-quarantine';
+  perform t.assert_eq(n, 0, 'a PENDING document has no readable bytes, not even for its uploader');
+  perform t.assert_eq((select count(*)::int from public.documents where id = DOC_P), 1,
+    '... although its row is visible, so the upload can be shown as still processing');
+  perform t.logout();
+
+  --    5c. the scanner clears it -> the uploader can read the bytes
+  perform app.record_scan_result(DOC_P, 'clean');
+  perform t.login(CARLA);
+  select count(*) into n from storage.objects where bucket_id = 'uploads-quarantine';
+  perform t.assert_eq(n, 1, 'once clean, the uploader reads their own bytes');
+  perform t.logout();
+
+  --    5d. ... and another family still cannot, clean or not
   perform t.login(DIEGO);
   select count(*) into n from storage.objects where bucket_id = 'uploads-quarantine';
-  perform t.assert_eq(n, 0, 'quarantine is invisible to another family');
+  perform t.assert_eq(n, 0, 'a clean document''s bytes stay invisible to another family');
   perform t.logout();
+
+  --    5e. infected bytes become unreadable again
+  update public.documents set scan_status = 'infected' where id = DOC_P;
+  perform t.login(CARLA);
+  select count(*) into n from storage.objects where bucket_id = 'uploads-quarantine';
+  perform t.assert_eq(n, 0, 'an INFECTED document is never delivered, not even to its uploader');
+  perform t.logout();
+  update public.documents set scan_status = 'clean' where id = DOC_P;
 
   -- 6. the service-role scanner DOES see it (this is how files leave quarantine)
   select count(*) into n from storage.objects
@@ -165,7 +206,7 @@ begin
   exception when insufficient_privilege then null;
   end;
 
-  raise notice 'ALL 10 REAL STORAGE.OBJECTS CASES PASSED';
+  raise notice 'ALL REAL STORAGE.OBJECTS CASES PASSED';
 end $$;
 
 -- Which policies actually exist on storage.objects, and for which buckets.

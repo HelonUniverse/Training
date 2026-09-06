@@ -83,6 +83,17 @@ export type Database = {
       activity_logs: {
         Row: {
           academic_year_id: string | null
+          activity_kind:
+            | "field_trip"
+            | "hands_on"
+            | "art"
+            | "music"
+            | "physical"
+            | "life_skills"
+            | "community"
+            | "experiment"
+            | "educational_game"
+            | "other"
           activity_title: string
           ai_generated: boolean
           ai_suggestion_id: string | null
@@ -128,6 +139,17 @@ export type Database = {
         }
         Insert: {
           academic_year_id?: string | null
+          activity_kind?:
+            | "field_trip"
+            | "hands_on"
+            | "art"
+            | "music"
+            | "physical"
+            | "life_skills"
+            | "community"
+            | "experiment"
+            | "educational_game"
+            | "other"
           activity_title: string
           ai_generated?: boolean
           ai_suggestion_id?: string | null
@@ -173,6 +195,17 @@ export type Database = {
         }
         Update: {
           academic_year_id?: string | null
+          activity_kind?:
+            | "field_trip"
+            | "hands_on"
+            | "art"
+            | "music"
+            | "physical"
+            | "life_skills"
+            | "community"
+            | "experiment"
+            | "educational_game"
+            | "other"
           activity_title?: string
           ai_generated?: boolean
           ai_suggestion_id?: string | null
@@ -1771,6 +1804,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -1822,6 +1857,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -1873,6 +1910,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -1935,6 +1974,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -1986,6 +2027,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -2037,6 +2080,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -2091,6 +2136,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -2142,6 +2189,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -2193,6 +2242,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -2247,6 +2298,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -2298,6 +2351,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -2349,6 +2404,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -2403,6 +2460,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -2454,6 +2513,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -2505,6 +2566,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -2559,6 +2622,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -2610,6 +2675,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -2661,6 +2728,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -2715,6 +2784,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -2766,6 +2837,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -2817,6 +2890,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -2871,6 +2946,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -2922,6 +2999,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -2973,6 +3052,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -3027,6 +3108,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -3078,6 +3161,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -3129,6 +3214,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -3183,6 +3270,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -3234,6 +3323,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -3285,6 +3376,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -3339,6 +3432,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -3390,6 +3485,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -3441,6 +3538,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -3495,6 +3594,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -3546,6 +3647,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -3597,6 +3700,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -3651,6 +3756,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -3702,6 +3809,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -3753,6 +3862,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -3807,6 +3918,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -3858,6 +3971,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -3909,6 +4024,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -3963,6 +4080,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -4014,6 +4133,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -4065,6 +4186,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -4119,6 +4242,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -4170,6 +4295,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -4221,6 +4348,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -4275,6 +4404,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -4326,6 +4457,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -4377,6 +4510,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -4431,6 +4566,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -4482,6 +4619,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -4533,6 +4672,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -4587,6 +4728,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -4638,6 +4781,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -4689,6 +4834,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -4743,6 +4890,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -4794,6 +4943,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -4845,6 +4996,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -4899,6 +5052,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -4950,6 +5105,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -5001,6 +5158,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -5055,6 +5214,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -5106,6 +5267,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -5157,6 +5320,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -5211,6 +5376,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -5262,6 +5429,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -5313,6 +5482,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -5367,6 +5538,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -5418,6 +5591,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -5469,6 +5644,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -5523,6 +5700,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -5574,6 +5753,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -5625,6 +5806,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -5679,6 +5862,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -5730,6 +5915,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -5781,6 +5968,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -5835,6 +6024,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -5886,6 +6077,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -5937,6 +6130,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -5991,6 +6186,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -6042,6 +6239,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -6093,6 +6292,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -6147,6 +6348,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -6198,6 +6401,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -6249,6 +6454,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -6303,6 +6510,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -6354,6 +6563,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -6405,6 +6616,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -6459,6 +6672,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -6510,6 +6725,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -6561,6 +6778,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -6615,6 +6834,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -6666,6 +6887,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -6717,6 +6940,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -6771,6 +6996,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -6822,6 +7049,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -6873,6 +7102,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -6927,6 +7158,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -6978,6 +7211,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -7029,6 +7264,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -7083,6 +7320,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -7134,6 +7373,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -7185,6 +7426,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -7239,6 +7482,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -7290,6 +7535,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -7341,6 +7588,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -7395,6 +7644,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -7446,6 +7697,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -7497,6 +7750,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -7551,6 +7806,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role: string | null
           actor_user_id: string | null
           created_at: string
@@ -7602,6 +7859,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -7653,6 +7912,8 @@ export type Database = {
             | "document_unshared"
             | "document_visibility_changed"
             | "authorization_denied"
+            | "document_scanned"
+            | "invitation_accepted"
           actor_role?: string | null
           actor_user_id?: string | null
           created_at?: string
@@ -9860,6 +10121,82 @@ export type Database = {
             columns: ["uploaded_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      email_deliveries: {
+        Row: {
+          attempts: number
+          created_at: string
+          created_by: string | null
+          id: string
+          invitation_id: string | null
+          last_error: string | null
+          organization_id: string | null
+          payload: NonNullable<Json>
+          provider: string | null
+          provider_id: string | null
+          sent_at: string | null
+          status: string
+          template: string
+          to_email: string
+          updated_at: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          invitation_id?: string | null
+          last_error?: string | null
+          organization_id?: string | null
+          payload?: NonNullable<Json>
+          provider?: string | null
+          provider_id?: string | null
+          sent_at?: string | null
+          status?: string
+          template: string
+          to_email: string
+          updated_at?: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          invitation_id?: string | null
+          last_error?: string | null
+          organization_id?: string | null
+          payload?: NonNullable<Json>
+          provider?: string | null
+          provider_id?: string | null
+          sent_at?: string | null
+          status?: string
+          template?: string
+          to_email?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "email_deliveries_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_deliveries_invitation_id_fkey"
+            columns: ["invitation_id"]
+            isOneToOne: false
+            referencedRelation: "invitations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "email_deliveries_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -17374,6 +17711,7 @@ export type Database = {
       }
     }
     Functions: {
+      accept_invitation: { Args: { p_token: string }; Returns: Json }
       add_child: {
         Args: {
           p_child_dob: string
@@ -17384,9 +17722,98 @@ export type Database = {
         }
         Returns: string
       }
+      attach_documents: {
+        Args: { p_document_ids: string[]; p_item: string }
+        Returns: number
+      }
       can_student_action: {
         Args: { p_action: string; p_resource: string; p_student: string }
         Returns: boolean
+      }
+      create_portfolio_item: {
+        Args: {
+          p_activity_type?:
+            | "worksheet"
+            | "writing"
+            | "project"
+            | "experiment"
+            | "art"
+            | "reading"
+            | "video"
+            | "photo"
+            | "assessment"
+            | "field_trip"
+            | "discussion"
+            | "other"
+          p_category?:
+            | "work_sample"
+            | "assessment"
+            | "observation"
+            | "teacher_note"
+            | "certificate"
+            | "reading"
+            | "other"
+          p_description?: string
+          p_document_ids?: string[]
+          p_occurred_on?: string
+          p_student: string
+          p_subject?: string
+          p_title: string
+          p_visibility?: string
+        }
+        Returns: string
+      }
+      document_is_deliverable: {
+        Args: { p_document: string }
+        Returns: boolean
+      }
+      find_duplicate_document: {
+        Args: { p_sha256: string }
+        Returns: {
+          created_at: string
+          document_date: string
+          id: string
+          original_filename: string
+          title: string
+        }[]
+      }
+      log_activity: {
+        Args: {
+          p_date?: string
+          p_description?: string
+          p_document_ids?: string[]
+          p_kind?:
+            | "field_trip"
+            | "hands_on"
+            | "art"
+            | "music"
+            | "physical"
+            | "life_skills"
+            | "community"
+            | "experiment"
+            | "educational_game"
+            | "other"
+          p_minutes?: number
+          p_student: string
+          p_subject?: string
+          p_title: string
+        }
+        Returns: string
+      }
+      log_reading: {
+        Args: {
+          p_author?: string
+          p_book_title: string
+          p_completed_on?: string
+          p_cover_doc?: string
+          p_minutes?: number
+          p_notes?: string
+          p_pages?: number
+          p_reading_type?: "independent" | "read_aloud" | "shared" | "audiobook"
+          p_started_on?: string
+          p_student: string
+        }
+        Returns: string
       }
       onboard_organization: {
         Args: {
@@ -17418,6 +17845,95 @@ export type Database = {
           p_start_date: string
           p_state_code: string
           p_subjects: string[]
+        }
+        Returns: string
+      }
+      preview_invitation: {
+        Args: { p_token: string }
+        Returns: {
+          email: string
+          email_matches: boolean
+          expires_at: string
+          invite_kind: string
+          invited_by: string
+          organization_name: string
+          role: string
+        }[]
+      }
+      queue_invitation_email: {
+        Args: { p_invitation: string }
+        Returns: string
+      }
+      record_document_view: { Args: { p_document: string }; Returns: undefined }
+      record_email_result: {
+        Args: {
+          p_delivery: string
+          p_error?: string
+          p_provider?: string
+          p_provider_id?: string
+          p_status: string
+        }
+        Returns: undefined
+      }
+      record_scan_result: {
+        Args: {
+          p_detail?: string
+          p_document: string
+          p_result: "pending" | "clean" | "infected" | "error" | "skipped"
+        }
+        Returns: undefined
+      }
+      register_document: {
+        Args: {
+          p_bucket: string
+          p_bytes: number
+          p_category?:
+            | "assessment"
+            | "evaluation"
+            | "lesson_plan"
+            | "worksheet"
+            | "certificate"
+            | "report"
+            | "receipt"
+            | "notice_of_intent"
+            | "notice_of_termination"
+            | "correspondence"
+            | "student_work"
+            | "credential"
+            | "contract"
+            | "incident"
+            | "hr_record"
+            | "other"
+            | "unclassified"
+          p_document_date?: string
+          p_family?: string
+          p_filename: string
+          p_mime: string
+          p_path: string
+          p_sha256: string
+          p_student?: string
+          p_title?: string
+          p_visibility?:
+            | "family_private"
+            | "family_shared"
+            | "academic_shared"
+            | "assigned_staff"
+            | "evaluator_shared"
+            | "organization_operational"
+            | "system_compliance"
+        }
+        Returns: Json
+      }
+      revoke_document_share: { Args: { p_share: string }; Returns: undefined }
+      share_document: {
+        Args: {
+          p_can_download?: boolean
+          p_document: string
+          p_expires_at?: string
+          p_reason?: string
+          p_with_grant?: string
+          p_with_org?: string
+          p_with_user?: string
         }
         Returns: string
       }

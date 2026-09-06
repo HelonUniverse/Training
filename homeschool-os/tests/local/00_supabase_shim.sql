@@ -79,10 +79,34 @@ create table if not exists storage.objects (
   bucket_id text references storage.buckets(id),
   name text not null,
   owner uuid,
+  -- Real Supabase carries both: `owner` (uuid, legacy) and `owner_id` (text).
+  -- The shim lacked owner_id, so tests written against the managed platform
+  -- died locally on a missing column instead of on a real assertion.
+  owner_id text,
   metadata jsonb,
   created_at timestamptz default now()
 );
 alter table storage.objects enable row level security;
+
+-- Supabase grants the API roles full DML on storage.objects and lets RLS do the
+-- deciding. Without these grants the local harness fails with "permission
+-- denied" before any policy is consulted, which reads like a policy pass.
+grant all on storage.objects to anon, authenticated, service_role;
+grant all on storage.buckets to anon, authenticated, service_role;
+
+-- Managed Supabase installs storage.protect_delete(), which blocks every direct
+-- SQL DELETE from storage.objects - including as service_role - so that object
+-- removal always goes through the Storage HTTP API and the file itself is
+-- actually deleted. Mirrored here so local and managed behave the same.
+create or replace function storage.protect_delete()
+returns trigger language plpgsql as $$
+begin
+  raise exception 'delete from storage.objects is not permitted; use the Storage API'
+    using errcode = 'insufficient_privilege';
+end $$;
+drop trigger if exists protect_delete on storage.objects;
+create trigger protect_delete before delete on storage.objects
+  for each row execute function storage.protect_delete();
 
 create or replace function storage.foldername(name text) returns text[]
 language sql immutable as $$ select string_to_array(name, '/'); $$;
