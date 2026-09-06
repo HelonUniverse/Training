@@ -8,7 +8,7 @@ Twenty numbered answers, in the order asked.
 
 ## 1. What was built
 
-Nine forward migrations (0056–0064, 64 total), 25 new application files, and a
+Nine forward migrations (0056–0064, 64 total), 34 new application files, and a
 capture path that runs end to end against real PostgreSQL, real RLS, real
 storage and a real browser.
 
