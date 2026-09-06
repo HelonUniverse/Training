@@ -245,11 +245,81 @@ depends on the first line of a file — so it stays in
 
 ## 18. Test results
 
-PLACEHOLDER_RESULTS
+Everything below was run in this session, against real PostgreSQL carrying all
+64 migrations, with RLS enforced.
+
+**Database (`bash tests/local/test.sh`)** — 8 suites, all PASS:
+
+```
+  01_access_matrix          PASS      05_evaluator_and_documents  PASS
+  02_invariants             PASS      06_privilege_escalation     PASS
+  03_write_policies         PASS      07_schema_invariants        PASS
+  04_resource_authorization PASS      08_step4_capture            PASS  ← new
+```
+
+`08_step4_capture.sql` carries the **20 numbered security cases** for this step,
+covering the scan gate, byte delivery, the duplicate oracle, capture
+authorization, one-entry-per-afternoon, sharing, and invitations.
+
+**Acceptance (`bash tests/acceptance/dryrun.sh`)** — 5 files, all PASS. Two of
+them execute locally for the first time: the shim was missing
+`storage.objects.owner_id`, the DML grants Supabase gives the API roles, and
+`protect_delete`, so `04_storage_policies.sql` used to die on a missing column
+before reaching a single assertion.
+
+**Browser (`bash tests/e2e/run.sh`)** — 26 tests per width.
+
+| Project | Result |
+|---|---|
+| desktop 1440 | 24 passed, 2 skipped (mobile-only tests) |
+| tablet 768 | 26 passed |
+| mobile 390 | 26 passed |
+| performance (`RUN_PERF=1`) | 1 passed |
+
+The **20 browser security cases** (S1–S20) are in `security.spec.ts`, the **four
+journeys** in `capture.spec.ts`, and the visual review in
+`step4-screens.spec.ts`, which shoots 16 screens per width and asserts no
+horizontal overflow, no control under 40px, no control without an accessible
+name, no "Invalid Date", no untranslated key, and no enum label anywhere in the
+rendered text.
+
+**Guards** — `npm run guard` (service-role boundary + i18n) passes, `npx eslint .`
+passes with the rules actually running for the first time, `npx tsc --noEmit`
+is clean.
 
 ## 19. Performance
 
-PLACEHOLDER_PERF
+Measured, not estimated: `RUN_PERF=1 npx playwright test performance.spec.ts`
+seeds **24 real captures** through the UI — pick, validate, hash, upload, save —
+and then measures the screens.
+
+```
+one capture: pick, upload, save, land on the timeline     536 ms   (budget 8000)
+portfolio: server render, heading visible                 266 ms   (budget 4000)
+portfolio: first photograph on screen                      85 ms   (budget 6000)
+portfolio: signing round trips for a whole page             1 req  (budget 3)
+documents: server render, heading visible                 139 ms   (budget 4000)
+documents: metadata search                                191 ms   (budget 4000)
+one signed URL, end to end (authorize, sign, audit)        88 ms   (budget 2000)
+document detail: server render                            248 ms   (budget 4000)
+dashboard: server render with real counts                 230 ms   (budget 4000)
+```
+
+The budgets are deliberately generous — this is Next in production mode against
+local PostgreSQL on a shared sandbox CPU, so the absolute numbers are not a
+production forecast. What they catch is the SHAPE of a mistake, which shows up
+as an order of magnitude and survives the noise.
+
+**The one that matters is the fourth row.** A page of two dozen photographs
+costs ONE signing request, not one per thumbnail. That is the difference between
+a scrapbook and a file manager loading, and it is now a test rather than an
+intention.
+
+Worth noting what the perf test itself found: it stalled at the ninth capture,
+every time, deterministically. The seeding loop was generating dates in the
+future, and the date field carries `max={today}` because you cannot record work
+a child has not done yet — so the browser refused to submit. The product was
+right and the test was wrong.
 
 ## 20. What is not done, and what I would check next
 

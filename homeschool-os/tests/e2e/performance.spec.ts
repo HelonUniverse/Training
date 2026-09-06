@@ -203,17 +203,26 @@ async function captureOne(page: Page, index: number): Promise<number> {
     .setInputFiles([
       { name: `capture-${index}.png`, mimeType: 'image/png', buffer: png(`perf-${index}`) },
     ]);
-  // Wait for the file to finish being inspected, not for a label to disappear:
-  // if hashing finishes before the first poll, "Checking" never renders and a
-  // waitFor(detached) resolves against a form whose Save is still disabled.
-  await expect(page.getByRole('button', { name: 'Save' })).toBeEnabled({ timeout: 30_000 });
+  // Poll until nothing is being inspected. `toHaveCount(0)` is right where
+  // `waitFor({state:'detached'})` is not: if hashing finishes before the first
+  // poll, "Checking" never renders at all and waiting for it to detach returns
+  // instantly against a form that is not ready.
+  await expect(page.getByText(/Checking/)).toHaveCount(0, { timeout: 30_000 });
   await page.getByLabel('What is this?').fill(`Capture number ${index}`);
-  const month = String((index % 12) + 1).padStart(2, '0');
-  const day = String((index % 28) + 1).padStart(2, '0');
-  await page.getByLabel('When was this done?').fill(`2026-${month}-${day}`);
+  // Spread backwards from today, a fortnight apart. It has to be the PAST: the
+  // date field carries max={today} because you cannot record work a child has
+  // not done yet, so a future date makes the form invalid and the browser
+  // silently refuses to submit it. (That is how this test first stalled.)
+  const when = new Date();
+  when.setDate(when.getDate() - index * 14);
+  await page.getByLabel('When was this done?').fill(when.toISOString().slice(0, 10));
+  // Only now can Save be enabled: it needs a file AND a title.
   const save = page.getByRole('button', { name: 'Save' });
-  await expect(save).toBeEnabled();
+  await expect(save).toBeEnabled({ timeout: 30_000 });
   await save.click();
-  await page.waitForURL(/app\/portfolio/, { timeout: 60_000 });
+  // toHaveURL polls the URL; waitForURL waits for a load event, which a
+  // client-side router.push never fires - so it hangs on a navigation that
+  // has already happened.
+  await expect(page).toHaveURL(/app\/portfolio/, { timeout: 60_000 });
   return Date.now() - started;
 }
