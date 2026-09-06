@@ -97,8 +97,14 @@ begin
   select count(*) into n from storage.objects where name = FAM_A || '/lucas/2026/photo.jpg';
   perform t.assert_eq(n, 0, '5a. an INFECTED document delivers nothing to its own uploader');
   perform t.assert(not public.document_is_deliverable(doc1), '5b. and says so');
+  -- The RECORD stays visible on purpose (0064). Hiding it too made a refused
+  -- upload look as though the product had simply lost the file, so a parent
+  -- could be notified about something they could not then open or understand.
   select count(*) into n from public.documents where id = doc1;
-  perform t.assert_eq(n, 0, '5c. app.can_read_document hides an infected row outright');
+  perform t.assert_eq(n, 1, '5c. the record stays readable, so the refusal can be explained');
+  perform t.assert_eq(
+    (select status::text from public.documents where id = doc1), 'quarantined',
+    '5d. ... and says plainly that it is quarantined');
   perform t.logout();
   perform app.record_scan_result(doc1, 'clean', 'restored for later cases');
 

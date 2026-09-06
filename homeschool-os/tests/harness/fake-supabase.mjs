@@ -21,18 +21,36 @@
  *   GET  /auth/v1/user
  *   REST /rest/v1/<table>            (select / insert / update, filters, count)
  *   POST /rest/v1/rpc/<function>
+ *   STORAGE /storage/v1/object/...   (upload, sign, download, remove)
+ *
+ * The storage side matters as much as the REST side. Bytes land on local disk,
+ * but the AUTHORIZATION is real: an upload is an insert into the real
+ * storage.objects table as the real user, so the quarantine policy decides;
+ * signing first checks that the same user can SELECT that object, so migration
+ * 0060's "readable only when the owning document is readable and clean" is what
+ * gates every preview. A test that gets a signed URL here would get one in
+ * production, and one that is refused here would be refused there.
  *
  * It is a TEST HARNESS. It is never imported by application code and never
  * shipped. Tokens are opaque random strings kept in memory, not real JWTs.
  */
 import http from 'node:http';
 import { randomUUID, randomBytes } from 'node:crypto';
+import { mkdirSync, writeFileSync, readFileSync, existsSync, rmSync } from 'node:fs';
+import { dirname, join } from 'node:path';
 import pg from 'pg';
 
 const DB = process.env.DATABASE_URL ?? 'postgresql://postgres:localdev@127.0.0.1:5433/hos_test';
 const PORT = Number(process.env.FAKE_SUPABASE_PORT ?? 54321);
 
 const pool = new pg.Pool({ connectionString: DB, max: 10 });
+
+/** Where uploaded bytes live for the duration of a test run. */
+const STORE = process.env.FAKE_STORAGE_DIR ?? '/tmp/hos-fake-storage';
+mkdirSync(STORE, { recursive: true });
+
+/** signed-url token -> { bucket, path, expiresAt }. Opaque, in-memory. */
+const signatures = new Map();
 
 /** token -> userId. Opaque, in-memory, test-only. */
 const sessions = new Map();
@@ -49,18 +67,35 @@ function json(res, status, body, extra = {}) {
   res.end(payload);
 }
 
+/**
+ * The service-role key. The trusted worker (the scan cron route) presents this
+ * instead of a session, exactly as it would against real Supabase.
+ */
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY ?? 'test-service-role-key';
+const SERVICE = Symbol('service_role');
+
 function bearer(req) {
   const raw = req.headers.authorization ?? '';
   const token = raw.startsWith('Bearer ') ? raw.slice(7) : '';
+  if (token && token === SERVICE_KEY) return SERVICE;
   return sessions.get(token) ?? null;
 }
 
-/** Run a query as the signed-in user so RLS applies exactly as in production. */
+/**
+ * Run a query as the caller, so RLS applies exactly as in production.
+ *
+ * The service_role branch sets NO jwt claims, which is the whole point:
+ * auth.uid() is null there, and app.record_scan_result refuses to run unless it
+ * is. The worker's privilege and the user's are genuinely different roles here,
+ * not a flag this harness decides to honour.
+ */
 async function asUser(userId, fn) {
   const client = await pool.connect();
   try {
     await client.query('begin');
-    if (userId) {
+    if (userId === SERVICE) {
+      await client.query('set local role service_role');
+    } else if (userId) {
       await client.query('select set_config($1, $2, true)', [
         'request.jwt.claims',
         JSON.stringify({ sub: userId, role: 'authenticated' }),
@@ -119,15 +154,87 @@ function sessionPayload(token, user) {
 
 /* ------------------------------------------------------------ PostgREST bits */
 
+/** proretset, cached: the catalog is the authority on a function's shape. */
+const setReturningCache = new Map();
+async function returnsSet(name) {
+  if (setReturningCache.has(name)) return setReturningCache.get(name);
+  const out = await asAdmin((c) =>
+    c.query(
+      `select bool_or(p.proretset) as s from pg_proc p
+         join pg_namespace n on n.oid = p.pronamespace
+        where n.nspname = 'public' and p.proname = $1`,
+      [name],
+    ),
+  );
+  const answer = out.rows[0]?.s === true;
+  setReturningCache.set(name, answer);
+  return answer;
+}
+
 const OPS = {
   eq: '=', neq: '<>', gt: '>', gte: '>=', lt: '<', lte: '<=', like: 'like', ilike: 'ilike',
 };
+
+/** One `column.op.value` term. Returns null if it is not one. */
+function term(key, raw, values) {
+  const m = /^([a-z]+)\.(.*)$/.exec(raw);
+  if (!m) return null;
+  const [, op, val] = m;
+  if (op === 'is') return `"${key}" is ${val === 'null' ? 'null' : val}`;
+  if (OPS[op]) {
+    values.push(val);
+    return `"${key}" ${OPS[op]} $${values.length}`;
+  }
+  if (op === 'in') {
+    const items = val.replace(/^\(|\)$/g, '').split(',');
+    const ph = items.map((v) => {
+      values.push(v.replace(/^"|"$/g, ''));
+      return `$${values.length}`;
+    });
+    return `"${key}" in (${ph.join(',')})`;
+  }
+  return null;
+}
+
+/**
+ * `.or('a.ilike.%x%,b.ilike.%x%')` arrives as or=(a.ilike.%x%,b.ilike.%x%).
+ * Splitting on commas at depth zero keeps a value containing a comma intact.
+ */
+function orClause(raw, values) {
+  const inner = raw.replace(/^\(|\)$/g, '');
+  const parts = [];
+  let depth = 0;
+  let buf = '';
+  for (const ch of inner) {
+    if (ch === '(') depth += 1;
+    if (ch === ')') depth -= 1;
+    if (ch === ',' && depth === 0) {
+      parts.push(buf);
+      buf = '';
+    } else buf += ch;
+  }
+  if (buf) parts.push(buf);
+
+  const clauses = [];
+  for (const part of parts) {
+    const dot = part.indexOf('.');
+    if (dot === -1) continue;
+    const clause = term(part.slice(0, dot), part.slice(dot + 1), values);
+    if (clause) clauses.push(clause);
+  }
+  return clauses.length ? `(${clauses.join(' or ')})` : null;
+}
 
 /** Translate a subset of PostgREST query params into SQL. */
 function buildFilters(params, values) {
   const clauses = [];
   for (const [key, raw] of params) {
     if (['select', 'order', 'limit', 'offset', 'on_conflict'].includes(key)) continue;
+    if (key === 'or') {
+      const clause = orClause(raw, values);
+      if (clause) clauses.push(clause);
+      continue;
+    }
     const m = /^([a-z]+)\.(.*)$/.exec(raw);
     if (!m) continue;
     const [, op, val] = m;
@@ -276,6 +383,188 @@ async function handleRest(req, res, url, userId, body) {
   }
 }
 
+
+/* ------------------------------------------------------------------ storage */
+
+function objectFile(bucket, path) {
+  return join(STORE, bucket, path);
+}
+
+/**
+ * storage-js sends a File/Blob as multipart/form-data. Only one part is ever
+ * needed here, so this pulls out the first file part rather than implementing
+ * RFC 7578.
+ */
+function multipartFile(buffer, contentType) {
+  const boundaryMatch = /boundary=(?:"([^"]+)"|([^;]+))/i.exec(contentType ?? '');
+  if (!boundaryMatch) return { bytes: buffer, type: contentType ?? 'application/octet-stream' };
+  const boundary = Buffer.from(`--${boundaryMatch[1] ?? boundaryMatch[2]}`);
+
+  let cursor = buffer.indexOf(boundary);
+  while (cursor !== -1) {
+    const headerStart = cursor + boundary.length + 2;
+    const headerEnd = buffer.indexOf('\r\n\r\n', headerStart);
+    if (headerEnd === -1) break;
+    const headers = buffer.slice(headerStart, headerEnd).toString('utf8');
+    const next = buffer.indexOf(boundary, headerEnd);
+    if (next === -1) break;
+
+    if (/filename=/i.test(headers)) {
+      const typeMatch = /content-type:\s*([^\r\n]+)/i.exec(headers);
+      return {
+        // -2 drops the CRLF that precedes the next boundary.
+        bytes: buffer.slice(headerEnd + 4, next - 2),
+        type: (typeMatch?.[1] ?? 'application/octet-stream').trim(),
+      };
+    }
+    cursor = next;
+  }
+  return { bytes: buffer, type: contentType ?? 'application/octet-stream' };
+}
+
+/**
+ * Upload. The row goes into the REAL storage.objects table as the REAL user, so
+ * "quarantine insert own scope" is what decides - an upload into another
+ * family's prefix fails here exactly as it would in production. Bytes are only
+ * written after the database has accepted the row.
+ */
+async function storageUpload(res, userId, bucket, path, buffer, contentType) {
+  if (!userId || userId === SERVICE) return json(res, 401, { message: 'unauthorized' });
+  const { bytes, type } = multipartFile(buffer, contentType);
+
+  try {
+    await asUser(userId, (c) =>
+      c.query(
+        `insert into storage.objects (bucket_id, name, owner, owner_id, metadata)
+         values ($1, $2, $3::uuid, $3, jsonb_build_object('size', $4::bigint, 'mimetype', $5::text))`,
+        [bucket, path, userId, bytes.length, type],
+      ),
+    );
+  } catch (e) {
+    const denied = e.code === '42501';
+    return json(res, denied ? 403 : 400, {
+      statusCode: denied ? '403' : '400',
+      error: denied ? 'Unauthorized' : 'BadRequest',
+      message: e.message,
+    });
+  }
+
+  const file = objectFile(bucket, path);
+  mkdirSync(dirname(file), { recursive: true });
+  writeFileSync(file, bytes);
+
+  return json(res, 200, { Key: `${bucket}/${path}`, Id: randomUUID(), path });
+}
+
+/**
+ * Can this user read these bytes? Asked of the database, never decided here.
+ * The SELECT policy from migration 0060 joins the object to its documents row,
+ * so a pending or infected file simply is not visible and gets no signature.
+ */
+async function canRead(userId, bucket, path) {
+  const out = await asUser(userId, (c) =>
+    c.query('select 1 from storage.objects where bucket_id = $1 and name = $2', [bucket, path]),
+  );
+  return out.rowCount > 0;
+}
+
+/**
+ * storage-js builds the final URL as `${storageUrl}${signedURL}`, and its
+ * storageUrl already ends in /storage/v1 - so this must NOT repeat that prefix.
+ */
+function sign(bucket, path, expiresIn) {
+  const token = randomBytes(24).toString('hex');
+  signatures.set(token, { bucket, path, expiresAt: Date.now() + expiresIn * 1000 });
+  return `/object/sign/${bucket}/${path}?token=${token}`;
+}
+
+async function storageSignOne(res, userId, bucket, path, expiresIn) {
+  if (!userId) return json(res, 401, { message: 'unauthorized' });
+  if (!(await canRead(userId, bucket, path))) {
+    return json(res, 400, { statusCode: '404', error: 'not_found', message: 'Object not found' });
+  }
+  return json(res, 200, { signedURL: sign(bucket, path, expiresIn) });
+}
+
+async function storageSignMany(res, userId, bucket, paths, expiresIn) {
+  if (!userId) return json(res, 401, { message: 'unauthorized' });
+  const out = [];
+  for (const path of paths) {
+    const allowed = await canRead(userId, bucket, path);
+    out.push(
+      allowed
+        ? { error: null, path, signedURL: sign(bucket, path, expiresIn) }
+        : { error: 'Object not found', path, signedURL: null },
+    );
+  }
+  return json(res, 200, out);
+}
+
+/** Following a signed URL. No session required - that is what "signed" means. */
+function storageDownload(res, bucket, path, token) {
+  const record = signatures.get(token ?? '');
+  if (!record || record.bucket !== bucket || record.path !== path) {
+    return json(res, 400, { message: 'Invalid signature' });
+  }
+  if (Date.now() > record.expiresAt) {
+    signatures.delete(token);
+    return json(res, 400, { message: 'Expired signature' });
+  }
+  const file = objectFile(bucket, path);
+  if (!existsSync(file)) return json(res, 404, { message: 'Object not found' });
+
+  const bytes = readFileSync(file);
+  res.writeHead(200, {
+    'content-type': 'application/octet-stream',
+    'content-length': bytes.length,
+    'access-control-allow-origin': '*',
+    'cache-control': 'no-store',
+  });
+  res.end(bytes);
+}
+
+/**
+ * Remove. The local shim carries managed Supabase's protect_delete trigger,
+ * which refuses every direct SQL delete from storage.objects - that is how the
+ * platform forces removal through the Storage API so the file itself is really
+ * deleted. So permission is established the only way it can be: attempt the
+ * delete as the user and read what comes back.
+ *
+ *   trigger raised  -> RLS let the row through, the user MAY delete it
+ *   0 rows affected -> RLS filtered it out, the user may NOT
+ *
+ * Only then is the row removed the way the real storage service would, with
+ * triggers suppressed.
+ */
+async function storageRemove(res, userId, bucket, paths) {
+  if (!userId) return json(res, 401, { message: 'unauthorized' });
+  const removed = [];
+
+  for (const path of paths) {
+    let permitted = false;
+    try {
+      const out = await asUser(userId, (c) =>
+        c.query('delete from storage.objects where bucket_id = $1 and name = $2', [bucket, path]),
+      );
+      permitted = out.rowCount > 0;
+    } catch (e) {
+      permitted = e.code === '42501' && /Storage API/.test(e.message);
+      if (!permitted) continue;
+    }
+    if (!permitted) continue;
+
+    await asAdmin(async (c) => {
+      await c.query("set session_replication_role = 'replica'");
+      await c.query('delete from storage.objects where bucket_id = $1 and name = $2', [bucket, path]);
+      await c.query("set session_replication_role = 'origin'");
+    });
+    rmSync(objectFile(bucket, path), { force: true });
+    removed.push({ bucket_id: bucket, name: path });
+  }
+
+  return json(res, 200, removed);
+}
+
 /* ------------------------------------------------------------------- server */
 
 const server = http.createServer(async (req, res) => {
@@ -283,12 +572,25 @@ const server = http.createServer(async (req, res) => {
 
   if (req.method === 'OPTIONS') return json(res, 204, null);
 
+  const isStorage = url.pathname.startsWith('/storage/v1/');
+
   let body = null;
-  if (['POST', 'PATCH', 'PUT'].includes(req.method)) {
+  let raw = Buffer.alloc(0);
+  if (['POST', 'PATCH', 'PUT', 'DELETE'].includes(req.method)) {
     const chunks = [];
     for await (const c of req) chunks.push(c);
-    const raw = Buffer.concat(chunks).toString('utf8');
-    body = raw ? JSON.parse(raw) : {};
+    raw = Buffer.concat(chunks);
+    // Upload bodies are bytes. Parsing them as UTF-8 JSON would corrupt every
+    // photo that happens not to be valid UTF-8, which is all of them.
+    const looksJson = (req.headers['content-type'] ?? '').includes('json');
+    if (!isStorage || looksJson) {
+      const text = raw.toString('utf8');
+      try {
+        body = text ? JSON.parse(text) : {};
+      } catch {
+        body = {};
+      }
+    }
   }
 
   try {
@@ -358,6 +660,56 @@ const server = http.createServer(async (req, res) => {
       return json(res, 200, {});
     }
 
+    /* ------------------------------------------------------------ storage */
+    if (isStorage) {
+      const userId = bearer(req);
+      const rest = url.pathname.replace('/storage/v1/', '');
+
+      // POST /object/sign/<bucket>            -> many
+      // POST /object/sign/<bucket>/<path>     -> one
+      // GET  /object/sign/<bucket>/<path>?token=...
+      if (rest.startsWith('object/sign/')) {
+        const [bucket, ...segments] = rest.replace('object/sign/', '').split('/');
+        const path = segments.join('/');
+
+        if (req.method === 'GET') return storageDownload(res, bucket, path, url.searchParams.get('token'));
+
+        const expiresIn = Number(body?.expiresIn ?? 60);
+        if (Array.isArray(body?.paths)) return storageSignMany(res, userId, bucket, body.paths, expiresIn);
+        return storageSignOne(res, userId, bucket, path, expiresIn);
+      }
+
+      if (rest.startsWith('object/')) {
+        const [bucket, ...segments] = rest.replace('object/', '').split('/');
+        const path = segments.join('/');
+
+        if (req.method === 'POST' || req.method === 'PUT') {
+          return storageUpload(res, userId, bucket, path, raw, req.headers['content-type']);
+        }
+        if (req.method === 'DELETE') {
+          const paths = Array.isArray(body?.prefixes) ? body.prefixes : path ? [path] : [];
+          return storageRemove(res, userId, bucket, paths);
+        }
+        if (req.method === 'GET') {
+          // Authenticated read straight from the API, still policy-gated.
+          if (!userId || !(await canRead(userId, bucket, path))) {
+            return json(res, 404, { message: 'Object not found' });
+          }
+          const file = objectFile(bucket, path);
+          if (!existsSync(file)) return json(res, 404, { message: 'Object not found' });
+          const bytes = readFileSync(file);
+          res.writeHead(200, {
+            'content-type': 'application/octet-stream',
+            'content-length': bytes.length,
+            'access-control-allow-origin': '*',
+          });
+          return res.end(bytes);
+        }
+      }
+
+      return json(res, 404, { message: 'not found' });
+    }
+
     /* ---------------------------------------------------------------- rpc */
     if (url.pathname.startsWith('/rest/v1/rpc/')) {
       const fn = url.pathname.replace('/rest/v1/rpc/', '');
@@ -366,11 +718,19 @@ const server = http.createServer(async (req, res) => {
       const keys = Object.keys(body ?? {});
       const args = keys.map((k, i) => `${k} => $${i + 1}`).join(', ');
       const values = keys.map((k) => body[k]);
+
       try {
+        // A function returning TABLE(...) is a set, and PostgREST answers with
+        // an array of row objects. Calling it in the select list instead would
+        // hand back a composite rendered as a string, which the client cannot
+        // read - so ask the catalog which shape this one is.
+        const setReturning = await returnsSet(fn);
         const out = await asUser(userId, (c) =>
-          c.query(`select public.${fn}(${args}) as result`, values),
+          setReturning
+            ? c.query(`select * from public.${fn}(${args})`, values)
+            : c.query(`select public.${fn}(${args}) as result`, values),
         );
-        return json(res, 200, out.rows[0]?.result ?? null);
+        return json(res, 200, setReturning ? out.rows : (out.rows[0]?.result ?? null));
       } catch (e) {
         console.error('[rpc]', fn, e.message);
         return json(res, 400, { message: e.message, code: e.code ?? '' });

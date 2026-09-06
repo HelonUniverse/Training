@@ -26,10 +26,11 @@ export const getCaptureStudents = cache(async () => {
 
 export const getSubjects = cache(async () => {
   const supabase = await createClient();
+  // subjects has no deleted_at - it is retired with `active`, not soft-deleted.
   const { data } = await supabase
     .from('subjects')
     .select('id, name')
-    .is('deleted_at', null)
+    .eq('active', true)
     .order('name');
 
   return (data ?? []).map((s) => ({ id: s.id, name: s.name }));

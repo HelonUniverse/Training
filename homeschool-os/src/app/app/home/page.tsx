@@ -6,6 +6,7 @@ import { getActiveStudent, greetingKey } from '@/lib/auth/context';
 import { getPortfolioCounts, getTimeline } from '@/lib/portfolio/queries';
 import { PreviewProvider, DocumentPreview } from '@/components/portfolio/DocumentPreview';
 import { ParentShell } from '@/components/app/ParentShell';
+import { NotificationList } from '@/components/app/NotificationList';
 import { Button, Card, StatusBadge } from '@/components/ui/primitives';
 import { StatCard } from '@/components/ui/patterns';
 
@@ -110,6 +111,9 @@ export default async function ParentHome() {
           />
         </div>
       </section>
+
+      {/* Only rendered when there is genuinely something to say. */}
+      <NotificationList />
 
       {/* ---------------------------------------------------- recently added */}
       {/* Real captures, not a generated insight. Nothing on this dashboard is

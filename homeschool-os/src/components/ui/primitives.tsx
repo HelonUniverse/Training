@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Link from 'next/link';
 
 export function cx(...parts: Array<string | false | null | undefined>) {
   return parts.filter(Boolean).join(' ');
@@ -48,6 +49,45 @@ export function Button({
       className={cx(buttonBase, buttonVariants[variant], buttonSizes[size], full && 'w-full', className)}
       {...props}
     />
+  );
+}
+
+/**
+ * A link that looks and MEASURES like a button.
+ *
+ * `<Link><Button/></Link>` renders an inline <a> about 19px tall wrapping a
+ * 44px button, so the anchor - the thing a screen reader announces and a
+ * pointer test measures - fails the touch-target minimum even though it looks
+ * fine. This puts the button's own box on the anchor instead.
+ */
+export function ButtonLink({
+  href,
+  variant = 'primary',
+  size = 'md',
+  full,
+  className,
+  children,
+}: {
+  href: string;
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  full?: boolean;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Link
+      href={href}
+      className={cx(
+        buttonBase,
+        buttonVariants[variant],
+        buttonSizes[size],
+        full ? 'flex w-full' : 'inline-flex',
+        className,
+      )}
+    >
+      {children}
+    </Link>
   );
 }
 

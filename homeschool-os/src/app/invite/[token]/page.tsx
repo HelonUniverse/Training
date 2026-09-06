@@ -3,7 +3,7 @@ import { getTranslations, getFormatter } from 'next-intl/server';
 import { getUser } from '@/lib/auth/session';
 import { previewInvitation } from '@/server/actions/invitations';
 import { AcceptInvitation } from '@/components/app/AcceptInvitation';
-import { Card } from '@/components/ui/primitives';
+import { Card, ButtonLink } from '@/components/ui/primitives';
 
 /**
  * Accepting an invitation.
@@ -37,12 +37,9 @@ export default async function Page({ params }: PageProps<'/invite/[token]'>) {
           <h1 className="text-title text-balance text-ink">{t('signedOut.title')}</h1>
           <p className="mt-3 text-pretty text-ink-muted">{t('signedOut.body')}</p>
           <p className="mt-6">
-            <Link
-              href={`/sign-in?next=${encodeURIComponent(`/invite/${token}`)}`}
-              className="inline-flex min-h-12 w-full items-center justify-center rounded-field bg-primary px-5 font-medium text-ink-inverse"
-            >
+            <ButtonLink href={`/sign-in?next=${encodeURIComponent(`/invite/${token}`)}`} size="lg" full>
               {t('signInToAccept')}
-            </Link>
+            </ButtonLink>
           </p>
           <p className="mt-4 text-sm text-ink-subtle">{t('signedOut.noAccount')}</p>
         </Card>

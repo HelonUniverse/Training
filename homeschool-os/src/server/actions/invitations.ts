@@ -185,6 +185,18 @@ async function deliverInvitation(
   return outcome.status;
 }
 
+/**
+ * The <form action> form of resendInvitation.
+ *
+ * A form action must resolve to void; resendInvitation returns a result an
+ * interactive caller wants. This wrapper exists so the list can post a plain
+ * form (which works without JavaScript) without either function lying about
+ * its shape.
+ */
+export async function resendInvitationForm(formData: FormData): Promise<void> {
+  await resendInvitation(formData);
+}
+
 export async function cancelInvitation(formData: FormData): Promise<void> {
   await requirePermission();
   const id = String(formData.get('id') ?? '');

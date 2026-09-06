@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import { ParentShell } from '@/components/app/ParentShell';
-import { PageHeader, Button } from '@/components/ui/primitives';
+import { PageHeader, ButtonLink } from '@/components/ui/primitives';
 import { EmptyState } from '@/components/ui/patterns';
 import { Timeline } from '@/components/portfolio/Timeline';
 import { PreviewProvider } from '@/components/portfolio/DocumentPreview';
@@ -30,9 +30,7 @@ export default async function Page() {
         title={tn('portfolio')}
         subtitle={entries.length > 0 ? t('subtitle', { count: entries.length }) : undefined}
         action={
-          <Link href="/app/add">
-            <Button size="md">{t('add')}</Button>
-          </Link>
+          <ButtonLink href="/app/add">{t('add')}</ButtonLink>
         }
       />
 
@@ -42,9 +40,9 @@ export default async function Page() {
           title={te('title')}
           body={te('body')}
           action={
-            <Link href="/app/add">
-              <Button size="lg">{te('cta')}</Button>
-            </Link>
+            <ButtonLink href="/app/add" size="lg">
+              {te('cta')}
+            </ButtonLink>
           }
         />
       ) : (

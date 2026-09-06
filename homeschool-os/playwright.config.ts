@@ -5,6 +5,9 @@ const CHROME = process.env.CHROME_PATH ?? '/opt/pw-browsers/chromium-1194/chrome
 
 export default defineConfig({
   testDir: './tests/e2e',
+  // performance.spec.ts seeds two dozen real captures and takes minutes; it is
+  // run on purpose, not as part of every suite.
+  testIgnore: process.env.RUN_PERF ? [] : ['**/performance.spec.ts'],
   fullyParallel: false,
   workers: 1,
   retries: 0,

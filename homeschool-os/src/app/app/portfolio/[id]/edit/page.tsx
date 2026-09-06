@@ -19,7 +19,7 @@ export default async function Page({ params }: PageProps<'/app/portfolio/[id]/ed
     <ParentShell showStudentSwitcher={false}>
       <PageHeader
         eyebrow={
-          <Link href={`/app/portfolio/${id}`} className="hover:underline">
+          <Link href={`/app/portfolio/${id}`} className="inline-flex min-h-11 items-center hover:underline">
             ← {item.title}
           </Link>
         }

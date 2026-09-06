@@ -178,6 +178,12 @@ export function CaptureFlow({
     event.preventDefault();
     if (!canSave) return;
 
+    // Read the form NOW, synchronously. React clears event.currentTarget once
+    // the handler returns, and everything below this line is awaited - so
+    // reaching for it after the upload finishes throws, and the person sees a
+    // save failure for a form that was filled in correctly.
+    const form = new FormData(event.currentTarget);
+
     setSaving(true);
     setFormError(null);
 
@@ -188,9 +194,12 @@ export function CaptureFlow({
       return;
     }
 
+    // The upload and the save are reported separately on purpose. Telling
+    // someone "that didn't save" when the file never left their phone sends
+    // them looking in the wrong place, and the two have different remedies.
+    const uploaded: UploadedFile[] = [];
     try {
       const supabase = createClient();
-      const uploaded: UploadedFile[] = [];
 
       for (const entry of usable) {
         if (!entry.mime || !entry.sha256) continue;
@@ -210,8 +219,16 @@ export function CaptureFlow({
           sha256: entry.sha256,
         });
       }
+    } catch (error) {
+      // Surfaced to the console as well as the screen: the message a person
+      // needs is short, and the message someone debugging needs is not.
+      console.error('[capture] upload failed', error);
+      setFormError(t('errors.uploadFailed'));
+      setSaving(false);
+      return;
+    }
 
-      const form = new FormData(event.currentTarget);
+    try {
       const result = await saveCapture({
         kind,
         studentId,
@@ -237,7 +254,8 @@ export function CaptureFlow({
       toast(t('saved'), 'positive');
       router.push(kind === 'document' ? '/app/documents' : '/app/portfolio');
       router.refresh();
-    } catch {
+    } catch (error) {
+      console.error('[capture] save failed', error);
       setFormError(t('errors.saveFailed'));
       setSaving(false);
     }

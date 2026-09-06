@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getTranslations } from 'next-intl/server';
 import { ParentShell } from '@/components/app/ParentShell';
-import { PageHeader } from '@/components/ui/primitives';
+import { PageHeader, ButtonLink } from '@/components/ui/primitives';
 import { EmptyState } from '@/components/ui/patterns';
 import { CaptureFlow } from '@/components/capture/CaptureFlow';
 import { SmartIntakeNotice } from '@/components/capture/SmartIntakeNotice';
@@ -32,12 +32,9 @@ export default async function Page({ params }: PageProps<'/app/add/[kind]'>) {
           title={te('noChildren.title')}
           body={te('noChildren.body')}
           action={
-            <Link
-              href="/app/children/new"
-              className="inline-flex min-h-11 items-center rounded-pill bg-primary px-5 text-[0.9375rem] font-medium text-ink-inverse"
-            >
+            <ButtonLink href="/app/children/new" size="lg">
               {te('noChildren.cta')}
-            </Link>
+            </ButtonLink>
           }
         />
       </ParentShell>
@@ -48,7 +45,7 @@ export default async function Page({ params }: PageProps<'/app/add/[kind]'>) {
     <ParentShell showStudentSwitcher={false}>
       <PageHeader
         eyebrow={
-          <Link href="/app/add" className="hover:underline">
+          <Link href="/app/add" className="inline-flex min-h-11 items-center hover:underline">
             ← {t('addSomething')}
           </Link>
         }

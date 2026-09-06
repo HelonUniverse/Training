@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { getTranslations, getFormatter } from 'next-intl/server';
 import { ParentShell } from '@/components/app/ParentShell';
-import { PageHeader, Card, StatusBadge, Button } from '@/components/ui/primitives';
+import { PageHeader, Card, StatusBadge, ButtonLink } from '@/components/ui/primitives';
 import { PreviewProvider, DocumentPreview } from '@/components/portfolio/DocumentPreview';
 import { getPortfolioItem, getDocuments } from '@/lib/portfolio/queries';
 import { getCaptureStudents, getSubjects } from '@/lib/capture/data';
@@ -33,7 +33,7 @@ export default async function Page({ params }: PageProps<'/app/portfolio/[id]'>)
     <ParentShell showStudentSwitcher={false}>
       <PageHeader
         eyebrow={
-          <Link href="/app/portfolio" className="hover:underline">
+          <Link href="/app/portfolio" className="inline-flex min-h-11 items-center hover:underline">
             ← {t('backToPortfolio')}
           </Link>
         }
@@ -46,9 +46,9 @@ export default async function Page({ params }: PageProps<'/app/portfolio/[id]'>)
           .filter(Boolean)
           .join(' · ')}
         action={
-          <Link href={`/app/portfolio/${id}/edit`}>
-            <Button variant="secondary">{t('edit')}</Button>
-          </Link>
+          <ButtonLink href={`/app/portfolio/${id}/edit`} variant="secondary">
+            {t('edit')}
+          </ButtonLink>
         }
       />
 

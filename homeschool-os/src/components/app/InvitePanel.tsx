@@ -26,12 +26,23 @@ export function InvitePanel({ kind }: { kind: 'family' | 'org_member' }) {
       <form action={action} className="mt-4 space-y-4">
         <input type="hidden" name="kind" value={kind} />
         {state?.error ? <FormError>{tErr(state.error)}</FormError> : null}
+        {/* What the outbox actually recorded, not what we hoped. With no email
+            provider configured nothing is sent, and saying "sent" would leave
+            an admin waiting for a reply to a message that never existed. */}
         {state?.success ? (
           <p
             role="status"
-            className="rounded-field bg-positive-soft px-3.5 py-3 text-sm text-positive-ink ring-1 ring-inset ring-positive/20"
+            className={
+              state.delivery === 'sent'
+                ? 'rounded-field bg-positive-soft px-3.5 py-3 text-sm text-positive-ink ring-1 ring-inset ring-positive/20'
+                : 'rounded-field bg-attention-soft px-3.5 py-3 text-sm text-attention-ink ring-1 ring-inset ring-attention/20'
+            }
           >
-            {t('sent', { email: state.success })}
+            {state.delivery === 'sent'
+              ? t('sent', { email: state.success })
+              : state.delivery === 'skipped'
+                ? t('createdNotEmailed', { email: state.success })
+                : t('createdSendFailed', { email: state.success })}
           </p>
         ) : null}
 

@@ -327,7 +327,11 @@
       "noneTitle": "No invitations yet",
       "noneBody": "Invite a family, teacher or staff member to get started.",
       "listTitle": "Invitations",
-      "cancel": "Cancel invitation"
+      "cancel": "Cancel invitation",
+      "createdNotEmailed": "Invitation created for {email}, but no email went out - this installation has no email provider set up yet. Once one is configured you can resend it.",
+      "createdSendFailed": "Invitation created for {email}, but the email did not go out. You can resend it.",
+      "resend": "Resend",
+      "resendHelp": "Sends a new link and stops the old one from working."
     }
   },
   "context": {
@@ -494,7 +498,8 @@
       "chooseChild": "Choose which child this belongs to.",
       "notPermitted": "You don't have permission to add this for this child.",
       "saveFailed": "That didn't save. Nothing was lost — try again.",
-      "unknownKind": "We don't know how to save that."
+      "unknownKind": "We don't know how to save that.",
+      "uploadFailed": "We couldn't upload your file. Check your connection and try again - nothing was lost."
     }
   },
   "upload": {
@@ -780,5 +785,8 @@
     "success": {
       "accepted": "You're in."
     }
+  },
+  "notifications": {
+    "heading": "Needs your attention"
   }
 }

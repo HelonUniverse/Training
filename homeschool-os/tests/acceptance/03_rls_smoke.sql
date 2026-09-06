@@ -24,7 +24,15 @@ begin
   perform t.assert_eq((select count(*) from public.students), 2::bigint, 'full guardian sees 2 students');
   perform t.assert_eq(app.student_access(LUCAS), 'admin'::app.access_level, 'full guardian is admin');
   perform t.assert(app.can_read_document(DOC_PRIV), 'full guardian reads family_private');
-  perform t.assert(not app.can_read_document(DOC_INF), 'nobody reads an infected document');
+  -- STEP 4 (migration 0064) separated the two questions. The RECORD of an
+  -- infected document stays readable by the people who could already read it,
+  -- so the product can explain that the file was refused instead of appearing
+  -- to have lost it. The BYTES are gated by the storage policy, which requires
+  -- scan_status = 'clean' - see case 5e in 04_storage_policies.sql.
+  perform t.assert(app.can_read_document(DOC_INF),
+    'the record of an infected document is still readable, so it can be explained');
+  perform t.assert(not public.document_is_deliverable(DOC_INF),
+    '... but it is never deliverable');
   perform t.assert(app.can_student_action(LUCAS,'compliance_submission','submit'), 'full guardian may file');
   perform t.assert(app.can_export_student(LUCAS), 'full guardian may export');
   perform t.logout();

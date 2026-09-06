@@ -174,7 +174,13 @@ test.describe('organization journey', () => {
     await page.goto('/app/org/families');
     await page.getByLabel('Email address').fill('newfamily@test.local');
     await page.getByRole('button', { name: 'Send invitation' }).click();
-    await expect(page.getByText(/Invitation sent to newfamily@test.local/)).toBeVisible();
+    // STEP 4 made this message truthful. The invitation IS created, but this
+    // installation has no email provider configured, so nothing was sent - and
+    // the screen has to say so. It used to read "Invitation sent", which would
+    // have left an admin waiting for a reply to a message that never existed.
+    await expect(
+      page.getByText(/Invitation created for newfamily@test.local, but no email went out/),
+    ).toBeVisible();
     await expect(page.getByText('Pending')).toBeVisible();
   });
 });

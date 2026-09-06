@@ -67,7 +67,7 @@ export default async function Page({ params }: PageProps<'/app/documents/[id]'>)
     <ParentShell showStudentSwitcher={false}>
       <PageHeader
         eyebrow={
-          <Link href="/app/documents" className="hover:underline">
+          <Link href="/app/documents" className="inline-flex min-h-11 items-center hover:underline">
             ← {t('backToDocuments')}
           </Link>
         }

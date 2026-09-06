@@ -159,7 +159,10 @@ export async function saveCapture(input: CaptureInput): Promise<CaptureResult> {
       p_document_date: input.occurredOn,
     });
 
-    if (error || !data) return { ok: false, error: 'capture.errors.saveFailed' };
+    if (error || !data) {
+      console.error('[capture] register_document failed', error);
+      return { ok: false, error: 'capture.errors.saveFailed' };
+    }
 
     const result = data as unknown as { id: string | null; duplicate: boolean };
     if (result.duplicate) {
@@ -175,7 +178,10 @@ export async function saveCapture(input: CaptureInput): Promise<CaptureResult> {
     const itemId = await createEntry(supabase, input, title, documentIds);
     revalidatePath('/app', 'layout');
     return { ok: true, itemId, documentIds, duplicates };
-  } catch {
+  } catch (error) {
+    // Server-side only. A parent gets one short sentence; whoever is on call
+    // gets the reason.
+    console.error('[capture] entry creation failed', error);
     return { ok: false, error: 'capture.errors.saveFailed' };
   }
 }

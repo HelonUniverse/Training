@@ -327,7 +327,11 @@
       "noneTitle": "Aún no hay invitaciones",
       "noneBody": "Invita a una familia, un maestro o personal para empezar.",
       "listTitle": "Invitaciones",
-      "cancel": "Cancelar invitación"
+      "cancel": "Cancelar invitación",
+      "createdNotEmailed": "Se creó la invitación para {email}, pero no salió ningún correo - esta instalación todavía no tiene un proveedor de correo configurado. Cuando lo tenga, puedes reenviarla.",
+      "createdSendFailed": "Se creó la invitación para {email}, pero el correo no salió. Puedes reenviarla.",
+      "resend": "Reenviar",
+      "resendHelp": "Manda un enlace nuevo y deja de servir el anterior."
     }
   },
   "context": {
@@ -494,7 +498,8 @@
       "chooseChild": "Elige de cuál de tus hijos es.",
       "notPermitted": "No tienes permiso para agregar esto para este estudiante.",
       "saveFailed": "No se guardó. No se perdió nada — inténtalo otra vez.",
-      "unknownKind": "No sabemos cómo guardar eso."
+      "unknownKind": "No sabemos cómo guardar eso.",
+      "uploadFailed": "No pudimos subir tu archivo. Revisa tu conexión e inténtalo otra vez - no se perdió nada."
     }
   },
   "upload": {
@@ -780,5 +785,8 @@
     "success": {
       "accepted": "Ya estás dentro."
     }
+  },
+  "notifications": {
+    "heading": "Necesita tu atención"
   }
 }

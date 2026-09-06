@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { getTranslations } from 'next-intl/server';
 import { ParentShell } from '@/components/app/ParentShell';
-import { PageHeader, Button } from '@/components/ui/primitives';
+import { PageHeader, ButtonLink } from '@/components/ui/primitives';
 import { EmptyState } from '@/components/ui/patterns';
 import { PreviewProvider } from '@/components/portfolio/DocumentPreview';
 import { DocumentList, type DocumentRow } from '@/components/documents/DocumentList';
@@ -49,9 +49,7 @@ export default async function Page({ searchParams }: PageProps<'/app/documents'>
         title={tn('documents')}
         subtitle={nothingAtAll ? undefined : t('subtitle', { count: documents.length })}
         action={
-          <Link href="/app/add/document">
-            <Button>{t('add')}</Button>
-          </Link>
+          <ButtonLink href="/app/add/document">{t('add')}</ButtonLink>
         }
       />
 
@@ -61,9 +59,9 @@ export default async function Page({ searchParams }: PageProps<'/app/documents'>
           title={te('title')}
           body={te('body')}
           action={
-            <Link href="/app/add/document">
-              <Button size="lg">{te('cta')}</Button>
-            </Link>
+            <ButtonLink href="/app/add/document" size="lg">
+              {te('cta')}
+            </ButtonLink>
           }
         />
       ) : (

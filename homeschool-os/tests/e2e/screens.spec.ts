@@ -41,7 +41,11 @@ async function assertLayoutSane(page: Page, label: string) {
     const nodes = document.querySelectorAll('button, a[href], input, select');
     for (const el of Array.from(nodes)) {
       if (el.closest('nextjs-portal, [data-nextjs-toast]')) continue;
+      // Not pointer targets: the skip link (until focused) and the visually
+      // hidden file inputs, which are driven by the labelled buttons beside
+      // them. Measuring those would be measuring the wrong element.
       if (el.classList.contains('skip-link')) continue;
+      if (el.classList.contains('sr-only')) continue;
 
       const style = getComputedStyle(el);
       if (style.visibility === 'hidden' || style.display === 'none') continue;
