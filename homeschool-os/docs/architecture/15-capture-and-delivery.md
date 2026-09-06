@@ -150,3 +150,34 @@ The first notification they then miss is the one that mattered.
 SQL and executed against real PostgreSQL carrying the real migrations, as the
 real role — `authenticated` with the caller's claims, or `service_role` with
 none. A request refused there is refused in production.
+
+## What the managed deployment changed about this document
+
+STEP 4.1 applied migrations 0056–0064 to the real `homeschool-os-dev` project and
+re-ran every claim above against PostgreSQL 17.6 in the cloud, as real
+authenticated users. Everything in this document held. Two things are worth
+recording because they are not obvious from the migrations alone.
+
+**The sandbox cannot reach the cloud.** The egress proxy answers `403` to
+`CONNECT` for both `*.supabase.co` and `api.supabase.com`, so no browser and no
+HTTP client here can talk to the managed project. The database, storage-policy
+and auth halves of the verification ran through the Supabase MCP channel — real
+SQL, real roles, real policies — and the browser half ran locally against the
+RLS-faithful harness. **No browser-to-cloud journey was performed, and none is
+claimed.** Anything that lives only in Supabase's HTTP layer — the actual
+signature and `exp` of a Storage signed URL, GoTrue's own token minting — was
+therefore not observed against managed. The signed-URL *authorization* was:
+`document_is_deliverable` and the storage read policy were exercised on managed
+for all four scan states, and only `clean` yields readable bytes. The expiry is
+what the route configures: 120 s for a single document, 300 s for a batch of up
+to 24.
+
+**A read filter is not a write filter (migration 0065).** `ai_usage_summary` is
+deliberately a SECURITY DEFINER view. What nobody had checked is that a view
+without `security_invoker` executes as its owner for *writes* as well as reads,
+and `authenticated` held every privilege on it, not just `SELECT`. An
+organization admin could `UPDATE` or `DELETE` her own AI cost ledger straight
+through the view, past the base table's RLS. The view's `WHERE` clause was the
+only gate, and it answers *who may see this row* — a different question from
+*who may destroy it*. 0065 revokes everything but `SELECT` on every view in
+`public` and adds a schema invariant so it cannot return.

@@ -193,7 +193,14 @@ test('journey 3: a document is filed, opened, and its audience changed', async (
   await runScanner(page);
 
   await page.goto('/app/documents');
-  await page.getByText('Immunization form').click();
+  // Click the LINK, not the paragraph inside it. getByText resolves to the <p>,
+  // which React replaces during hydration - so on a cold server the click can
+  // land on a node that has just been detached, and nothing navigates. The link
+  // itself is stable across hydration, and naming it by role says what the test
+  // actually means: follow the document into its own page.
+  const row = page.getByRole('link', { name: /Immunization form/ });
+  await expect(row).toBeVisible();
+  await row.click();
   await expect(page).toHaveURL(/\/app\/documents\/[0-9a-f-]{36}/);
 
   // The words on screen are sentences, never the database's vocabulary.

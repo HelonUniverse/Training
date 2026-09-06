@@ -257,3 +257,73 @@ select t.assert(not app.can_export_student(:'LUCAS'::uuid), 'a teacher cannot ex
 commit;
 
 select 'privilege escalation and boundary checks passed' as result;
+
+-- =============================================================================
+-- A SUMMARY VIEW IS NOT A WRITE PATH  (migration 0065)
+-- =============================================================================
+-- Found by the STEP 4.1 managed verification. ai_usage_summary is deliberately
+-- a SECURITY DEFINER view so an organization admin can read cost aggregates
+-- without reading provider internals. A view without security_invoker executes
+-- as its OWNER for WRITES as well as reads, and this one is auto-updatable - so
+-- while `authenticated` held every privilege on it, an org admin could rewrite
+-- or delete her own AI cost ledger straight through it, past the base table's
+-- RLS. The read filter was the only gate, and it answers "who may SEE this
+-- row", which is not the same question as "who may DESTROY it".
+--
+-- Both halves matter: the admin must still READ, and must not WRITE.
+-- =============================================================================
+begin;
+insert into public.ai_usage_events (id, provider, model, feature, organization_id,
+                                    family_id, student_id, input_tokens, output_tokens, status)
+values ('88888888-8888-4888-8888-00000000ffff', 'anthropic', 'test-model', 'lesson_generation',
+        :'ORG'::uuid, '22222222-2222-4222-8222-00000000000a', :'LUCAS'::uuid, 100, 200, 'success');
+commit;
+
+begin;
+select t.login(:'ADELE');
+select t.assert_eq((select count(*) from public.ai_usage_summary
+                     where id = '88888888-8888-4888-8888-00000000ffff'), 1::bigint,
+  'an org admin can still READ her organization''s AI usage through the view');
+select t.assert_eq((select count(*) from public.ai_usage_events
+                     where id = '88888888-8888-4888-8888-00000000ffff'), 0::bigint,
+  'but not the base table, which carries provider, model and error text');
+commit;
+
+begin;
+select t.login(:'ADELE');
+do $$
+begin
+  update public.ai_usage_summary set input_tokens = 999999
+   where id = '88888888-8888-4888-8888-00000000ffff';
+  raise exception 'ASSERTION FAILED: an org admin rewrote the AI cost ledger through the view';
+exception when insufficient_privilege then null;
+end $$;
+rollback;
+
+begin;
+select t.login(:'ADELE');
+do $$
+begin
+  delete from public.ai_usage_summary where id = '88888888-8888-4888-8888-00000000ffff';
+  raise exception 'ASSERTION FAILED: an org admin deleted the AI cost ledger through the view';
+exception when insufficient_privilege then null;
+end $$;
+rollback;
+
+begin;
+select t.assert_eq((select input_tokens from public.ai_usage_events
+                     where id = '88888888-8888-4888-8888-00000000ffff'), 100,
+  'the cost ledger is intact');
+-- And the rule is now permanent, not a one-off revoke: no view in public grants
+-- an end user anything beyond SELECT.
+select t.assert_eq((select count(*) from pg_class c
+                      join pg_namespace n on n.oid = c.relnamespace
+                      cross join lateral aclexplode(c.relacl) ac
+                      join pg_roles r on r.oid = ac.grantee
+                     where n.nspname = 'public' and c.relkind = 'v'
+                       and r.rolname in ('anon','authenticated')
+                       and ac.privilege_type <> 'SELECT'), 0::bigint,
+  'no view in public is writable by an end user');
+commit;
+
+select 'view write-path checks passed' as result;
