@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test:e2e": "playwright test",
-    "guard": "bash scripts/check-service-role.sh"
+    "guard": "bash scripts/check-service-role.sh && node scripts/check-i18n.mjs",
+    "test:sql": "bash tests/local/test.sh"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.6",
@@ -21,6 +22,7 @@
     "server-only": "^0.0.1"
   },
   "devDependencies": {
+    "@next/eslint-plugin-next": "^15.5.25",
     "@playwright/test": "^1.47.2",
     "@supabase/postgres-meta": "^0.99.0",
     "@types/node": "^22.7.4",
@@ -28,10 +30,13 @@
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.7",
     "autoprefixer": "^10.4.20",
+    "eslint": "^9.39.5",
+    "eslint-plugin-react-hooks": "^5.2.0",
     "pg": "^8.23.0",
     "postcss": "^8.4.47",
     "supabase": "^2.116.0",
     "tailwindcss": "^3.4.13",
-    "typescript": "^5.6.2"
+    "typescript": "^5.6.2",
+    "typescript-eslint": "^8.69.0"
   }
 }

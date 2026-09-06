@@ -33,7 +33,6 @@ export interface EmailProvider {
 class ConsoleProvider implements EmailProvider {
   readonly name = 'console';
   async send(message: Message): Promise<SendOutcome> {
-    // eslint-disable-next-line no-console
     console.info(
       `\n[email:console] to=${message.to}\n  subject: ${message.subject}\n` +
         `  ${message.text.split('\n').join('\n  ')}\n`,

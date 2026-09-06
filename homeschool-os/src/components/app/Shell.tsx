@@ -79,15 +79,17 @@ export async function Shell({
   const secondary = variant === 'parent' ? PARENT_MORE : ORG_MORE;
   const mobile = variant === 'parent' ? PARENT_MOBILE : ORG_MOBILE;
 
+  // The universal action now leads somewhere real. Every parent entry here is a
+  // capture flow that saves; the two that are not yet built are gone rather
+  // than left pointing at a page that cannot do what the label promises.
   const actions =
     variant === 'parent'
       ? [
-          { key: 'uploadWork', href: '/app/portfolio' },
-          { key: 'uploadDocument', href: '/app/documents' },
-          { key: 'addActivity', href: '/app/portfolio' },
-          { key: 'planLesson', href: '/app/learning' },
-          { key: 'createEvent', href: '/app/calendar' },
-          { key: 'askAi', href: '/app/home' },
+          { key: 'addSchoolwork', href: '/app/add/schoolwork' },
+          { key: 'addProject', href: '/app/add/project' },
+          { key: 'addActivity', href: '/app/add/activity' },
+          { key: 'addBook', href: '/app/add/book' },
+          { key: 'uploadDocument', href: '/app/add/document' },
         ]
       : [
           { key: 'inviteFamily', href: '/app/org/families' },

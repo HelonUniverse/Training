@@ -3,10 +3,11 @@ import { getTranslations } from 'next-intl/server';
 import { createClient } from '@/lib/supabase/server';
 import { getUser } from '@/lib/auth/session';
 import { getActiveStudent, greetingKey } from '@/lib/auth/context';
+import { getPortfolioCounts, getTimeline } from '@/lib/portfolio/queries';
+import { PreviewProvider, DocumentPreview } from '@/components/portfolio/DocumentPreview';
 import { ParentShell } from '@/components/app/ParentShell';
 import { Button, Card, StatusBadge } from '@/components/ui/primitives';
 import { StatCard } from '@/components/ui/patterns';
-import { AIInsightCard } from '@/components/ui/interactive';
 
 export default async function ParentHome() {
   const t = await getTranslations('dashboard');
@@ -20,24 +21,22 @@ export default async function ParentHome() {
   // Everything below reads through RLS as the signed-in guardian.
   const studentFilter = activeId && activeId !== 'all' ? activeId : null;
 
-  const [portfolioRes, lessonsRes, documentsRes, eventsRes] = await Promise.all([
-    supabase.from('portfolio_items').select('id', { count: 'exact', head: true }),
+  const [counts, recent, lessonsRes, eventsRes] = await Promise.all([
+    getPortfolioCounts(studentFilter),
+    getTimeline({ studentId: studentFilter, limit: 4 }),
     supabase
       .from('lessons')
       .select('id, title, scheduled_for')
       .gte('scheduled_for', new Date().toISOString().slice(0, 10))
       .order('scheduled_for', { ascending: true })
       .limit(3),
-    supabase.from('documents').select('id', { count: 'exact', head: true }),
     supabase.from('calendar_event_instances').select('id', { count: 'exact', head: true }),
   ]);
 
-  const portfolio = portfolioRes.count ?? 0;
-  const documents = documentsRes.count ?? 0;
+  const portfolio = counts.portfolioItems + counts.activities + counts.readings;
+  const documents = counts.documents;
   const events = eventsRes.count ?? 0;
   const lessons = lessonsRes.data ?? [];
-
-  void studentFilter;
 
   const firstName =
     (user?.fullName ?? '').split(' ')[0] || (user?.email ?? '').split('@')[0] || '';
@@ -84,7 +83,7 @@ export default async function ParentHome() {
             {...(portfolio > 0
               ? { value: portfolio }
               : { state: ts('noEvidenceYet'), tone: 'neutral' as const })}
-            action={{ href: '/app/portfolio', label: t('cards.addWork') }}
+            action={{ href: '/app/add', label: t('cards.addWork') }}
             icon="✦"
           />
           <StatCard
@@ -112,21 +111,50 @@ export default async function ParentHome() {
         </div>
       </section>
 
-      {/* -------------------------------------------------------- next step */}
-      <section aria-labelledby="next-heading" className="mt-9">
-        <h2 id="next-heading" className="mb-3 text-heading text-ink">
-          {t('nextStep')}
-        </h2>
-        <AIInsightCard
-          title={t('buildFirstWeek')}
-          body={t('buildFirstWeekBody')}
-          action={
-            <Link href="/app/learning" className="inline-block">
-              <Button>{t('createFirstWeek')}</Button>
+      {/* ---------------------------------------------------- recently added */}
+      {/* Real captures, not a generated insight. Nothing on this dashboard is
+          produced by a model, so nothing on it is presented as though it were. */}
+      {recent.length > 0 ? (
+        <section aria-labelledby="recent-heading" className="mt-9">
+          <div className="mb-3 flex items-baseline justify-between gap-4">
+            <h2 id="recent-heading" className="text-heading text-ink">
+              {t('recentlyAdded')}
+            </h2>
+            <Link href="/app/portfolio" className="text-sm font-medium text-primary hover:underline">
+              {t('seeAll')}
             </Link>
-          }
-        />
-      </section>
+          </div>
+          <PreviewProvider>
+            <ul className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {recent.map((entry) => (
+                <li key={`${entry.kind}-${entry.id}`}>
+                  <Link
+                    href={entry.kind === 'portfolio' ? `/app/portfolio/${entry.id}` : '/app/portfolio'}
+                    className="block overflow-hidden rounded-card bg-surface shadow-card ring-1 ring-inset ring-hairline/70 transition-all hover:shadow-raised"
+                  >
+                    {entry.documentIds[0] ? (
+                      <DocumentPreview
+                        documentId={entry.documentIds[0]}
+                        alt={entry.title}
+                        className="aspect-square w-full"
+                        rounded={false}
+                      />
+                    ) : (
+                      <div
+                        aria-hidden
+                        className="flex aspect-square w-full items-center justify-center bg-primary-soft text-2xl text-primary-ink"
+                      >
+                        ✦
+                      </div>
+                    )}
+                    <p className="truncate p-3 text-sm font-medium text-ink">{entry.title}</p>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </PreviewProvider>
+        </section>
+      ) : null}
 
       {/* ----------------------------------------------------- quick actions */}
       <section aria-labelledby="quick-heading" className="mt-9">
@@ -135,11 +163,11 @@ export default async function ParentHome() {
         </h2>
         <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 lg:grid-cols-5">
           {[
-            { href: '/app/portfolio', label: ta('uploadWork'), icon: '⬆' },
-            { href: '/app/learning', label: ta('planLesson'), icon: '✎' },
-            { href: '/app/portfolio', label: ta('addActivity'), icon: '＋' },
-            { href: '/app/documents', label: ta('uploadDocument'), icon: '❐' },
-            { href: '/app/home', label: ta('askAi'), icon: '✦' },
+            { href: '/app/add/schoolwork', label: ta('addSchoolwork'), icon: '✎' },
+            { href: '/app/add/activity', label: ta('addActivity'), icon: '☀' },
+            { href: '/app/add/book', label: ta('addBook'), icon: '❧' },
+            { href: '/app/add/document', label: ta('uploadDocument'), icon: '❐' },
+            { href: '/app/add', label: ta('title'), icon: '＋' },
           ].map((a, i) => (
             <Link
               key={`${a.href}-${i}`}

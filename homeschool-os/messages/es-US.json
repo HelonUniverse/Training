@@ -18,7 +18,9 @@
     "more": "Más",
     "add": "Agregar",
     "openMenu": "Abrir menú",
-    "skipToContent": "Ir al contenido"
+    "skipToContent": "Ir al contenido",
+    "remove": "Quitar",
+    "saving": "Guardando…"
   },
   "auth": {
     "signIn": {
@@ -237,8 +239,8 @@
   "actions": {
     "title": "Agregar",
     "uploadWork": "Subir trabajo",
-    "uploadDocument": "Subir documento",
-    "addActivity": "Agregar actividad",
+    "uploadDocument": "Subir un documento",
+    "addActivity": "Agregar una actividad",
     "planLesson": "Planificar lección",
     "createEvent": "Crear evento",
     "askAi": "Preguntar a la IA",
@@ -246,7 +248,10 @@
     "addStudent": "Agregar estudiante",
     "createClass": "Crear clase",
     "inviteStaff": "Invitar personal",
-    "inviteTeacher": "Invitar maestro"
+    "inviteTeacher": "Invitar maestro",
+    "addSchoolwork": "Agregar trabajo escolar",
+    "addProject": "Agregar un proyecto",
+    "addBook": "Agregar un libro"
   },
   "dashboard": {
     "greeting": {
@@ -277,7 +282,9 @@
       "calendar": "Calendario",
       "calendarEmpty": "Nada programado",
       "openCalendar": "Abrir calendario"
-    }
+    },
+    "recentlyAdded": "Agregado hace poco",
+    "seeAll": "Ver todo"
   },
   "students": {
     "switcher": "Cambiar de niño",
@@ -387,6 +394,11 @@
       "title": "Aún no hay clases.",
       "body": "Crea una clase o grupo y luego agrega a los estudiantes que asisten.",
       "cta": "Crear clase"
+    },
+    "noChildren": {
+      "title": "Primero agrega a tu hijo",
+      "body": "Todo lo que guardas pertenece a uno de tus hijos, así que empieza por agregar a uno.",
+      "cta": "Agregar un estudiante"
     }
   },
   "status": {
@@ -407,5 +419,366 @@
     "email": "Correo electrónico",
     "theme": "Apariencia",
     "saved": "Guardado."
+  },
+  "capture": {
+    "addSomething": "Agrega algo",
+    "addSomethingSubtitle": "Guárdalo ahora. Después lo acomodas.",
+    "kind": {
+      "schoolwork": "Trabajo escolar",
+      "project": "Proyecto",
+      "activity": "Actividad",
+      "book": "Libro",
+      "document": "Documento"
+    },
+    "kindHelp": {
+      "schoolwork": "Una hoja de trabajo, una página de matemáticas, algo que escribió.",
+      "project": "Algo que armó, construyó o presentó con el tiempo.",
+      "activity": "Una excursión, un experimento, música, deportes, lo que hicieron.",
+      "book": "Lo que tu hijo está leyendo, solo o contigo.",
+      "document": "Una carta, un certificado, resultados de exámenes, algo que vale la pena guardar."
+    },
+    "title": {
+      "schoolwork": "¿Qué es esto?",
+      "project": "¿Cuál es el proyecto?",
+      "activity": "¿Qué hicieron?",
+      "book": "Título del libro",
+      "document": "¿Qué documento es?"
+    },
+    "titlePlaceholder": {
+      "schoolwork": "Práctica de división",
+      "project": "Maqueta del sistema solar",
+      "activity": "Paseo a los manantiales",
+      "book": "Because of Winn-Dixie",
+      "document": "Récord de vacunas"
+    },
+    "date": {
+      "schoolwork": "¿Cuándo lo hizo?",
+      "project": "¿Cuándo lo terminó?",
+      "activity": "¿Cuándo fue?",
+      "book": "¿Cuándo lo empezó?",
+      "document": "Fecha del documento"
+    },
+    "notes": {
+      "schoolwork": "Notas",
+      "project": "Notas",
+      "activity": "Notas",
+      "book": "Notas",
+      "document": "Notas"
+    },
+    "notesPlaceholder": {
+      "schoolwork": "¿Cómo le fue? Lo que quieras recordar.",
+      "project": "¿Qué hizo y qué aprendió?",
+      "activity": "¿Qué vieron o de qué hablaron?",
+      "book": "¿Qué le pareció?",
+      "document": "Algo que valga la pena anotar sobre este documento."
+    },
+    "child": "¿Cuál de tus hijos?",
+    "subject": "Materia",
+    "noSubject": "Sin materia",
+    "author": "Autor",
+    "activityKind": "¿Qué tipo de actividad?",
+    "readingType": "¿Cómo lo leyó?",
+    "category": "¿Qué tipo de documento?",
+    "categoryHint": "Tú lo eliges. No adivinamos nada del archivo.",
+    "minutes": "Minutos",
+    "pages": "Páginas",
+    "takePhoto": "Tomar una foto",
+    "chooseFile": "Elegir un archivo",
+    "filesHeading": "Fotos y archivos",
+    "filesRequiredHint": "Agrega al menos una foto o archivo para poder guardar.",
+    "save": "Guardar",
+    "saving": "Guardando…",
+    "saved": "Guardado.",
+    "errors": {
+      "titleRequired": "Ponle un nombre corto para que lo encuentres después.",
+      "chooseChild": "Elige de cuál de tus hijos es.",
+      "notPermitted": "No tienes permiso para agregar esto para este estudiante.",
+      "saveFailed": "No se guardó. No se perdió nada — inténtalo otra vez.",
+      "unknownKind": "No sabemos cómo guardar eso."
+    }
+  },
+  "upload": {
+    "accepted": "Fotos y PDF, hasta 50 MB.",
+    "checking": "Revisando…",
+    "duplicate": "Este mismo archivo ya lo tienes guardado.",
+    "noPreview": "sin vista previa",
+    "errors": {
+      "tooLarge": "El archivo es muy grande. El límite es 50 MB.",
+      "unsupported": "Todavía no podemos con este tipo de archivo. Las fotos y los PDF sí funcionan.",
+      "empty": "Este archivo está vacío.",
+      "mismatch": "Este archivo no es lo que dice su nombre, así que no lo aceptamos."
+    }
+  },
+  "smartIntake": {
+    "title": "Smart Intake viene en camino",
+    "body": "Más adelante, Homeschool OS va a leer lo que subes y te va a sugerir un nombre, una materia y una fecha. Todavía no lo hace — nada de esto se ha analizado, así que se guarda tal como tú lo escribes."
+  },
+  "scan": {
+    "pending": "Revisando",
+    "clean": "Listo",
+    "infected": "No es seguro",
+    "error": "No se pudo revisar",
+    "skipped": "Sin revisar",
+    "pendingTitle": "Todavía estamos revisando este archivo",
+    "pendingBody": "Revisamos cada archivo antes de poder abrirlo. Normalmente tarda un momento. Tu archivo ya está guardado.",
+    "infectedTitle": "No es seguro abrir este archivo",
+    "infectedBody": "Al revisarlo encontramos algo dañino, así que no lo vamos a abrir. El registro se queda aquí, pero el archivo no se le entrega a nadie.",
+    "errorTitle": "No pudimos revisar este archivo",
+    "errorBody": "Algo salió mal al revisarlo. Mientras no esté revisado, no lo abrimos. Intenta subirlo de nuevo.",
+    "skippedTitle": "Este archivo no se ha revisado",
+    "skippedBody": "Esta instalación no tiene revisión de archivos configurada, así que este archivo no se revisó y no se va a abrir."
+  },
+  "vocab": {
+    "activityKind": {
+      "field_trip": "Excursión",
+      "hands_on": "Práctico",
+      "art": "Arte",
+      "music": "Música",
+      "physical": "Deportes y movimiento",
+      "life_skills": "Destrezas para la vida",
+      "community": "Comunidad",
+      "experiment": "Experimento",
+      "educational_game": "Juego educativo",
+      "other": "Otra cosa"
+    },
+    "readingType": {
+      "independent": "Solo, por su cuenta",
+      "read_aloud": "Le leíste en voz alta",
+      "shared": "Leyeron juntos",
+      "audiobook": "Audiolibro"
+    },
+    "activityType": {
+      "worksheet": "Hoja de trabajo",
+      "writing": "Escritura",
+      "project": "Proyecto",
+      "experiment": "Experimento",
+      "art": "Arte",
+      "reading": "Lectura",
+      "video": "Video",
+      "photo": "Foto",
+      "assessment": "Evaluación",
+      "field_trip": "Excursión",
+      "discussion": "Conversación",
+      "other": "Otra cosa"
+    },
+    "evidenceCategory": {
+      "work_sample": "Muestra de trabajo",
+      "assessment": "Evaluación",
+      "observation": "Algo que observaste",
+      "teacher_note": "Nota de la maestra",
+      "certificate": "Certificado",
+      "reading": "Lectura",
+      "other": "Otra cosa"
+    },
+    "documentCategory": {
+      "assessment": "Examen o evaluación",
+      "evaluation": "Evaluación anual",
+      "lesson_plan": "Plan de lección",
+      "worksheet": "Hoja de trabajo",
+      "certificate": "Certificado",
+      "report": "Reporte",
+      "receipt": "Recibo",
+      "notice_of_intent": "Aviso de intención",
+      "notice_of_termination": "Aviso de terminación",
+      "correspondence": "Carta o correo",
+      "student_work": "Trabajo del estudiante",
+      "credential": "Credencial",
+      "contract": "Contrato",
+      "incident": "Reporte de incidente",
+      "hr_record": "Expediente de personal",
+      "other": "Otra cosa",
+      "unclassified": "Sin clasificar"
+    }
+  },
+  "visibility": {
+    "sectionTitle": "Quién puede ver esto",
+    "label": "Quién puede ver este archivo",
+    "changed": "Actualizado.",
+    "changeFailed": "No pudimos cambiar eso.",
+    "familyPrivate": "Solo yo",
+    "familyPrivateHelp": "Tú y cualquier tutor con acceso completo. Nadie del programa lo ve.",
+    "familyShared": "Toda mi familia",
+    "familySharedHelp": "Todos los tutores de esta familia, incluso los que solo pueden ver.",
+    "academicShared": "Las maestras de mi hijo",
+    "academicSharedHelp": "El personal de tu programa que tiene acceso académico a este estudiante.",
+    "assignedStaff": "Solo el personal asignado a mi hijo",
+    "assignedStaffHelp": "Solo las personas asignadas específicamente a este estudiante — no todo el personal.",
+    "evaluatorShared": "El evaluador de mi hijo",
+    "evaluatorSharedHelp": "Un evaluador que ya tiene un permiso activo para este estudiante, mientras dure.",
+    "organizationOperational": "Los archivos del programa",
+    "organizationOperationalHelp": "Papeles del programa. Las familias los ven solo si se comparten con ellas.",
+    "systemCompliance": "Archivos de cumplimiento",
+    "systemComplianceHelp": "Lo define el proceso de cumplimiento, no se elige aquí.",
+    "item": {
+      "private": "Solo yo",
+      "family": "Toda mi familia",
+      "staff": "Las maestras de mi hijo",
+      "organization": "El programa"
+    }
+  },
+  "portfolio": {
+    "subtitle": "{count, plural, one {# entrada} other {# entradas}} hasta ahora.",
+    "add": "Agregar algo",
+    "edit": "Editar",
+    "delete": "Borrar esta entrada",
+    "editTitle": "Editar esta entrada",
+    "editSubtitle": "Cambia lo que dice. Quién la registró, y cuándo, se queda igual.",
+    "backToPortfolio": "Portafolio",
+    "photoCount": "{count} fotos",
+    "minutes": "{count} min",
+    "evidence": "{count, plural, one {# foto o archivo} other {# fotos y archivos}}",
+    "fields": {
+      "title": "Nombre",
+      "date": "Fecha",
+      "subject": "Materia",
+      "noSubject": "Sin materia",
+      "notes": "Notas"
+    },
+    "deleteConfirm": {
+      "title": "¿Borrar esta entrada?",
+      "body": "Se quita de la línea de tiempo. Las fotos y los archivos siguen guardados, y esto se puede deshacer pidiéndoselo a soporte."
+    },
+    "provenance": {
+      "title": "Cómo se registró",
+      "help": "Esta parte no cambia cuando editas la entrada.",
+      "recordedBy": "Registrado",
+      "recordedOn": "Registrado el",
+      "lastEdited": "Editado por última vez",
+      "kind": "Tipo",
+      "evidenceKind": "Evidencia",
+      "visibility": "Lo ve",
+      "aiInvolved": "Participó la IA",
+      "aiYes": "Sí, y una persona lo confirmó",
+      "aiNo": "No",
+      "source": {
+        "manual": "A mano",
+        "parent": "Por ti",
+        "staff": "Por el personal del programa",
+        "student": "Por tu hijo",
+        "import": "Importado",
+        "ai_suggested": "Sugerido por IA y confirmado por una persona",
+        "system": "Por el sistema"
+      }
+    },
+    "errors": {
+      "titleRequired": "Ponle un nombre corto.",
+      "notPermitted": "No tienes permiso para cambiar esto.",
+      "saveFailed": "No se guardó. Inténtalo otra vez."
+    },
+    "success": {
+      "saved": "Guardado.",
+      "deleted": "Borrado."
+    }
+  },
+  "documents": {
+    "subtitle": "{count, plural, one {# documento} other {# documentos}}.",
+    "add": "Subir",
+    "backToDocuments": "Documentos",
+    "noMatches": "No hay nada que coincida.",
+    "searchLabel": "Buscar documentos",
+    "searchPlaceholder": "Busca por nombre",
+    "searchScope": "Busca en los nombres y los nombres de archivo — no en las palabras dentro del documento.",
+    "facts": {
+      "title": "Sobre este archivo",
+      "filename": "Archivo",
+      "size": "Tamaño",
+      "added": "Agregado",
+      "dated": "Fecha",
+      "checked": "Revisado",
+      "fingerprint": "Huella",
+      "immutable": "El archivo en sí nunca cambia. Lo que editas aquí es cómo lo llamamos, no lo que se subió."
+    },
+    "viewer": {
+      "failed": "No pudimos abrirlo en este momento.",
+      "retry": "Intentar de nuevo",
+      "open": "Abrir el PDF",
+      "pdfFallback": "Tu navegador no muestra este PDF aquí."
+    },
+    "errors": {
+      "notPermitted": "No tienes permiso para hacer eso.",
+      "saveFailed": "No se guardó. Inténtalo otra vez.",
+      "shareFailed": "No pudimos compartirlo.",
+      "oneRecipient": "Elige una persona o un programa para compartirlo.",
+      "titleRequired": "Ponle un nombre."
+    },
+    "success": {
+      "saved": "Guardado.",
+      "visibilityChanged": "Actualizado.",
+      "shared": "Compartido.",
+      "revoked": "Se quitó el acceso."
+    }
+  },
+  "sharing": {
+    "shareWith": "Compartir con alguien",
+    "share": "Compartir",
+    "shared": "Compartido.",
+    "revoke": "Quitar acceso",
+    "revoked": "Se quitó el acceso.",
+    "someone": "Alguien",
+    "recipient": "Compartir con",
+    "chooseRecipient": "Elige una persona o un programa",
+    "noRecipients": "Todavía no hay con quién compartir esto. Cuando tu hijo entre a un programa o invites a un evaluador, van a aparecer aquí.",
+    "until": "Hasta",
+    "untilHint": "Déjalo vacío para compartirlo hasta que tú lo quites.",
+    "untilDate": "Hasta el {date}",
+    "untilRevoked": "Hasta que tú lo quites",
+    "viewOnly": "solo ver",
+    "allowDownload": "Permitir que descarguen una copia",
+    "allowDownloadHint": "Si lo apagas, pueden verlo pero no guardarlo.",
+    "reason": "Para qué",
+    "reasonPlaceholder": "Para la evaluación de fin de año",
+    "groups": {
+      "staff": "Las maestras de tu hijo",
+      "programs": "Programas",
+      "evaluators": "Evaluadores"
+    },
+    "errors": {
+      "chooseRecipient": "Elige para quién es.",
+      "notPermitted": "No tienes permiso para compartir esto.",
+      "shareFailed": "No pudimos compartirlo.",
+      "revokeFailed": "No pudimos quitar ese acceso.",
+      "oneRecipient": "Elige una persona o un programa."
+    }
+  },
+  "invitations": {
+    "eyebrow": "Te invitaron",
+    "heading": "Únete a {organization}",
+    "body": "{inviter} te agregó a {organization} en Homeschool OS.",
+    "roleLabel": "Tu rol",
+    "sentToLabel": "Enviada a",
+    "expiresLabel": "Vence",
+    "accept": "Aceptar invitación",
+    "accepting": "Aceptando…",
+    "signInToAccept": "Inicia sesión para continuar",
+    "role": {
+      "teacher": "Maestra o maestro",
+      "staff": "Personal",
+      "tutor": "Tutor",
+      "org_admin": "Administrador",
+      "family": "Familia",
+      "org_member": "Miembro del equipo"
+    },
+    "signedOut": {
+      "title": "Inicia sesión para ver esta invitación",
+      "body": "Cada invitación es para un solo correo, así que te mostramos los detalles cuando inicies sesión.",
+      "noAccount": "Si todavía no tienes cuenta, puedes crear una con el correo al que llegó la invitación."
+    },
+    "invalid": {
+      "title": "Este enlace de invitación no sirve",
+      "body": "Puede que se haya vencido, que ya se haya usado o que la hayan cancelado. Pídele a quien te invitó que te mande una nueva.",
+      "cta": "Ir a Homeschool OS"
+    },
+    "wrongAccount": {
+      "title": "Esta invitación es para otro correo",
+      "body": "Se envió a {invited}, y tú iniciaste sesión como {signedIn}. Entra con el correo invitado para aceptarla."
+    },
+    "errors": {
+      "invalid": "Este enlace de invitación ya no sirve.",
+      "wrongAccount": "Esta invitación se envió a otro correo.",
+      "notResendable": "Esa invitación ya no se puede reenviar. Crea una nueva."
+    },
+    "success": {
+      "accepted": "Ya estás dentro."
+    }
   }
 }

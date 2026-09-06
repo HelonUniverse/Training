@@ -18,7 +18,9 @@
     "more": "More",
     "add": "Add",
     "openMenu": "Open menu",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "remove": "Remove",
+    "saving": "Saving…"
   },
   "auth": {
     "signIn": {
@@ -237,8 +239,8 @@
   "actions": {
     "title": "Add",
     "uploadWork": "Upload Work",
-    "uploadDocument": "Upload Document",
-    "addActivity": "Add Activity",
+    "uploadDocument": "Upload a document",
+    "addActivity": "Add an activity",
     "planLesson": "Plan Lesson",
     "createEvent": "Create Event",
     "askAi": "Ask AI",
@@ -246,7 +248,10 @@
     "addStudent": "Add Student",
     "createClass": "Create Class",
     "inviteStaff": "Invite Staff",
-    "inviteTeacher": "Invite Teacher"
+    "inviteTeacher": "Invite Teacher",
+    "addSchoolwork": "Add schoolwork",
+    "addProject": "Add a project",
+    "addBook": "Add a book"
   },
   "dashboard": {
     "greeting": {
@@ -277,7 +282,9 @@
       "calendar": "Calendar",
       "calendarEmpty": "Nothing scheduled",
       "openCalendar": "Open calendar"
-    }
+    },
+    "recentlyAdded": "Recently added",
+    "seeAll": "See all"
   },
   "students": {
     "switcher": "Change child",
@@ -387,6 +394,11 @@
       "title": "No classes yet.",
       "body": "Create a class or pod, then add the students who attend it.",
       "cta": "Create class"
+    },
+    "noChildren": {
+      "title": "Add a child first",
+      "body": "Everything you save belongs to one of your children, so start by adding one.",
+      "cta": "Add a child"
     }
   },
   "status": {
@@ -407,5 +419,366 @@
     "email": "Email",
     "theme": "Appearance",
     "saved": "Saved."
+  },
+  "capture": {
+    "addSomething": "Add something",
+    "addSomethingSubtitle": "Save it now. You can tidy it up later.",
+    "kind": {
+      "schoolwork": "Schoolwork",
+      "project": "Project",
+      "activity": "Activity",
+      "book": "Book",
+      "document": "Document"
+    },
+    "kindHelp": {
+      "schoolwork": "A worksheet, a page of math, a piece of writing.",
+      "project": "Something built, made or presented over time.",
+      "activity": "A field trip, an experiment, music, sports, anything you did.",
+      "book": "What your child is reading, on their own or with you.",
+      "document": "A letter, a certificate, test results, anything worth keeping."
+    },
+    "title": {
+      "schoolwork": "What is this?",
+      "project": "What is the project?",
+      "activity": "What did you do?",
+      "book": "Book title",
+      "document": "What is this document?"
+    },
+    "titlePlaceholder": {
+      "schoolwork": "Long division practice",
+      "project": "Model of the solar system",
+      "activity": "Trip to the springs",
+      "book": "Because of Winn-Dixie",
+      "document": "Immunization form"
+    },
+    "date": {
+      "schoolwork": "When was this done?",
+      "project": "When was this finished?",
+      "activity": "When was this?",
+      "book": "When did they start it?",
+      "document": "Date on the document"
+    },
+    "notes": {
+      "schoolwork": "Notes",
+      "project": "Notes",
+      "activity": "Notes",
+      "book": "Notes",
+      "document": "Notes"
+    },
+    "notesPlaceholder": {
+      "schoolwork": "How did it go? Anything you want to remember.",
+      "project": "What did they build, and what did they learn?",
+      "activity": "What did you see or talk about?",
+      "book": "What did they think of it?",
+      "document": "Anything worth noting about this document."
+    },
+    "child": "Which child?",
+    "subject": "Subject",
+    "noSubject": "No subject",
+    "author": "Author",
+    "activityKind": "What kind of activity?",
+    "readingType": "How did they read it?",
+    "category": "What kind of document?",
+    "categoryHint": "You choose this. Nothing is guessed from the file.",
+    "minutes": "Minutes",
+    "pages": "Pages",
+    "takePhoto": "Take a photo",
+    "chooseFile": "Choose a file",
+    "filesHeading": "Photos and files",
+    "filesRequiredHint": "Add at least one photo or file to save this.",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Saved.",
+    "errors": {
+      "titleRequired": "Give this a short name so you can find it later.",
+      "chooseChild": "Choose which child this belongs to.",
+      "notPermitted": "You don't have permission to add this for this child.",
+      "saveFailed": "That didn't save. Nothing was lost — try again.",
+      "unknownKind": "We don't know how to save that."
+    }
+  },
+  "upload": {
+    "accepted": "Photos and PDFs, up to 50 MB.",
+    "checking": "Checking…",
+    "duplicate": "You've already saved this exact file.",
+    "noPreview": "no preview",
+    "errors": {
+      "tooLarge": "This file is too big. The limit is 50 MB.",
+      "unsupported": "We can't handle this kind of file yet. Photos and PDFs work.",
+      "empty": "This file is empty.",
+      "mismatch": "This file isn't what its name says it is, so we didn't accept it."
+    }
+  },
+  "smartIntake": {
+    "title": "Smart Intake is coming",
+    "body": "Later, Homeschool OS will read what you upload and suggest a title, a subject and a date. It doesn't yet — nothing here has been analyzed, so what you type is what gets saved."
+  },
+  "scan": {
+    "pending": "Checking file",
+    "clean": "Ready",
+    "infected": "Not safe",
+    "error": "Couldn't check",
+    "skipped": "Not checked",
+    "pendingTitle": "We're still checking this file",
+    "pendingBody": "Every upload is scanned before it can be opened. This usually takes a moment. Your file is saved.",
+    "infectedTitle": "This file isn't safe to open",
+    "infectedBody": "Our scan found something harmful in this file, so we won't open it. The record stays here, but the file itself will not be delivered to anyone.",
+    "errorTitle": "We couldn't check this file",
+    "errorBody": "Something went wrong while scanning. Until it's checked, we won't open it. Try uploading it again.",
+    "skippedTitle": "This file hasn't been checked",
+    "skippedBody": "No scanner is set up on this installation, so this file has not been checked and won't be opened."
+  },
+  "vocab": {
+    "activityKind": {
+      "field_trip": "Field trip",
+      "hands_on": "Hands-on",
+      "art": "Art",
+      "music": "Music",
+      "physical": "Sports and movement",
+      "life_skills": "Life skills",
+      "community": "Community",
+      "experiment": "Experiment",
+      "educational_game": "Learning game",
+      "other": "Something else"
+    },
+    "readingType": {
+      "independent": "On their own",
+      "read_aloud": "Read aloud to them",
+      "shared": "Read together",
+      "audiobook": "Audiobook"
+    },
+    "activityType": {
+      "worksheet": "Worksheet",
+      "writing": "Writing",
+      "project": "Project",
+      "experiment": "Experiment",
+      "art": "Art",
+      "reading": "Reading",
+      "video": "Video",
+      "photo": "Photo",
+      "assessment": "Assessment",
+      "field_trip": "Field trip",
+      "discussion": "Discussion",
+      "other": "Something else"
+    },
+    "evidenceCategory": {
+      "work_sample": "Work sample",
+      "assessment": "Assessment",
+      "observation": "Something you observed",
+      "teacher_note": "Teacher note",
+      "certificate": "Certificate",
+      "reading": "Reading",
+      "other": "Something else"
+    },
+    "documentCategory": {
+      "assessment": "Test or assessment",
+      "evaluation": "Evaluation",
+      "lesson_plan": "Lesson plan",
+      "worksheet": "Worksheet",
+      "certificate": "Certificate",
+      "report": "Report",
+      "receipt": "Receipt",
+      "notice_of_intent": "Notice of intent",
+      "notice_of_termination": "Notice of termination",
+      "correspondence": "Letter or email",
+      "student_work": "Student work",
+      "credential": "Credential",
+      "contract": "Contract",
+      "incident": "Incident record",
+      "hr_record": "Staff record",
+      "other": "Something else",
+      "unclassified": "Not sorted yet"
+    }
+  },
+  "visibility": {
+    "sectionTitle": "Who can see this",
+    "label": "Who can see this file",
+    "changed": "Updated.",
+    "changeFailed": "We couldn't change that.",
+    "familyPrivate": "Only me",
+    "familyPrivateHelp": "You and any guardian with full access. Nobody at a program can see it.",
+    "familyShared": "Everyone in my family",
+    "familySharedHelp": "Every guardian on this family, including anyone with view-only access.",
+    "academicShared": "My child's teachers",
+    "academicSharedHelp": "Staff at your program who have academic access to this child.",
+    "assignedStaff": "Only my child's assigned staff",
+    "assignedStaffHelp": "Only the people specifically assigned to this child — not everyone on staff.",
+    "evaluatorShared": "My child's evaluator",
+    "evaluatorSharedHelp": "An evaluator who already holds an active grant for this child, for as long as it lasts.",
+    "organizationOperational": "The program's own records",
+    "organizationOperationalHelp": "Program paperwork. Families see it only if it is shared with them.",
+    "systemCompliance": "Compliance records",
+    "systemComplianceHelp": "Set by the compliance process, not chosen here.",
+    "item": {
+      "private": "Only me",
+      "family": "Everyone in my family",
+      "staff": "My child's teachers",
+      "organization": "The program"
+    }
+  },
+  "portfolio": {
+    "subtitle": "{count, plural, one {# entry} other {# entries}} so far.",
+    "add": "Add something",
+    "edit": "Edit",
+    "delete": "Delete this entry",
+    "editTitle": "Edit this entry",
+    "editSubtitle": "Change what it says. Who recorded it, and when, stays as it was.",
+    "backToPortfolio": "Portfolio",
+    "photoCount": "{count} photos",
+    "minutes": "{count} min",
+    "evidence": "{count, plural, one {# photo or file} other {# photos and files}}",
+    "fields": {
+      "title": "Name",
+      "date": "Date",
+      "subject": "Subject",
+      "noSubject": "No subject",
+      "notes": "Notes"
+    },
+    "deleteConfirm": {
+      "title": "Delete this entry?",
+      "body": "It comes off the timeline. The photos and files stay saved, and this can be undone by asking support."
+    },
+    "provenance": {
+      "title": "How this was recorded",
+      "help": "This part doesn't change when you edit the entry.",
+      "recordedBy": "Recorded",
+      "recordedOn": "Recorded on",
+      "lastEdited": "Last edited",
+      "kind": "Kind",
+      "evidenceKind": "Evidence",
+      "visibility": "Visible to",
+      "aiInvolved": "AI involved",
+      "aiYes": "Yes, confirmed by a person",
+      "aiNo": "No",
+      "source": {
+        "manual": "By hand",
+        "parent": "By you",
+        "staff": "By program staff",
+        "student": "By your child",
+        "import": "Imported",
+        "ai_suggested": "Suggested by AI, confirmed by a person",
+        "system": "By the system"
+      }
+    },
+    "errors": {
+      "titleRequired": "Give this a short name.",
+      "notPermitted": "You don't have permission to change this.",
+      "saveFailed": "That didn't save. Try again."
+    },
+    "success": {
+      "saved": "Saved.",
+      "deleted": "Deleted."
+    }
+  },
+  "documents": {
+    "subtitle": "{count, plural, one {# document} other {# documents}}.",
+    "add": "Upload",
+    "backToDocuments": "Documents",
+    "noMatches": "Nothing matches that.",
+    "searchLabel": "Search documents",
+    "searchPlaceholder": "Search by name",
+    "searchScope": "Searches names and file names — not the words inside a document.",
+    "facts": {
+      "title": "About this file",
+      "filename": "File",
+      "size": "Size",
+      "added": "Added",
+      "dated": "Dated",
+      "checked": "Checked",
+      "fingerprint": "Fingerprint",
+      "immutable": "The file itself never changes. Editing here changes what we call it, not what was uploaded."
+    },
+    "viewer": {
+      "failed": "We couldn't open this right now.",
+      "retry": "Try again",
+      "open": "Open the PDF",
+      "pdfFallback": "Your browser won't show this PDF here."
+    },
+    "errors": {
+      "notPermitted": "You don't have permission to do that.",
+      "saveFailed": "That didn't save. Try again.",
+      "shareFailed": "We couldn't share that.",
+      "oneRecipient": "Choose one person or program to share with.",
+      "titleRequired": "Give this a name."
+    },
+    "success": {
+      "saved": "Saved.",
+      "visibilityChanged": "Updated.",
+      "shared": "Shared.",
+      "revoked": "Access removed."
+    }
+  },
+  "sharing": {
+    "shareWith": "Share with someone",
+    "share": "Share",
+    "shared": "Shared.",
+    "revoke": "Remove access",
+    "revoked": "Access removed.",
+    "someone": "Someone",
+    "recipient": "Share with",
+    "chooseRecipient": "Choose a person or program",
+    "noRecipients": "There is nobody to share this with yet. Once your child joins a program or you invite an evaluator, they'll appear here.",
+    "until": "Until",
+    "untilHint": "Leave this empty to share until you remove it.",
+    "untilDate": "Until {date}",
+    "untilRevoked": "Until you remove it",
+    "viewOnly": "view only",
+    "allowDownload": "Let them download a copy",
+    "allowDownloadHint": "If you turn this off, they can look at it but not save it.",
+    "reason": "Why",
+    "reasonPlaceholder": "For the year-end evaluation",
+    "groups": {
+      "staff": "Your child's teachers",
+      "programs": "Programs",
+      "evaluators": "Evaluators"
+    },
+    "errors": {
+      "chooseRecipient": "Choose who this is for.",
+      "notPermitted": "You don't have permission to share this.",
+      "shareFailed": "We couldn't share that.",
+      "revokeFailed": "We couldn't remove that access.",
+      "oneRecipient": "Choose one person or program."
+    }
+  },
+  "invitations": {
+    "eyebrow": "You've been invited",
+    "heading": "Join {organization}",
+    "body": "{inviter} added you to {organization} on Homeschool OS.",
+    "roleLabel": "Your role",
+    "sentToLabel": "Sent to",
+    "expiresLabel": "Expires",
+    "accept": "Accept invitation",
+    "accepting": "Accepting…",
+    "signInToAccept": "Sign in to continue",
+    "role": {
+      "teacher": "Teacher",
+      "staff": "Staff",
+      "tutor": "Tutor",
+      "org_admin": "Administrator",
+      "family": "Family",
+      "org_member": "Team member"
+    },
+    "signedOut": {
+      "title": "Sign in to see this invitation",
+      "body": "Invitations belong to one email address, so we'll show you the details once you're signed in.",
+      "noAccount": "If you don't have an account yet, you can create one with the address the invitation was sent to."
+    },
+    "invalid": {
+      "title": "This invitation link doesn't work",
+      "body": "It may have expired, already been used, or been cancelled. Ask whoever invited you to send a new one.",
+      "cta": "Go to Homeschool OS"
+    },
+    "wrongAccount": {
+      "title": "This invitation is for a different email address",
+      "body": "It was sent to {invited}, and you're signed in as {signedIn}. Sign in with the invited address to accept it."
+    },
+    "errors": {
+      "invalid": "This invitation link doesn't work any more.",
+      "wrongAccount": "This invitation was sent to a different email address.",
+      "notResendable": "That invitation can't be sent again. Create a new one."
+    },
+    "success": {
+      "accepted": "You're in."
+    }
   }
 }

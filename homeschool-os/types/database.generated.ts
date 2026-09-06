@@ -17865,6 +17865,10 @@ export type Database = {
         Returns: string
       }
       record_document_view: { Args: { p_document: string }; Returns: undefined }
+      record_document_views: {
+        Args: { p_documents: string[] }
+        Returns: number
+      }
       record_email_result: {
         Args: {
           p_delivery: string

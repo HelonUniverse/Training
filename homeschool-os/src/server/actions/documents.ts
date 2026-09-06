@@ -62,6 +62,84 @@ export async function getSharingContext(studentId: string): Promise<SharingConte
 }
 
 /**
+ * The people and programs this document could actually be shared with.
+ *
+ * Never a directory of everyone on the platform. The list is exactly: staff
+ * already assigned to this child, the program the child is enrolled in, and
+ * evaluators who already hold an active grant - all read through RLS, so
+ * someone with no such relationships gets an empty list and no sharing UI.
+ *
+ * Showing a recipient the caller cannot reach is worse than showing none: it
+ * teaches people that our sharing controls are decorative, and the first time
+ * one of them matters they will not read it.
+ */
+export async function getShareRecipients(studentId: string) {
+  await requirePermission();
+  const supabase = await createClient();
+
+  const [{ data: staff }, { data: enrolments }, { data: grants }] = await Promise.all([
+    supabase
+      .from('student_staff_assignments')
+      .select('user_id, role, profiles!student_staff_assignments_user_id_fkey(id, full_name, email)')
+      .eq('student_id', studentId)
+      .eq('active', true),
+    supabase
+      .from('student_organization_memberships')
+      .select('organization_id, organizations(id, name)')
+      .eq('student_id', studentId)
+      .eq('status', 'active'),
+    supabase
+      .from('student_access_grants')
+      .select('id, kind, expires_at, profiles!student_access_grants_grantee_user_id_fkey(id, full_name, email)')
+      .eq('student_id', studentId)
+      .eq('status', 'active'),
+  ]);
+
+  return {
+    people: (staff ?? []).flatMap((row) => {
+      const profile = row.profiles as { id: string; full_name: string | null; email: string } | null;
+      return profile
+        ? [{ userId: profile.id, name: profile.full_name ?? profile.email, role: row.role }]
+        : [];
+    }),
+    organizations: (enrolments ?? []).flatMap((row) => {
+      const org = row.organizations as { id: string; name: string } | null;
+      return org ? [{ organizationId: org.id, name: org.name }] : [];
+    }),
+    evaluators: (grants ?? []).flatMap((row) => {
+      const profile = row.profiles as { id: string; full_name: string | null; email: string } | null;
+      return profile
+        ? [
+            {
+              grantId: row.id,
+              name: profile.full_name ?? profile.email,
+              kind: row.kind,
+              expiresAt: row.expires_at,
+            },
+          ]
+        : [];
+    }),
+  };
+}
+
+export type ShareRecipients = Awaited<ReturnType<typeof getShareRecipients>>;
+
+/** Shares currently in force for one document, so they can be seen and undone. */
+export async function getActiveShares(documentId: string) {
+  await requirePermission();
+  const supabase = await createClient();
+
+  const { data } = await supabase
+    .from('document_shares')
+    .select('id, shared_at, expires_at, can_download, reason, shared_with_user_id, shared_with_organization_id, shared_with_grant_id')
+    .eq('document_id', documentId)
+    .is('revoked_at', null)
+    .order('shared_at', { ascending: false });
+
+  return data ?? [];
+}
+
+/**
  * Change who can see a document.
  *
  * The requested visibility is checked against what this caller may actually
