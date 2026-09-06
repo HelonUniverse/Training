@@ -3,6 +3,7 @@ import { getTranslations, getFormatter } from 'next-intl/server';
 import { StatusBadge, cx } from '@/components/ui/primitives';
 import { DocumentPreview } from './DocumentPreview';
 import type { TimelineEntry } from '@/lib/portfolio/queries';
+import { calendarDate } from '@/lib/dates';
 
 /**
  * The year, as a story.
@@ -41,10 +42,7 @@ export async function Timeline({
             id={`month-${month}`}
             className="sticky top-0 z-10 -mx-1 bg-canvas/90 px-1 py-2 text-sm font-medium uppercase tracking-wide text-ink-subtle backdrop-blur"
           >
-            {format.dateTime(new Date(`${month}-01T12:00:00`), {
-              month: 'long',
-              year: 'numeric',
-            })}
+            {monthLabel(month, format)}
           </h2>
 
           <ul className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
@@ -81,10 +79,7 @@ export async function Timeline({
                     </div>
 
                     <p className="mt-1 text-sm text-ink-muted">
-                      {format.dateTime(new Date(`${entry.occurredOn}T12:00:00`), {
-                        month: 'short',
-                        day: 'numeric',
-                      })}
+                      {dayLabel(entry.occurredOn, format)}
                       {showChild ? ` · ${studentNames.get(entry.studentId) ?? ''}` : ''}
                       {subject ? ` · ${subject}` : ''}
                     </p>
@@ -130,4 +125,16 @@ export async function Timeline({
       ))}
     </div>
   );
+}
+
+type Format = Awaited<ReturnType<typeof getFormatter>>;
+
+function monthLabel(month: string, format: Format) {
+  const date = calendarDate(`${month}-01`);
+  return date ? format.dateTime(date, { month: 'long', year: 'numeric' }) : month;
+}
+
+function dayLabel(value: string, format: Format) {
+  const date = calendarDate(value);
+  return date ? format.dateTime(date, { month: 'short', day: 'numeric' }) : '';
 }

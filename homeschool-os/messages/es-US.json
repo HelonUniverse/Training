@@ -597,7 +597,7 @@
   },
   "visibility": {
     "sectionTitle": "Quién puede ver esto",
-    "label": "Quién puede ver este archivo",
+    "label": "Lo puede ver",
     "changed": "Actualizado.",
     "changeFailed": "No pudimos cambiar eso.",
     "familyPrivate": "Solo yo",

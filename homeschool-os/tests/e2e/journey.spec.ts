@@ -182,6 +182,12 @@ test.describe('organization journey', () => {
       page.getByText(/Invitation created for newfamily@test.local, but no email went out/),
     ).toBeVisible();
     await expect(page.getByText('Pending')).toBeVisible();
+
+    // Resending issues a NEW token, which is also what stops a link that went
+    // astray from being useful. The invitation stays the same invitation.
+    await page.getByRole('button', { name: 'Resend' }).click();
+    await expect(page.getByText('newfamily@test.local', { exact: true })).toBeVisible();
+    await expect(page.getByText('Pending')).toBeVisible();
   });
 });
 
@@ -271,10 +277,15 @@ test.describe('mobile', () => {
       await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
     }
 
-    // The universal action is reachable from the header on mobile too.
+    // The universal action is reachable from the header on mobile too, and
+    // since STEP 4 every entry in it leads to a capture flow that saves.
     await page.goto('/app/home');
     await page.getByRole('button', { name: /Add|\+/ }).first().click();
-    await expect(page.getByRole('menuitem', { name: 'Upload Work' })).toBeVisible();
+    const capture = page.getByRole('menuitem', { name: 'Add schoolwork' });
+    await expect(capture).toBeVisible();
+    await capture.click();
+    await expect(page).toHaveURL(/\/app\/add\/schoolwork/);
+    await expect(page.getByRole('button', { name: 'Take a photo' })).toBeVisible();
 
     // More holds the overflow, including sign out.
     await nav.getByRole('link', { name: 'More' }).click();

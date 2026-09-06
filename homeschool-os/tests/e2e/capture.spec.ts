@@ -197,7 +197,7 @@ test('journey 3: a document is filed, opened, and its audience changed', async (
   await expect(page).toHaveURL(/\/app\/documents\/[0-9a-f-]{36}/);
 
   // The words on screen are sentences, never the database's vocabulary.
-  const audience = page.getByLabel('Who can see this file');
+  const audience = page.getByLabel('Visible to');
   await expect(audience).toBeVisible();
   await expect(audience).toHaveValue('family_private');
   await expect(page.getByRole('option', { name: 'Only me' })).toBeAttached();

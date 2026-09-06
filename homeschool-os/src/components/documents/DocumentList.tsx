@@ -4,6 +4,7 @@ import { StatusBadge } from '@/components/ui/primitives';
 import { DocumentPreview } from '@/components/portfolio/DocumentPreview';
 import { SCAN_LABEL, type ScanStatus } from '@/lib/documents/visibility';
 import { humanSize } from '@/lib/upload/validation';
+import { calendarDate } from '@/lib/dates';
 
 export type DocumentRow = {
   id: string;
@@ -42,7 +43,7 @@ export async function DocumentList({
     <ul className="divide-y divide-hairline overflow-hidden rounded-card bg-surface ring-1 ring-inset ring-hairline/70">
       {documents.map((doc) => {
         const scan = SCAN_LABEL[doc.scan_status as ScanStatus];
-        const when = doc.document_date ?? doc.created_at.slice(0, 10);
+        const whenDate = calendarDate(doc.document_date ?? doc.created_at);
 
         return (
           <li key={doc.id}>
@@ -64,7 +65,7 @@ export async function DocumentList({
                 <p className="mt-0.5 truncate text-sm text-ink-muted">
                   {tv(`documentCategory.${doc.category}`)}
                   {' · '}
-                  {format.dateTime(new Date(`${when}T12:00:00`), { dateStyle: 'medium' })}
+                  {whenDate ? format.dateTime(whenDate, { dateStyle: 'medium' }) : ''}
                   {showChild && doc.student_id
                     ? ` · ${studentNames.get(doc.student_id) ?? ''}`
                     : ''}

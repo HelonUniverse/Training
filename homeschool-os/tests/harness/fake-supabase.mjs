@@ -43,6 +43,20 @@ import pg from 'pg';
 const DB = process.env.DATABASE_URL ?? 'postgresql://postgres:localdev@127.0.0.1:5433/hos_test';
 const PORT = Number(process.env.FAKE_SUPABASE_PORT ?? 54321);
 
+/**
+ * PostgREST hands a `date` column back as "2026-09-06" - a calendar day, with
+ * no time and no zone, because that is what the column means. node-postgres
+ * instead parses it into a JS Date, which then serialises as a full ISO
+ * timestamp and shifts by the server's offset.
+ *
+ * Left alone, the harness feeds the app a shape production never produces. It
+ * cost an afternoon once already: every card on the portfolio timeline read
+ * "Invalid Date", and the app was not at fault.
+ */
+pg.types.setTypeParser(1082, (value) => value); // date
+pg.types.setTypeParser(1083, (value) => value); // time
+pg.types.setTypeParser(1266, (value) => value); // timetz
+
 const pool = new pg.Pool({ connectionString: DB, max: 10 });
 
 /** Where uploaded bytes live for the duration of a test run. */

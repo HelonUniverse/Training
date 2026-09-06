@@ -203,12 +203,17 @@ async function captureOne(page: Page, index: number): Promise<number> {
     .setInputFiles([
       { name: `capture-${index}.png`, mimeType: 'image/png', buffer: png(`perf-${index}`) },
     ]);
-  await page.getByText(/Checking/).waitFor({ state: 'detached', timeout: 30_000 }).catch(() => {});
+  // Wait for the file to finish being inspected, not for a label to disappear:
+  // if hashing finishes before the first poll, "Checking" never renders and a
+  // waitFor(detached) resolves against a form whose Save is still disabled.
+  await expect(page.getByRole('button', { name: 'Save' })).toBeEnabled({ timeout: 30_000 });
   await page.getByLabel('What is this?').fill(`Capture number ${index}`);
   const month = String((index % 12) + 1).padStart(2, '0');
   const day = String((index % 28) + 1).padStart(2, '0');
   await page.getByLabel('When was this done?').fill(`2026-${month}-${day}`);
-  await page.getByRole('button', { name: 'Save' }).click();
+  const save = page.getByRole('button', { name: 'Save' });
+  await expect(save).toBeEnabled();
+  await save.click();
   await page.waitForURL(/app\/portfolio/, { timeout: 60_000 });
   return Date.now() - started;
 }

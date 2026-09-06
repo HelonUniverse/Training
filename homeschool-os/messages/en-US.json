@@ -597,7 +597,7 @@
   },
   "visibility": {
     "sectionTitle": "Who can see this",
-    "label": "Who can see this file",
+    "label": "Visible to",
     "changed": "Updated.",
     "changeFailed": "We couldn't change that.",
     "familyPrivate": "Only me",

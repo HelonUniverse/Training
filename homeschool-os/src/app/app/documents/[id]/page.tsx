@@ -17,6 +17,7 @@ import {
   type ScanStatus,
 } from '@/lib/documents/visibility';
 import { humanSize } from '@/lib/upload/validation';
+import { calendarDate } from '@/lib/dates';
 
 export default async function Page({ params }: PageProps<'/app/documents/[id]'>) {
   const { id } = await params;
@@ -38,6 +39,7 @@ export default async function Page({ params }: PageProps<'/app/documents/[id]'>)
   const format = await getFormatter();
 
   const scan = SCAN_LABEL[doc.scan_status as ScanStatus];
+  const documentDate = calendarDate(doc.document_date);
 
   // A document with no student is family or organization paperwork; there is
   // nobody to share it with under the student capability model, so the sharing
@@ -100,9 +102,9 @@ export default async function Page({ params }: PageProps<'/app/documents/[id]'>)
               <Row label={t('facts.added')}>
                 {format.dateTime(new Date(doc.created_at), { dateStyle: 'medium' })}
               </Row>
-              {doc.document_date ? (
+              {documentDate ? (
                 <Row label={t('facts.dated')}>
-                  {format.dateTime(new Date(`${doc.document_date}T12:00:00`), { dateStyle: 'medium' })}
+                  {format.dateTime(documentDate, { dateStyle: 'medium' })}
                 </Row>
               ) : null}
               <Row label={t('facts.checked')}>

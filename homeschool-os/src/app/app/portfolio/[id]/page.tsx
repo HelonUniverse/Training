@@ -7,6 +7,7 @@ import { PreviewProvider, DocumentPreview } from '@/components/portfolio/Documen
 import { getPortfolioItem, getDocuments } from '@/lib/portfolio/queries';
 import { getCaptureStudents, getSubjects } from '@/lib/capture/data';
 import { SCAN_LABEL, type ScanStatus } from '@/lib/documents/visibility';
+import { calendarDate } from '@/lib/dates';
 
 export default async function Page({ params }: PageProps<'/app/portfolio/[id]'>) {
   const { id } = await params;
@@ -26,6 +27,7 @@ export default async function Page({ params }: PageProps<'/app/portfolio/[id]'>)
     getSubjects(),
   ]);
 
+  const occurredOn = calendarDate(item.occurred_on);
   const child = students.find((s) => s.id === item.student_id);
   const subject = subjects.find((s) => s.id === item.subject_id);
 
@@ -39,7 +41,7 @@ export default async function Page({ params }: PageProps<'/app/portfolio/[id]'>)
         }
         title={item.title}
         subtitle={[
-          format.dateTime(new Date(`${item.occurred_on}T12:00:00`), { dateStyle: 'long' }),
+          occurredOn ? format.dateTime(occurredOn, { dateStyle: 'long' }) : null,
           child?.name,
           subject?.name,
         ]

@@ -98,7 +98,18 @@ async function review(page: Page, label: string) {
   });
   expect(unlabelled, `${label}: controls with no accessible name`).toEqual([]);
 
-  const text = (await page.locator('body').innerText()).toLowerCase();
+  // A date that failed to parse renders as "Invalid Date" and no assertion
+  // about layout or labels would ever notice. It is worth its own check.
+  const body = await page.locator('body').innerText();
+  expect(body, `${label}: a date failed to render`).not.toContain('Invalid Date');
+  // An i18n key that reached the screen instead of its translation. Named
+  // prefixes rather than a general pattern, so a filename like "work.png" or a
+  // sentence with an abbreviation cannot trip it.
+  expect(body, `${label}: an untranslated key reached the screen`).not.toMatch(
+    /\b(capture|documents|portfolio|sharing|visibility|scan|vocab|upload|invitations|notifications)\.[a-zA-Z.]+/,
+  );
+
+  const text = body.toLowerCase();
   const leaked = FORBIDDEN.filter((token) => text.includes(token));
   expect(leaked, `${label}: database vocabulary on screen`).toEqual([]);
 }
