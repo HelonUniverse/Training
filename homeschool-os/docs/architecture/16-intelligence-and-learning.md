@@ -152,3 +152,47 @@ of generated ones nothing can be mapped to.
 - `tests/rls/09_step5_learning.sql` — 45 database-level proofs as real users.
 - `tests/e2e/step5-intake.spec.ts` — 15 journeys including prompt injection,
   cross-tenant Smart Intake, and analysis-before-clean.
+
+## Managed verification
+
+STEP 5's migrations (0066–0071) were applied to the managed development project
+`homeschool-os-dev` through the Supabase MCP migration mechanism — the sandbox's
+egress proxy still returns 403 CONNECT for both `*.supabase.co` and
+`api.supabase.com`, so `supabase db push` remains unavailable and no browser in
+this environment can reach the cloud database. `app.assert_schema_invariants()`
+passed at the end of every migration.
+
+Parity was then proved by `scripts/schema-digest.sql` run on both sides: twelve
+counts and MD5s over the catalog, identical on all twelve.
+
+Sixty-four properties were then exercised **on managed, as the real
+authenticated users** in the acceptance fixtures — the SQL suite's assertions
+re-asked of the cloud database rather than of the local harness:
+
+| group | what it proves | n |
+|---|---|---|
+| A | analysis is refused unless `scan_status = 'clean'`; one analysis per version | 7 |
+| B | a suggestion field inherits its household and cannot choose one | 7 |
+| C | the prerequisite graph, cycle refusal, and an empty standards crosswalk | 10 |
+| D | evidence is recorded and mastery is not touched | 8 |
+| E | curriculum, `manual` everywhere, append-only progress | 13 |
+| F | provenance, RLS reach, and the matrix's two deliberate absences | 9 |
+| G | injected text is echoed, never obeyed; AI is no path around RLS | 10 |
+
+Five assertions failed on the first run and all five were **mine, not the
+product's**: the seeded chain has five edges rather than four (FR.5 requires
+FR.3 *and* FR.4); `boolean::text` is `'true'`; `record_manual_completion` records
+`course_progress_updated` when no lesson is named, because claiming
+`lesson_completed` would assert a lesson nobody identified; `provider_webhook`
+is not a label of `app.source_type` at all, so the invented source was
+unrepresentable before any policy ran; and the append-only trigger raises
+`insufficient_privilege`, by design. Each was re-run corrected. A sixth — "no
+column may hold a provider password" — matched five `credential_*` columns on
+`evaluator_profiles`, which hold an evaluator's professional licence details and
+are not secrets; the check was narrowed to the curriculum surface, where the
+answer is none.
+
+The verification data it created (an analysis, two suggestions, a family course,
+an enrollment, two progress events and a piece of evidence) is left in place.
+`external_progress_events` cannot be cleaned up without dropping a trigger, which
+is itself the point.

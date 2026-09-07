@@ -50,7 +50,14 @@ select 'enum_labels', count(*)::text,
   from pg_type t join pg_enum e on e.enumtypid = t.oid
   join pg_namespace n on n.oid = t.typnamespace where n.nspname = 'app'
 union all
-select 'capabilities_rows', count(*)::text, md5(count(*)::text) from app.capabilities
+-- STEP 5: hash the matrix ITSELF, not its size. md5(count(*)) agreed whenever
+-- two databases held the same NUMBER of capability rows, which is the one thing
+-- a swapped relationship or a flipped requires_section does not change.
+select 'capabilities_rows', count(*)::text,
+       md5(string_agg(relationship::text||'.'||resource::text||'.'||action::text
+                      ||':'||requires_section::text, ','
+                      order by relationship::text, resource::text, action::text))
+  from app.capabilities
 union all
 select 'buckets_total', count(*)::text,
        md5(string_agg(id||':'||public::text, ',' order by id)) from storage.buckets
