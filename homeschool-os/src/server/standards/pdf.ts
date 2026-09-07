@@ -68,7 +68,18 @@ export async function extractPdfLines(bytes: Uint8Array): Promise<PdfExtraction>
   // Imported lazily: pdf.js is a large ESM bundle and nothing in the family
   // request path should pay for loading it.
   const pdfjs = await import('pdfjs-dist/legacy/build/pdf.mjs');
-  pdfjs.GlobalWorkerOptions.workerSrc = '';
+
+  // pdf.js needs a worker. Setting workerSrc to '' does NOT mean "run inline":
+  // it makes pdf.js try to set up a fake worker and throw
+  // `No "GlobalWorkerOptions.workerSrc" specified`. Found by running this
+  // against a real PDF before the authoritative artifact arrived, which is the
+  // entire reason for probing with a real file rather than a stub.
+  //
+  // Resolved from the installed package rather than hardcoded, so it survives
+  // the dependency moving.
+  const { createRequire } = await import('node:module');
+  pdfjs.GlobalWorkerOptions.workerSrc =
+    createRequire(import.meta.url).resolve('pdfjs-dist/legacy/build/pdf.worker.mjs');
 
   const doc = await pdfjs.getDocument({
     data: bytes,
