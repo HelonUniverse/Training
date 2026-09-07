@@ -205,7 +205,8 @@ begin
 
   v_source := public.register_standards_source(
     'state_education_agency', 'TEST6 Authority', 'test6-export.csv', 'csv',
-    'beef'||repeat('dead', 15), 2048, 'https://example.test/test6');
+    'beef'||repeat('dead', 15), 2048, 'https://example.test/test6',
+    p_artifact_kind => 'canonical_standards_publication');
 
   insert into public.standards_frameworks (code, name, jurisdiction, version_year)
   values ('TEST6.AUTH', 'TEST6 Authoritative Framework', 'XX', 2030) returning id into v_fw;
@@ -542,6 +543,84 @@ begin
   perform t.assert_eq(
     (select count(*)::int from public.standards_staged_records), 0,
     '9c. and staging rows are invisible to him entirely');
+  perform t.logout();
+end $$;
+
+-- =============================================================================
+-- 9b. The source-of-truth rule: only the standards publication may publish
+-- =============================================================================
+-- A parent guide, a progression document and a vendor correlation spreadsheet
+-- can all be published by a department of education, and all three are easier
+-- to parse than the standards themselves. Authority is not enough; the kind of
+-- document has to be right too.
+
+do $$
+declare
+  v_src uuid; v_fw uuid; v_ver uuid; v_bid uuid; v_row uuid; v_err text; k text;
+begin
+  perform t.login('11111111-1111-4111-8111-000000000004');
+  select id into v_fw from public.standards_frameworks where code = 'TEST6.AUTH';
+  select id into v_ver from public.standards_framework_versions
+   where framework_id = v_fw and version_label = 'v1';
+
+  foreach k in array array['parent_guide','instructional_guide','progression_document',
+                           'assessment_blueprint','correlation_spreadsheet','third_party_export',
+                           'other_reference'] loop
+    insert into public.standards_sources (authority, authority_name, artifact_name,
+                                          detected_format, sha256, byte_size, artifact_kind)
+    values ('state_education_agency', 'TEST6 Authority', 'TEST6-' || k || '.pdf', 'pdf',
+            md5(k) || md5(k || 'x'), 1024, k::app.source_artifact_kind)
+    returning id into v_src;
+
+    v_bid := ((public.open_standards_import(v_src, 'synthetic-test', '1.0.0', v_ver)) ->> 'batch_id')::uuid;
+    v_row := public.stage_standard_record(v_bid, 1, 'staged', 'TEST6.EASY.1',
+      'A benchmark taken from an easier document.', '4', 'FR', 'Fractions', 'en', '{}'::jsonb,
+      'TEST6.EASY.1', '4', 'mathematics', 'benchmark');
+    perform public.review_staged_record(v_row, 'approved');
+
+    begin
+      perform public.publish_standards_batch(v_bid);
+      v_err := 'NO ERROR';
+    exception when others then v_err := sqlstate;
+    end;
+    perform t.assert_eq(v_err, '23514',
+      '9d. a ' || k || ' cannot publish canonical standards, however authoritative its publisher');
+  end loop;
+
+  perform t.assert_eq(
+    (select count(*)::int from public.standards where code = 'TEST6.EASY.1'), 0,
+    '9e. and none of those seven attempts published anything');
+  perform t.logout();
+end $$;
+
+-- Where a benchmark was found in the artifact travels with it.
+do $$
+declare v_bid uuid; v_row uuid; v_src uuid; v_fw uuid; v_ver uuid;
+begin
+  perform t.login('11111111-1111-4111-8111-000000000004');
+  select id into v_fw from public.standards_frameworks where code = 'TEST6.AUTH';
+  select id into v_ver from public.standards_framework_versions
+   where framework_id = v_fw and version_label = 'v1';
+  insert into public.standards_sources (authority, authority_name, artifact_name,
+                                        detected_format, sha256, byte_size, artifact_kind)
+  values ('state_education_agency', 'TEST6 Authority', 'TEST6-canonical.pdf', 'pdf',
+          md5('canonical') || md5('canonical2'), 4096, 'canonical_standards_publication')
+  returning id into v_src;
+  v_bid := ((public.open_standards_import(v_src, 'florida-best-mathematics', '2.0.0', v_ver)) ->> 'batch_id')::uuid;
+  v_row := public.stage_standard_record(v_bid, 1, 'staged', 'TEST6.PAGE.1',
+    'A benchmark whose page we recorded.', '4', 'FR', 'Fractions', 'en', '{}'::jsonb,
+    'TEST6.PAGE.1', '4', 'mathematics', 'benchmark');
+  update public.standards_staged_records set source_page = 41, source_locator = 'p41:12'
+   where id = v_row;
+  perform public.review_staged_record(v_row, 'approved');
+  perform public.publish_standards_batch(v_bid);
+
+  perform t.assert_eq(
+    (select source_locator from public.standards_staged_records where id = v_row), 'p41:12',
+    '9f. a staged row records where in the artifact it was read from');
+  perform t.assert_eq(
+    (select count(*)::int from public.standards where code = 'TEST6.PAGE.1'), 1,
+    '9g. and the canonical standards publication does publish');
   perform t.logout();
 end $$;
 

@@ -17400,6 +17400,8 @@ export type Database = {
             | "progression_note"
           search_aliases: string[]
           source_id: string | null
+          source_locator: string | null
+          source_page: number | null
           source_url: string | null
           staged_record_id: string | null
           statement: string | null
@@ -17431,6 +17433,8 @@ export type Database = {
             | "progression_note"
           search_aliases?: string[]
           source_id?: string | null
+          source_locator?: string | null
+          source_page?: number | null
           source_url?: string | null
           staged_record_id?: string | null
           statement?: string | null
@@ -17462,6 +17466,8 @@ export type Database = {
             | "progression_note"
           search_aliases?: string[]
           source_id?: string | null
+          source_locator?: string | null
+          source_page?: number | null
           source_url?: string | null
           staged_record_id?: string | null
           statement?: string | null
@@ -17775,6 +17781,16 @@ export type Database = {
       }
       standards_sources: {
         Row: {
+          artifact_kind:
+            | "canonical_standards_publication"
+            | "parent_guide"
+            | "instructional_guide"
+            | "progression_document"
+            | "assessment_blueprint"
+            | "correlation_spreadsheet"
+            | "third_party_export"
+            | "other_reference"
+            | "synthetic_fixture"
           artifact_name: string
           authority:
             | "state_education_agency"
@@ -17809,6 +17825,16 @@ export type Database = {
           storage_path: string | null
         }
         Insert: {
+          artifact_kind?:
+            | "canonical_standards_publication"
+            | "parent_guide"
+            | "instructional_guide"
+            | "progression_document"
+            | "assessment_blueprint"
+            | "correlation_spreadsheet"
+            | "third_party_export"
+            | "other_reference"
+            | "synthetic_fixture"
           artifact_name: string
           authority:
             | "state_education_agency"
@@ -17843,6 +17869,16 @@ export type Database = {
           storage_path?: string | null
         }
         Update: {
+          artifact_kind?:
+            | "canonical_standards_publication"
+            | "parent_guide"
+            | "instructional_guide"
+            | "progression_document"
+            | "assessment_blueprint"
+            | "correlation_spreadsheet"
+            | "third_party_export"
+            | "other_reference"
+            | "synthetic_fixture"
           artifact_name?: string
           authority?:
             | "state_education_agency"
@@ -17914,6 +17950,8 @@ export type Database = {
           source_domain_name: string | null
           source_grade: string | null
           source_language: string
+          source_locator: string | null
+          source_page: number | null
           source_reference_kind: string | null
           source_statement: string | null
           status:
@@ -17956,6 +17994,8 @@ export type Database = {
           source_domain_name?: string | null
           source_grade?: string | null
           source_language?: string
+          source_locator?: string | null
+          source_page?: number | null
           source_reference_kind?: string | null
           source_statement?: string | null
           status?:
@@ -17998,6 +18038,8 @@ export type Database = {
           source_domain_name?: string | null
           source_grade?: string | null
           source_language?: string
+          source_locator?: string | null
+          source_page?: number | null
           source_reference_kind?: string | null
           source_statement?: string | null
           status?:
@@ -20187,6 +20229,7 @@ export type Database = {
       }
       register_standards_source: {
         Args: {
+          p_artifact_kind?: string
           p_artifact_name: string
           p_authority: string
           p_authority_name: string

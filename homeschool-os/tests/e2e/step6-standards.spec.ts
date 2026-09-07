@@ -266,3 +266,175 @@ test.describe('deterministic mapping before AI', () => {
     }
   });
 });
+
+/* =========================================================================== *
+ * PHASE B PREPARATION
+ *
+ * No authoritative Florida artifact has been supplied, so none of this parses
+ * a real one. What it does prove is the machinery that will meet it: that the
+ * source-of-truth rule is enforced rather than remembered, that a scan is
+ * refused instead of OCR'd, and that a layout this parser cannot read produces
+ * a refusal rather than confidently mismatched rows.
+ * ========================================================================== */
+
+import { classifyArtifact } from '../../src/server/standards/classify';
+import { assessLayout, segment } from '../../src/server/standards/adapters/florida-best-pdf';
+
+/** Synthetic pages. The codes below use the published SHAPE with a strand that
+ *  does not exist, so nothing here can be mistaken for a real benchmark. */
+function line(page: number, n: number, text: string) {
+  return { page, line: n, text, locator: `p${page}:${n}` };
+}
+
+test.describe('the source-of-truth rule is enforced, not remembered', () => {
+  test('P1 the authority\'s own standards publication is the only kind that may publish', () => {
+    const result = classifyArtifact({
+      title: "Florida's B.E.S.T. Standards for Mathematics",
+      artifactName: 'best-math.pdf',
+      openingText: 'Benchmarks for Excellent Student Thinking',
+    });
+    expect(result.kind).toBe('canonical_standards_publication');
+    expect(result.confidence).toBe('clear');
+  });
+
+  test('P2 a parent guide is classified as a guide even though it says "standards"', () => {
+    const result = classifyArtifact({
+      title: "B.E.S.T. Standards for Mathematics Parent Guide",
+      artifactName: 'guide.pdf',
+      openingText: 'A guide for families to the B.E.S.T. Standards for Mathematics.',
+    });
+    expect(result.kind).toBe('parent_guide');
+  });
+
+  test('P3 progressions, blueprints and correlations are all secondary', () => {
+    const kinds = [
+      ['Mathematics Learning Progression Document', 'progression_document'],
+      ['Grade 4 Mathematics Test Item Specifications', 'assessment_blueprint'],
+      ['Instructional Materials Correlation to the Standards', 'correlation_spreadsheet'],
+      ['Grade 4 Mathematics Instructional Guide', 'instructional_guide'],
+    ] as const;
+    for (const [title, expected] of kinds) {
+      expect(classifyArtifact({ title, artifactName: 'x.pdf', openingText: '' }).kind).toBe(expected);
+    }
+  });
+
+  test('P4 a third-party export is refused outright', () => {
+    expect(classifyArtifact({
+      title: 'Florida Math Standards', artifactName: 'export.csv',
+      openingText: 'Downloaded from Quizlet',
+    }).kind).toBe('third_party_export');
+  });
+
+  test('P5 a document that only MENTIONS the standards does not become them', () => {
+    const result = classifyArtifact({
+      title: 'District Curriculum Map 2026',
+      artifactName: 'map.pdf',
+      openingText: 'Aligned to the B.E.S.T. Standards for Mathematics throughout.',
+    });
+    expect(result.kind).toBe('other_reference');
+    expect(result.reason).toContain('does not declare itself to BE them');
+  });
+
+  test('P6 an unidentifiable document is not assumed to be the standards', () => {
+    const result = classifyArtifact({ title: null, artifactName: 'download.pdf', openingText: 'Page 1' });
+    expect(result.kind).toBe('other_reference');
+    expect(result.confidence).toBe('uncertain');
+  });
+});
+
+test.describe('the PDF path refuses what it cannot read', () => {
+  test('P7 a document with no benchmark codes is a structural refusal, not an empty framework', () => {
+    const outcome = segment([line(1, 1, 'Table of contents'), line(1, 2, 'Introduction ....... 3')]);
+    expect(outcome.ok).toBe(false);
+    if (!outcome.ok) {
+      expect(outcome.refusal).toContain('Refusing rather than returning');
+      expect(outcome.diagnostics.codesFound).toBe(0);
+    }
+  });
+
+  test('P8 a flowed layout is refused rather than mis-segmented', () => {
+    // Codes buried mid-sentence: this parser would pair the wrong statement
+    // with the wrong code, so it must refuse instead.
+    const outcome = segment([
+      line(1, 1, 'Students will meet MA.4.ZZ.1.1 and then MA.4.ZZ.1.2 during the year.'),
+      line(1, 2, 'Later they encounter MA.5.ZZ.2.1 alongside MA.5.ZZ.2.2 in context.'),
+    ]);
+    expect(outcome.ok).toBe(false);
+    if (!outcome.ok) expect(outcome.refusal).toContain('mid-line');
+  });
+
+  test('P9 a clean layout segments, and every benchmark keeps its page locator', () => {
+    const outcome = segment([
+      line(41, 1, 'MA.4.ZZ.1.1 A synthetic statement for one benchmark.'),
+      line(41, 2, 'It continues onto a second line.'),
+      line(41, 3, '41'),
+      line(42, 4, 'MA.4.ZZ.1.2 A second synthetic statement.'),
+    ]);
+    expect(outcome.ok).toBe(true);
+    if (!outcome.ok) return;
+    expect(outcome.rows).toHaveLength(2);
+    expect(outcome.rows[0]!.source.statement).toBe(
+      'A synthetic statement for one benchmark. It continues onto a second line.');
+    expect((outcome.rows[0]!.source.raw as { locator: string }).locator).toBe('p41:1');
+    // The bare page number was dropped as furniture, not glued into the statement.
+    expect(outcome.rows[0]!.source.statement).not.toContain('41 ');
+  });
+
+  test('P10 a derived grade stays UNRESOLVED because the PDF states grade by section', () => {
+    const outcome = segment([line(41, 1, 'MA.4.ZZ.1.1 A synthetic statement.')]);
+    expect(outcome.ok).toBe(true);
+    if (!outcome.ok) return;
+    expect(outcome.rows[0]!.status).toBe('unresolved');
+    expect(outcome.rows[0]!.normalized.grade).toBe('4');
+    expect(outcome.rows[0]!.warnings.join(' ')).toContain('a person confirms it');
+  });
+
+  test('P11 a code with no statement is unresolved, never reconstructed', () => {
+    const outcome = segment([
+      line(1, 1, 'MA.4.ZZ.1.1'),
+      line(1, 2, 'MA.4.ZZ.1.2 A synthetic statement.'),
+    ]);
+    expect(outcome.ok).toBe(true);
+    if (!outcome.ok) return;
+    expect(outcome.rows[0]!.status).toBe('unresolved');
+    expect(outcome.rows[0]!.source.statement).toBeNull();
+    expect(outcome.rows[0]!.warnings.join(' ')).toContain('not reconstructed');
+  });
+
+  test('P12 a practice code is cross-cutting and gets no grade', () => {
+    const outcome = segment([line(3, 1, 'MA.K12.MTR.9.1 A synthetic practice expectation.')]);
+    expect(outcome.ok).toBe(true);
+    if (!outcome.ok) return;
+    expect(outcome.rows[0]!.normalized.referenceKind).toBe('cross_cutting');
+    expect(outcome.rows[0]!.normalized.grade).toBeNull();
+  });
+
+  test('P13 a duplicate identity is reported with where it was first seen', () => {
+    const outcome = segment([
+      line(41, 1, 'MA.4.ZZ.1.1 A synthetic statement.'),
+      line(88, 2, 'MA.4.ZZ.1.1 The same code again.'),
+    ]);
+    expect(outcome.ok).toBe(true);
+    if (!outcome.ok) return;
+    expect(outcome.rows[1]!.status).toBe('duplicate');
+    expect(outcome.rows[1]!.warnings.join(' ')).toContain('p88:2');
+  });
+
+  test('P14 layout assessment reports its evidence rather than a verdict alone', () => {
+    const good = assessLayout([line(1, 1, 'MA.4.ZZ.1.1 Statement.')]);
+    expect(good.ok).toBe(true);
+    expect(good.codesAtLineStart).toBe(1);
+  });
+
+  test('P15 neither PDF file contains a real Florida benchmark', () => {
+    for (const path of ['src/server/standards/adapters/florida-best-pdf.ts',
+                        'src/server/standards/adapters/florida-best-mathematics.ts',
+                        'src/server/standards/classify.ts']) {
+      const source = readFileSync(join(process.cwd(), path), 'utf8');
+      // A concrete grade + real strand + numbers. The shape regexes and the ZZ
+      // fixtures do not match this.
+      const literal = source.match(/\bMA\.\d{1,2}\.(?:NSO|FR|AR|M|GR|DP|NR|AL|GR)\.\d+\.\d+\b/g) ?? [];
+      expect(literal, `${path} must contain no real benchmark`).toEqual([]);
+    }
+  });
+});

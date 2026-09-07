@@ -121,3 +121,60 @@ both catalogs, and `step6-family.spec.ts` re-checks the rendered page at 390,
 No authoritative Florida artifact has been supplied, and none is reachable from
 this environment. No real benchmark exists in this repository or either
 database. **WAITING FOR AUTHORITATIVE SOURCE ARTIFACT.**
+
+## The source-of-truth decision, enforced
+
+The first ingestion uses **Florida's B.E.S.T. Standards for Mathematics** as
+published by the Florida Department of Education. Not a parent guide, an
+instructional guide, a progression document, an assessment blueprint, an
+instructional-materials correlation spreadsheet, or a third-party export.
+
+Those documents are welcome as **secondary references** with their own
+provenance — several are genuinely useful, and several are far easier to parse.
+That last part is the whole problem, and why this is a mechanism rather than a
+note. The temptation runs one way: a correlation spreadsheet has one benchmark
+per clean row, the published standards are a long PDF, and whoever is under time
+pressure reaches for the spreadsheet. The rows that result are a vendor's
+transcription of a state document, shown to families as the state's words.
+
+So `standards_sources.artifact_kind` records **what** a document is, separately
+from `authority`, which records **who** published it — a department of education
+publishes all of the above. `publish_standards_batch()` refuses anything that is
+not `canonical_standards_publication`, and `classifyArtifact()` reads the
+document's own title, subject and opening pages rather than its filename, biased
+towards refusing: a document that merely *mentions* the standards is registered
+as a secondary reference, and one that does not say what it is never becomes the
+standards by default.
+
+## Reading the authoritative PDF
+
+`src/server/standards/pdf.ts` extracts a text layer with a page and line locator
+for every line, so each staged benchmark can say `p41:12` — which is what turns
+a spot check into a ten-second job and a disagreement into something resolvable.
+Metadata comes from the document itself.
+
+**A PDF with no text layer is refused, not OCR'd.** OCR of a standards document
+produces codes that differ from the published ones by characters nobody notices
+(`MA.4.FR.1.1` against `MA.4.FR.l.1`), and there is no OCR path here on purpose.
+
+`florida-best-pdf.ts` segments benchmarks from the code that starts a line to
+the next one. Before it does, `assessLayout()` measures that assumption against
+the actual lines: no codes at all, or codes appearing mid-sentence, produce a
+**structural refusal with diagnostics** rather than rows. A flowed or
+two-column layout would pair statements with the wrong codes, and rows that look
+right and are wrong are the failure this whole pipeline exists to prevent.
+
+The grade a code implies is a **candidate**: the PDF states grade by section
+heading rather than per benchmark, so every derived grade lands `unresolved` for
+a person to confirm. Missing statements stay missing, truncated wording stays
+truncated, malformed codes are `parse_error`, and none of it is repaired.
+
+**Neither adapter contains a Florida benchmark.** A test greps all three files
+for one and asserts zero.
+
+## Phase B status
+
+**WAITING FOR AUTHORITATIVE SOURCE ARTIFACT.** No FLDOE publication has been
+supplied and none is reachable from this environment. Nothing above has parsed a
+real one; the layout assumption in `florida-best-pdf.ts` is stated, measured and
+refusable precisely because it has not yet met the document it describes.
