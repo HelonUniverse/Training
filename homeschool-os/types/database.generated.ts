@@ -17005,8 +17005,6 @@ export type Database = {
           created_by: string | null
           depth: number
           description: string | null
-          framework: "internal" | "state_standard" | "common_core" | "custom"
-          framework_ref: string | null
           grade_band: string | null
           id: string
           is_system: boolean
@@ -17026,8 +17024,6 @@ export type Database = {
           created_by?: string | null
           depth?: number
           description?: string | null
-          framework?: "internal" | "state_standard" | "common_core" | "custom"
-          framework_ref?: string | null
           grade_band?: string | null
           id?: string
           is_system?: boolean
@@ -17047,8 +17043,6 @@ export type Database = {
           created_by?: string | null
           depth?: number
           description?: string | null
-          framework?: "internal" | "state_standard" | "common_core" | "custom"
-          framework_ref?: string | null
           grade_band?: string | null
           id?: string
           is_system?: boolean

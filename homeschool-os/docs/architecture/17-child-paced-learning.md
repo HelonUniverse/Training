@@ -113,12 +113,55 @@ Every screen, at visual review, gets two questions:
 | Nothing derives a path from standards | There is no path builder yet, and the graph walk (`skill_prerequisite_closure`) reads prerequisites only. |
 | Skills → standards, not the reverse | `skill_standards` points many frameworks **at** one Nestra skill. |
 
-**One conflict to settle in STEP 6.** `skills.framework` / `skills.framework_ref`
-(from 0014, STEP 1) let a skill *be* a standard — the reversed relationship these
-principles forbid — and carry a unique index. STEP 5 left them because STEP 1–4
-was not being redesigned, and added `skill_standards` as the mechanism from then
-on. Two homes for a standard code is one too many. Under these principles the
-crosswalk wins, and STEP 6 should retire the old columns in a forward migration
-rather than leave a second, contradicting answer in the schema. Nothing populates
-them today: the seeded skills are all `framework = 'internal'` with
-`framework_ref = null`, so the retirement is cheap now and expensive later.
+**One conflict, now settled (migration 0072).** `skills.framework` /
+`skills.framework_ref` (from 0014, STEP 1) let a skill *be* a standard — the
+reversed relationship these principles forbid — with a unique index enforcing one
+skill per (framework, code). Two failures followed: a skill whose identity is its
+B.E.S.T. code cannot also be a Common Core code, so the same learning had to
+exist twice; and revising a framework meant rewriting the SKILL, which moves a
+child's learning history because a state changed a document.
+
+Audited first on both databases: 26 skills, every one `framework = 'internal'`
+and `framework_ref = null`; no policy, function, view or application code read
+either column. So 0072 is the clean retirement, not a data migration — it drops
+the index, both columns, and `app.skill_framework` (leaving the type behind
+leaves the invitation behind). It still **refuses rather than destroys** if it
+meets a database where that audit does not hold: a migration is run in
+environments its author never saw, and dropping a column is how provenance is
+lost silently.
+
+`app.assert_schema_invariants()` now rejects `framework`, `framework_ref`,
+`standard`, `standard_id`, `standard_ref`, `standard_code` or `standards_code`
+reappearing on `public.skills`. `tests/rls/10_standards_crosswalk.sql` proves the
+guard fires by adding the column back, calling the invariant, and removing it.
+
+## The crosswalk, proved as one skill's life story
+
+`tests/rls/10_standards_crosswalk.sql` — 21 assertions, and the same sequence
+re-run on managed:
+
+1. A skill is created with **no** standards mapping, and is completely usable:
+   the prerequisite graph walks into it and evidence attaches to it.
+2. It is mapped to two frameworks at once, at **two different grade references**
+   — which the old unique index made impossible.
+3. One mapping is removed.
+4. A framework version is superseded: the new edition is a new framework row, the
+   old mapping is **deactivated rather than deleted** so what we once claimed
+   survives, and the skill is not rewritten.
+5. Both frameworks are deleted outright.
+
+After every one of those, the skill's id and canonical identity are re-checked,
+and after step 5 the graph and the child's evidence are re-checked too. That last
+one is the governing rule stated as a test rather than a promise: **a standard
+can disappear tomorrow and the child's learning history must still make sense.**
+
+The frameworks and codes in that file are fixtures, created and destroyed inside
+it. The standards catalogue still ships empty.
+
+**A note on how that test was wrong first.** Its initial version borrowed a
+*seeded* framework to hang a fixture standard on, then proved the cascade by
+deleting it. Locally the whole file runs inside a transaction that rolls back, so
+nothing showed. Run against the managed project — which has no rollback — it
+deleted a real seeded row. The seed was restored and the test now creates its own
+throwaway frameworks. A test that cleans up only because of a rollback is a test
+that destroys real data the first time somebody runs it somewhere without one.
