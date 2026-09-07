@@ -885,6 +885,49 @@
       "couldNotAdd": "No pudimos agregarlo. Inténtalo de nuevo.",
       "couldNotConfirm": "No pudimos guardarlo. Inténtalo de nuevo.",
       "couldNotRecord": "No pudimos registrarlo. Inténtalo de nuevo."
+    },
+    "evidenceHeading": "Evidencia de aprendizaje",
+    "relation": {
+      "demonstrates": "Mostró esta habilidad",
+      "practices": "Practicó esta habilidad",
+      "introduces": "Conoció esta habilidad",
+      "assesses": "Fue evaluado en esta habilidad"
+    }
+  },
+  "standards": {
+    "relatedHeading": "Estándares relacionados",
+    "relatedHelp": "Cómo esta habilidad se relaciona con un marco externo. Es una referencia, no un requisito.",
+    "gradeReference": "suele referenciarse en el grado {grade}",
+    "settingsHeading": "Referencia de estándares",
+    "settingsBody": "A algunas familias les gusta ver cómo una habilidad se relaciona con un marco estatal. A otras no. Ambas opciones están bien, y esto solo cambia lo que usted ve.",
+    "visibility": {
+      "hidden": "No mostrar estándares",
+      "simple": "Mostrar una referencia breve",
+      "detailed": "Mostrar la referencia completa"
+    },
+    "admin": {
+      "title": "Referencia de estándares",
+      "frameworks": "Marcos",
+      "versions": "Versiones",
+      "sources": "Artefactos de origen",
+      "batches": "Importaciones",
+      "staging": "Cola de revisión",
+      "noAccess": "La administración de estándares es una capacidad de plataforma. Su cuenta no la tiene.",
+      "sourceAuthority": "Autoridad",
+      "sourceHash": "SHA-256",
+      "sourceFormat": "Formato detectado",
+      "adapter": "Adaptador",
+      "rowsSeen": "Filas leídas",
+      "rowsStaged": "En preparación",
+      "rowsUnresolved": "Sin resolver",
+      "rowsPublished": "Publicadas",
+      "sourceText": "Texto de origen",
+      "normalized": "Metadatos de Nestra",
+      "warnings": "Avisos del analizador",
+      "approve": "Aprobar",
+      "reject": "Rechazar",
+      "publish": "Publicar filas aprobadas",
+      "emptyQueue": "No hay nada esperando revisión."
     }
   }
 }

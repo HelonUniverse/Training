@@ -5,14 +5,23 @@ import { ParentShell } from '@/components/app/ParentShell';
 import { OrgShell } from '@/components/app/OrgShell';
 import { PageHeader, Card } from '@/components/ui/primitives';
 import { LanguageSwitcher } from '@/components/app/LanguageSwitcher';
+import { StandardsVisibility } from '@/components/learning/StandardsVisibility';
+import { getStandardsVisibility } from '@/server/queries/standards';
+import { createClient } from '@/lib/supabase/server';
 import { SignOutButton } from '@/components/app/SignOutButton';
 
 export default async function SettingsPage() {
   const t = await getTranslations('settings');
   const tc = await getTranslations('common');
+  const ts = await getTranslations('standards');
   const user = await getUser();
   const locale = await getLocale();
   const context = await getActiveContext();
+
+  // RLS scopes this to the caller's own families, so no id is posted or trusted.
+  const supabase = await createClient();
+  const { data: families } = await supabase.from('families').select('id').limit(1);
+  const standardsVisibility = await getStandardsVisibility(families?.[0]?.id ?? null);
 
   const body = (
     <>
@@ -26,6 +35,16 @@ export default async function SettingsPage() {
             <LanguageSwitcher current={locale} />
           </div>
         </Card>
+
+        {context?.kind === 'organization' ? null : (
+          <Card>
+            <h2 className="text-heading text-ink">{ts('settingsHeading')}</h2>
+            <p className="mt-1 text-sm text-ink-muted">{ts('settingsBody')}</p>
+            <div className="mt-4">
+              <StandardsVisibility current={standardsVisibility} />
+            </div>
+          </Card>
+        )}
 
         <Card>
           <h2 className="text-heading text-ink">{t('account')}</h2>

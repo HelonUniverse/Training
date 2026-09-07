@@ -11333,6 +11333,7 @@ export type Database = {
           name: string
           primary_guardian_id: string | null
           settings: NonNullable<Json>
+          standards_visibility: "hidden" | "simple" | "detailed"
           state_code: string | null
           timezone: string
           updated_at: string
@@ -11352,6 +11353,7 @@ export type Database = {
           name: string
           primary_guardian_id?: string | null
           settings?: NonNullable<Json>
+          standards_visibility?: "hidden" | "simple" | "detailed"
           state_code?: string | null
           timezone?: string
           updated_at?: string
@@ -11371,6 +11373,7 @@ export type Database = {
           name?: string
           primary_guardian_id?: string | null
           settings?: NonNullable<Json>
+          standards_visibility?: "hidden" | "simple" | "detailed"
           state_code?: string | null
           timezone?: string
           updated_at?: string
@@ -16703,6 +16706,104 @@ export type Database = {
           },
         ]
       }
+      resource_standards: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          claim_url: string | null
+          course_id: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          lesson_id: string | null
+          note: string | null
+          provenance:
+            | "official_source"
+            | "nestra_reviewed"
+            | "imported"
+            | "teacher_suggested"
+            | "parent_reference"
+            | "provider_claimed"
+            | "ai_suggested"
+          resource_id: string | null
+          standard_id: string
+          status: "proposed" | "approved" | "rejected" | "superseded"
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          claim_url?: string | null
+          course_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          lesson_id?: string | null
+          note?: string | null
+          provenance?:
+            | "official_source"
+            | "nestra_reviewed"
+            | "imported"
+            | "teacher_suggested"
+            | "parent_reference"
+            | "provider_claimed"
+            | "ai_suggested"
+          resource_id?: string | null
+          standard_id: string
+          status?: "proposed" | "approved" | "rejected" | "superseded"
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          claim_url?: string | null
+          course_id?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          lesson_id?: string | null
+          note?: string | null
+          provenance?:
+            | "official_source"
+            | "nestra_reviewed"
+            | "imported"
+            | "teacher_suggested"
+            | "parent_reference"
+            | "provider_claimed"
+            | "ai_suggested"
+          resource_id?: string | null
+          standard_id?: string
+          status?: "proposed" | "approved" | "rejected" | "superseded"
+        }
+        Relationships: [
+          {
+            foreignKeyName: "resource_standards_course_id_fkey"
+            columns: ["course_id"]
+            isOneToOne: false
+            referencedRelation: "courses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_standards_lesson_id_fkey"
+            columns: ["lesson_id"]
+            isOneToOne: false
+            referencedRelation: "course_lessons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_standards_resource_id_fkey"
+            columns: ["resource_id"]
+            isOneToOne: false
+            referencedRelation: "learning_resources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "resource_standards_standard_id_fkey"
+            columns: ["standard_id"]
+            isOneToOne: false
+            referencedRelation: "standards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       signatures: {
         Row: {
           created_at: string
@@ -16897,10 +16998,29 @@ export type Database = {
       skill_standards: {
         Row: {
           active: boolean
+          ai_suggestion_id: string | null
+          approved_at: string | null
+          approved_by: string | null
+          confidence: number | null
           created_at: string
           created_by: string | null
           id: string
-          relation: "exact" | "narrower" | "broader" | "related"
+          provenance:
+            | "official_source"
+            | "nestra_reviewed"
+            | "imported"
+            | "teacher_suggested"
+            | "parent_reference"
+            | "provider_claimed"
+            | "ai_suggested"
+          rationale: string | null
+          relation:
+            | "exact"
+            | "narrower"
+            | "broader"
+            | "related"
+            | "partial"
+            | "supporting"
           skill_id: string
           source_type:
             | "parent"
@@ -16920,15 +17040,36 @@ export type Database = {
             | "manual"
           source_url: string | null
           standard_id: string
+          status: "proposed" | "approved" | "rejected" | "superseded"
+          superseded_by_id: string | null
           verified_at: string | null
           verified_by: string | null
         }
         Insert: {
           active?: boolean
+          ai_suggestion_id?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          confidence?: number | null
           created_at?: string
           created_by?: string | null
           id?: string
-          relation?: "exact" | "narrower" | "broader" | "related"
+          provenance?:
+            | "official_source"
+            | "nestra_reviewed"
+            | "imported"
+            | "teacher_suggested"
+            | "parent_reference"
+            | "provider_claimed"
+            | "ai_suggested"
+          rationale?: string | null
+          relation?:
+            | "exact"
+            | "narrower"
+            | "broader"
+            | "related"
+            | "partial"
+            | "supporting"
           skill_id: string
           source_type?:
             | "parent"
@@ -16948,15 +17089,36 @@ export type Database = {
             | "manual"
           source_url?: string | null
           standard_id: string
+          status?: "proposed" | "approved" | "rejected" | "superseded"
+          superseded_by_id?: string | null
           verified_at?: string | null
           verified_by?: string | null
         }
         Update: {
           active?: boolean
+          ai_suggestion_id?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          confidence?: number | null
           created_at?: string
           created_by?: string | null
           id?: string
-          relation?: "exact" | "narrower" | "broader" | "related"
+          provenance?:
+            | "official_source"
+            | "nestra_reviewed"
+            | "imported"
+            | "teacher_suggested"
+            | "parent_reference"
+            | "provider_claimed"
+            | "ai_suggested"
+          rationale?: string | null
+          relation?:
+            | "exact"
+            | "narrower"
+            | "broader"
+            | "related"
+            | "partial"
+            | "supporting"
           skill_id?: string
           source_type?:
             | "parent"
@@ -16976,10 +17138,19 @@ export type Database = {
             | "manual"
           source_url?: string | null
           standard_id?: string
+          status?: "proposed" | "approved" | "rejected" | "superseded"
+          superseded_by_id?: string | null
           verified_at?: string | null
           verified_by?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "skill_standards_ai_suggestion_id_fkey"
+            columns: ["ai_suggestion_id"]
+            isOneToOne: false
+            referencedRelation: "ai_suggestions"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "skill_standards_skill_id_fkey"
             columns: ["skill_id"]
@@ -16992,6 +17163,13 @@ export type Database = {
             columns: ["standard_id"]
             isOneToOne: false
             referencedRelation: "standards"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "skill_standards_superseded_by_id_fkey"
+            columns: ["superseded_by_id"]
+            isOneToOne: false
+            referencedRelation: "skill_standards"
             referencedColumns: ["id"]
           },
         ]
@@ -17202,41 +17380,254 @@ export type Database = {
           active: boolean
           code: string
           created_at: string
+          domain_id: string | null
+          effective_from: string | null
+          effective_to: string | null
           framework_id: string
+          framework_version_id: string | null
           grade_band: string | null
           id: string
+          normalized_grade: string | null
+          normalized_subject: string | null
+          published_at: string | null
+          published_by: string | null
+          reference_kind:
+            | "benchmark"
+            | "practice"
+            | "cross_cutting"
+            | "domain"
+            | "cluster"
+            | "progression_note"
+          search_aliases: string[]
+          source_id: string | null
           source_url: string | null
+          staged_record_id: string | null
           statement: string | null
+          status: "draft" | "active" | "deprecated" | "superseded"
           subject_hint: string | null
+          superseded_by_id: string | null
         }
         Insert: {
           active?: boolean
           code: string
           created_at?: string
+          domain_id?: string | null
+          effective_from?: string | null
+          effective_to?: string | null
           framework_id: string
+          framework_version_id?: string | null
           grade_band?: string | null
           id?: string
+          normalized_grade?: string | null
+          normalized_subject?: string | null
+          published_at?: string | null
+          published_by?: string | null
+          reference_kind?:
+            | "benchmark"
+            | "practice"
+            | "cross_cutting"
+            | "domain"
+            | "cluster"
+            | "progression_note"
+          search_aliases?: string[]
+          source_id?: string | null
           source_url?: string | null
+          staged_record_id?: string | null
           statement?: string | null
+          status?: "draft" | "active" | "deprecated" | "superseded"
           subject_hint?: string | null
+          superseded_by_id?: string | null
         }
         Update: {
           active?: boolean
           code?: string
           created_at?: string
+          domain_id?: string | null
+          effective_from?: string | null
+          effective_to?: string | null
           framework_id?: string
+          framework_version_id?: string | null
           grade_band?: string | null
           id?: string
+          normalized_grade?: string | null
+          normalized_subject?: string | null
+          published_at?: string | null
+          published_by?: string | null
+          reference_kind?:
+            | "benchmark"
+            | "practice"
+            | "cross_cutting"
+            | "domain"
+            | "cluster"
+            | "progression_note"
+          search_aliases?: string[]
+          source_id?: string | null
           source_url?: string | null
+          staged_record_id?: string | null
           statement?: string | null
+          status?: "draft" | "active" | "deprecated" | "superseded"
           subject_hint?: string | null
+          superseded_by_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "standards_domain_id_fkey"
+            columns: ["domain_id"]
+            isOneToOne: false
+            referencedRelation: "standards_domains"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "standards_framework_id_fkey"
             columns: ["framework_id"]
             isOneToOne: false
             referencedRelation: "standards_frameworks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "standards_framework_version_id_fkey"
+            columns: ["framework_version_id"]
+            isOneToOne: false
+            referencedRelation: "standards_framework_versions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "standards_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "standards_sources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "standards_staged_record_id_fkey"
+            columns: ["staged_record_id"]
+            isOneToOne: false
+            referencedRelation: "standards_staged_records"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "standards_superseded_by_id_fkey"
+            columns: ["superseded_by_id"]
+            isOneToOne: false
+            referencedRelation: "standards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      standards_domains: {
+        Row: {
+          code: string
+          created_at: string
+          framework_version_id: string
+          id: string
+          name: string
+          parent_domain_id: string | null
+          sequence: number
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          framework_version_id: string
+          id?: string
+          name: string
+          parent_domain_id?: string | null
+          sequence?: number
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          framework_version_id?: string
+          id?: string
+          name?: string
+          parent_domain_id?: string | null
+          sequence?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "standards_domains_framework_version_id_fkey"
+            columns: ["framework_version_id"]
+            isOneToOne: false
+            referencedRelation: "standards_framework_versions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "standards_domains_parent_domain_id_fkey"
+            columns: ["parent_domain_id"]
+            isOneToOne: false
+            referencedRelation: "standards_domains"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      standards_framework_versions: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          effective_from: string | null
+          effective_to: string | null
+          framework_id: string
+          id: string
+          jurisdiction: string | null
+          notes: string | null
+          source_id: string | null
+          source_url: string | null
+          status: "draft" | "active" | "deprecated" | "superseded"
+          subject: string | null
+          superseded_by_version_id: string | null
+          version_label: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          effective_from?: string | null
+          effective_to?: string | null
+          framework_id: string
+          id?: string
+          jurisdiction?: string | null
+          notes?: string | null
+          source_id?: string | null
+          source_url?: string | null
+          status?: "draft" | "active" | "deprecated" | "superseded"
+          subject?: string | null
+          superseded_by_version_id?: string | null
+          version_label: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          effective_from?: string | null
+          effective_to?: string | null
+          framework_id?: string
+          id?: string
+          jurisdiction?: string | null
+          notes?: string | null
+          source_id?: string | null
+          source_url?: string | null
+          status?: "draft" | "active" | "deprecated" | "superseded"
+          subject?: string | null
+          superseded_by_version_id?: string | null
+          version_label?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "standards_framework_versions_framework_id_fkey"
+            columns: ["framework_id"]
+            isOneToOne: false
+            referencedRelation: "standards_frameworks"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "standards_framework_versions_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "standards_sources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "standards_framework_versions_superseded_by_version_id_fkey"
+            columns: ["superseded_by_version_id"]
+            isOneToOne: false
+            referencedRelation: "standards_framework_versions"
             referencedColumns: ["id"]
           },
         ]
@@ -17273,6 +17664,433 @@ export type Database = {
           version_year?: number | null
         }
         Relationships: []
+      }
+      standards_import_batches: {
+        Row: {
+          adapter: string
+          adapter_version: string
+          created_at: string
+          created_by: string | null
+          error: string | null
+          finished_at: string | null
+          framework_version_id: string | null
+          id: string
+          requested_scope: NonNullable<Json>
+          rows_published: number
+          rows_rejected: number
+          rows_seen: number
+          rows_staged: number
+          rows_unresolved: number
+          source_id: string
+          started_at: string | null
+          status:
+            | "registered"
+            | "parsing"
+            | "parsed"
+            | "validation_pending"
+            | "review_pending"
+            | "approved"
+            | "published"
+            | "rejected"
+            | "superseded"
+            | "failed"
+          warnings: NonNullable<Json>
+        }
+        Insert: {
+          adapter: string
+          adapter_version: string
+          created_at?: string
+          created_by?: string | null
+          error?: string | null
+          finished_at?: string | null
+          framework_version_id?: string | null
+          id?: string
+          requested_scope?: NonNullable<Json>
+          rows_published?: number
+          rows_rejected?: number
+          rows_seen?: number
+          rows_staged?: number
+          rows_unresolved?: number
+          source_id: string
+          started_at?: string | null
+          status?:
+            | "registered"
+            | "parsing"
+            | "parsed"
+            | "validation_pending"
+            | "review_pending"
+            | "approved"
+            | "published"
+            | "rejected"
+            | "superseded"
+            | "failed"
+          warnings?: NonNullable<Json>
+        }
+        Update: {
+          adapter?: string
+          adapter_version?: string
+          created_at?: string
+          created_by?: string | null
+          error?: string | null
+          finished_at?: string | null
+          framework_version_id?: string | null
+          id?: string
+          requested_scope?: NonNullable<Json>
+          rows_published?: number
+          rows_rejected?: number
+          rows_seen?: number
+          rows_staged?: number
+          rows_unresolved?: number
+          source_id?: string
+          started_at?: string | null
+          status?:
+            | "registered"
+            | "parsing"
+            | "parsed"
+            | "validation_pending"
+            | "review_pending"
+            | "approved"
+            | "published"
+            | "rejected"
+            | "superseded"
+            | "failed"
+          warnings?: NonNullable<Json>
+        }
+        Relationships: [
+          {
+            foreignKeyName: "standards_import_batches_framework_version_id_fkey"
+            columns: ["framework_version_id"]
+            isOneToOne: false
+            referencedRelation: "standards_framework_versions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "standards_import_batches_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "standards_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      standards_sources: {
+        Row: {
+          artifact_name: string
+          authority:
+            | "state_education_agency"
+            | "state_curriculum_portal"
+            | "national_body"
+            | "international_body"
+            | "organization"
+            | "synthetic_test"
+          authority_name: string
+          byte_size: number
+          created_at: string
+          created_by: string | null
+          declared_mime: string | null
+          detected_format:
+            | "pdf"
+            | "docx"
+            | "xlsx"
+            | "csv"
+            | "html"
+            | "json"
+            | "xml"
+            | "unknown"
+          id: string
+          provided_on: string
+          sha256: string
+          source_language: string
+          source_notes: string | null
+          source_published_on: string | null
+          source_updated_on: string | null
+          source_url: string | null
+          storage_bucket: string | null
+          storage_path: string | null
+        }
+        Insert: {
+          artifact_name: string
+          authority:
+            | "state_education_agency"
+            | "state_curriculum_portal"
+            | "national_body"
+            | "international_body"
+            | "organization"
+            | "synthetic_test"
+          authority_name: string
+          byte_size: number
+          created_at?: string
+          created_by?: string | null
+          declared_mime?: string | null
+          detected_format:
+            | "pdf"
+            | "docx"
+            | "xlsx"
+            | "csv"
+            | "html"
+            | "json"
+            | "xml"
+            | "unknown"
+          id?: string
+          provided_on?: string
+          sha256: string
+          source_language?: string
+          source_notes?: string | null
+          source_published_on?: string | null
+          source_updated_on?: string | null
+          source_url?: string | null
+          storage_bucket?: string | null
+          storage_path?: string | null
+        }
+        Update: {
+          artifact_name?: string
+          authority?:
+            | "state_education_agency"
+            | "state_curriculum_portal"
+            | "national_body"
+            | "international_body"
+            | "organization"
+            | "synthetic_test"
+          authority_name?: string
+          byte_size?: number
+          created_at?: string
+          created_by?: string | null
+          declared_mime?: string | null
+          detected_format?:
+            | "pdf"
+            | "docx"
+            | "xlsx"
+            | "csv"
+            | "html"
+            | "json"
+            | "xml"
+            | "unknown"
+          id?: string
+          provided_on?: string
+          sha256?: string
+          source_language?: string
+          source_notes?: string | null
+          source_published_on?: string | null
+          source_updated_on?: string | null
+          source_url?: string | null
+          storage_bucket?: string | null
+          storage_path?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "standards_sources_source_language_fkey"
+            columns: ["source_language"]
+            isOneToOne: false
+            referencedRelation: "locales"
+            referencedColumns: ["code"]
+          },
+        ]
+      }
+      standards_staged_records: {
+        Row: {
+          batch_id: string
+          created_at: string
+          domain_id: string | null
+          id: string
+          normalized_code: string | null
+          normalized_grade: string | null
+          normalized_subject: string | null
+          published_standard_id: string | null
+          raw: NonNullable<Json>
+          reference_kind:
+            | "benchmark"
+            | "practice"
+            | "cross_cutting"
+            | "domain"
+            | "cluster"
+            | "progression_note"
+          review_note: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          row_number: number
+          search_aliases: string[]
+          source_code: string | null
+          source_domain_code: string | null
+          source_domain_name: string | null
+          source_grade: string | null
+          source_language: string
+          source_reference_kind: string | null
+          source_statement: string | null
+          status:
+            | "staged"
+            | "unresolved"
+            | "ambiguous"
+            | "parse_error"
+            | "source_conflict"
+            | "duplicate"
+            | "approved"
+            | "rejected"
+            | "published"
+            | "superseded"
+          warnings: NonNullable<Json>
+        }
+        Insert: {
+          batch_id: string
+          created_at?: string
+          domain_id?: string | null
+          id?: string
+          normalized_code?: string | null
+          normalized_grade?: string | null
+          normalized_subject?: string | null
+          published_standard_id?: string | null
+          raw?: NonNullable<Json>
+          reference_kind?:
+            | "benchmark"
+            | "practice"
+            | "cross_cutting"
+            | "domain"
+            | "cluster"
+            | "progression_note"
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          row_number: number
+          search_aliases?: string[]
+          source_code?: string | null
+          source_domain_code?: string | null
+          source_domain_name?: string | null
+          source_grade?: string | null
+          source_language?: string
+          source_reference_kind?: string | null
+          source_statement?: string | null
+          status?:
+            | "staged"
+            | "unresolved"
+            | "ambiguous"
+            | "parse_error"
+            | "source_conflict"
+            | "duplicate"
+            | "approved"
+            | "rejected"
+            | "published"
+            | "superseded"
+          warnings?: NonNullable<Json>
+        }
+        Update: {
+          batch_id?: string
+          created_at?: string
+          domain_id?: string | null
+          id?: string
+          normalized_code?: string | null
+          normalized_grade?: string | null
+          normalized_subject?: string | null
+          published_standard_id?: string | null
+          raw?: NonNullable<Json>
+          reference_kind?:
+            | "benchmark"
+            | "practice"
+            | "cross_cutting"
+            | "domain"
+            | "cluster"
+            | "progression_note"
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          row_number?: number
+          search_aliases?: string[]
+          source_code?: string | null
+          source_domain_code?: string | null
+          source_domain_name?: string | null
+          source_grade?: string | null
+          source_language?: string
+          source_reference_kind?: string | null
+          source_statement?: string | null
+          status?:
+            | "staged"
+            | "unresolved"
+            | "ambiguous"
+            | "parse_error"
+            | "source_conflict"
+            | "duplicate"
+            | "approved"
+            | "rejected"
+            | "published"
+            | "superseded"
+          warnings?: NonNullable<Json>
+        }
+        Relationships: [
+          {
+            foreignKeyName: "standards_staged_records_batch_id_fkey"
+            columns: ["batch_id"]
+            isOneToOne: false
+            referencedRelation: "standards_import_batches"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "standards_staged_records_domain_id_fkey"
+            columns: ["domain_id"]
+            isOneToOne: false
+            referencedRelation: "standards_domains"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "standards_staged_records_published_standard_id_fkey"
+            columns: ["published_standard_id"]
+            isOneToOne: false
+            referencedRelation: "standards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      standards_texts: {
+        Row: {
+          authority_name: string | null
+          created_at: string
+          id: string
+          is_official: boolean
+          language: string
+          source_id: string | null
+          standard_id: string
+          statement: string
+        }
+        Insert: {
+          authority_name?: string | null
+          created_at?: string
+          id?: string
+          is_official?: boolean
+          language: string
+          source_id?: string | null
+          standard_id: string
+          statement: string
+        }
+        Update: {
+          authority_name?: string | null
+          created_at?: string
+          id?: string
+          is_official?: boolean
+          language?: string
+          source_id?: string | null
+          standard_id?: string
+          statement?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "standards_texts_language_fkey"
+            columns: ["language"]
+            isOneToOne: false
+            referencedRelation: "locales"
+            referencedColumns: ["code"]
+          },
+          {
+            foreignKeyName: "standards_texts_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "standards_sources"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "standards_texts_standard_id_fkey"
+            columns: ["standard_id"]
+            isOneToOne: false
+            referencedRelation: "standards"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       student_access_grants: {
         Row: {
@@ -19263,6 +20081,16 @@ export type Database = {
         }
         Returns: string
       }
+      open_standards_import: {
+        Args: {
+          p_adapter: string
+          p_adapter_version: string
+          p_framework_version?: string
+          p_scope?: Json
+          p_source: string
+        }
+        Returns: Json
+      }
       preview_invitation: {
         Args: { p_token: string }
         Returns: {
@@ -19275,6 +20103,7 @@ export type Database = {
           role: string
         }[]
       }
+      publish_standards_batch: { Args: { p_batch: string }; Returns: Json }
       queue_document_analysis: {
         Args: { p_document: string; p_force?: boolean }
         Returns: Json
@@ -19356,6 +20185,32 @@ export type Database = {
         }
         Returns: Json
       }
+      register_standards_source: {
+        Args: {
+          p_artifact_name: string
+          p_authority: string
+          p_authority_name: string
+          p_byte_size: number
+          p_declared_mime?: string
+          p_detected_format: string
+          p_language?: string
+          p_published_on?: string
+          p_sha256: string
+          p_source_url?: string
+        }
+        Returns: string
+      }
+      review_staged_record: {
+        Args: {
+          p_decision: string
+          p_normalized_code?: string
+          p_normalized_grade?: string
+          p_normalized_subject?: string
+          p_note?: string
+          p_record: string
+        }
+        Returns: boolean
+      }
       revoke_document_share: { Args: { p_share: string }; Returns: undefined }
       share_document: {
         Args: {
@@ -19375,6 +20230,27 @@ export type Database = {
           depth: number
           skill_id: string
         }[]
+      }
+      stage_standard_record: {
+        Args: {
+          p_aliases?: string[]
+          p_batch: string
+          p_normalized_code?: string
+          p_normalized_grade?: string
+          p_normalized_subject?: string
+          p_raw?: Json
+          p_reference_kind?: string
+          p_row: number
+          p_source_code?: string
+          p_source_domain_code?: string
+          p_source_domain_name?: string
+          p_source_grade?: string
+          p_source_language?: string
+          p_source_statement?: string
+          p_status: string
+          p_warnings?: Json
+        }
+        Returns: string
       }
     }
     Enums: {

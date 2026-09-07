@@ -1,5 +1,23 @@
 #!/usr/bin/env bash
-# Rebuilds the scratch database, applies all migrations, loads fixtures, runs tests.
+# =============================================================================
+# The SQL suite runner
+# =============================================================================
+# Discovery used to be the glob [0-9][1-9]_*.sql, which silently skipped every
+# file numbered 10 and above. Nothing failed. The suite printed PASS and a whole
+# test file had never run - which is strictly worse than a failing test, because
+# a failing test tells you something.
+#
+# So discovery is no longer a pattern that happens to match. It is:
+#
+#   1. every tests/rls/*.sql is DISCOVERED,
+#   2. each is classified as a fixture (00*) or a test,
+#   3. every test file is EXECUTED, and
+#   4. the runner reconciles discovered against executed at the end and FAILS
+#      if the two sets differ, whatever the individual results were.
+#
+# A numeric prefix of any width sorts and runs: 01, 09, 10, 11, 20, 99, 100.
+# tests/local/meta_discovery.sh proves that rather than asserting it.
+# =============================================================================
 set -euo pipefail
 PGDIR=${PGDIR:-/var/tmp/hos-pg}
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
@@ -9,22 +27,68 @@ PSQL="/usr/lib/postgresql/16/bin/psql -h $PGDIR/run -p 5433 -U postgres -v ON_ER
 "$ROOT/tests/local/run.sh" >/dev/null
 echo "migrations: ok"
 
-for f in "$ROOT"/tests/rls/00*_fixtures.sql; do
-  su postgres -c "$PSQL -d $DB -f $f" >/dev/null
-done
-echo "fixtures:   ok"
+# --- discovery ---------------------------------------------------------------
+# Sorted by numeric prefix then name, so 9 comes before 10 rather than after it.
+mapfile -t DISCOVERED < <(
+  find "$ROOT/tests/rls" -maxdepth 1 -name '*.sql' -printf '%f\n' \
+  | sort -t_ -k1,1n -k1
+)
 
+FIXTURES=(); TESTS=(); UNEXPECTED=()
+for f in "${DISCOVERED[@]}"; do
+  case "$f" in
+    00*_fixtures.sql) FIXTURES+=("$f") ;;
+    [0-9]*_*.sql)     TESTS+=("$f") ;;
+    *)                UNEXPECTED+=("$f") ;;   # not named to a convention: surfaced, never skipped
+  esac
+done
+
+if [ ${#UNEXPECTED[@]} -gt 0 ]; then
+  echo "UNEXPECTED files in tests/rls (not <number>_<name>.sql):"
+  printf '  %s\n' "${UNEXPECTED[@]}"
+  exit 1
+fi
+
+for f in "${FIXTURES[@]}"; do
+  su postgres -c "$PSQL -d $DB -f $ROOT/tests/rls/$f" >/dev/null
+done
+echo "fixtures:   ok (${#FIXTURES[@]})"
+
+# --- execution ---------------------------------------------------------------
 status=0
-# Everything that is not a fixture. The old glob was [0-9][1-9]_*.sql, which
-# quietly skipped 10_ onwards - a test file that is never run is worse than one
-# that fails, because it reads as passing.
-for f in "$ROOT"/tests/rls/[0-9][0-9]*_*.sql; do
-  case "$(basename "$f")" in 00*) continue ;; esac
-  printf '  %s ... ' "$(basename "$f")"
-  if su postgres -c "$PSQL -d $DB -f $f" > /tmp/test.out 2>&1; then
+EXECUTED=()
+for f in "${TESTS[@]}"; do
+  printf '  %s ... ' "$f"
+  EXECUTED+=("$f")
+  if su postgres -c "$PSQL -d $DB -f $ROOT/tests/rls/$f" > /tmp/test.out 2>&1; then
     echo PASS
   else
     echo FAIL; sed -n '1,40p' /tmp/test.out; status=1
   fi
 done
+
+# --- reconciliation ----------------------------------------------------------
+# The part that makes the defect impossible to repeat: a test file that was
+# discovered and not executed fails the suite even when everything that DID run
+# passed.
+SKIPPED=()
+for f in "${TESTS[@]}"; do
+  found=0
+  for e in "${EXECUTED[@]}"; do [ "$e" = "$f" ] && found=1 && break; done
+  [ $found -eq 0 ] && SKIPPED+=("$f")
+done
+
+echo
+echo "discovery: ${#DISCOVERED[@]} discovered, ${#FIXTURES[@]} fixtures, ${#TESTS[@]} tests, ${#EXECUTED[@]} executed, ${#SKIPPED[@]} skipped, ${#UNEXPECTED[@]} unexpected"
+if [ ${#SKIPPED[@]} -gt 0 ]; then
+  echo "SUITE INVALID - discovered but never executed:"
+  printf '  %s\n' "${SKIPPED[@]}"
+  status=1
+fi
+
+# An empty suite is not a passing suite.
+if [ ${#TESTS[@]} -eq 0 ]; then
+  echo "SUITE INVALID - no test files discovered"; status=1
+fi
+
 exit $status

@@ -885,6 +885,49 @@
       "couldNotAdd": "We couldn't add that. Please try again.",
       "couldNotConfirm": "We couldn't save that. Please try again.",
       "couldNotRecord": "We couldn't record that. Please try again."
+    },
+    "evidenceHeading": "Learning evidence",
+    "relation": {
+      "demonstrates": "Showed this skill",
+      "practices": "Practised this skill",
+      "introduces": "Met this skill",
+      "assesses": "Was assessed on this skill"
+    }
+  },
+  "standards": {
+    "relatedHeading": "Related standards",
+    "relatedHelp": "How this skill happens to line up with an outside framework. It is a reference, not a requirement.",
+    "gradeReference": "usually referenced at grade {grade}",
+    "settingsHeading": "Standards reference",
+    "settingsBody": "Some families like to see how a skill lines up with a state framework. Others never do. Either is fine, and this changes only what you see.",
+    "visibility": {
+      "hidden": "Don't show standards",
+      "simple": "Show a short reference",
+      "detailed": "Show the full reference"
+    },
+    "admin": {
+      "title": "Standards reference",
+      "frameworks": "Frameworks",
+      "versions": "Versions",
+      "sources": "Source artifacts",
+      "batches": "Imports",
+      "staging": "Review queue",
+      "noAccess": "Standards administration is a platform capability. Your account does not have it.",
+      "sourceAuthority": "Authority",
+      "sourceHash": "SHA-256",
+      "sourceFormat": "Detected format",
+      "adapter": "Adapter",
+      "rowsSeen": "Rows read",
+      "rowsStaged": "Staged",
+      "rowsUnresolved": "Unresolved",
+      "rowsPublished": "Published",
+      "sourceText": "Source wording",
+      "normalized": "Nestra metadata",
+      "warnings": "Parser warnings",
+      "approve": "Approve",
+      "reject": "Reject",
+      "publish": "Publish approved rows",
+      "emptyQueue": "Nothing is waiting for review."
     }
   }
 }

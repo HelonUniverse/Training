@@ -172,11 +172,19 @@ export default async function Page() {
         ) : (
           <ul className="divide-y divide-hairline overflow-hidden rounded-card bg-surface ring-1 ring-inset ring-hairline/70">
             {[...bySkill.entries()].map(([id, skill]) => (
-              <li key={id} className="flex items-center justify-between gap-3 px-4 py-3">
-                <span className="text-ink">{skill.name}</span>
-                <span className="text-sm text-ink-muted">
-                  {t('evidenceCount', { count: skill.count })}
-                </span>
+              <li key={id}>
+                {/* Navigating by href rather than a row click handler: a row
+                    clicked mid-hydration goes nowhere, and a link works before
+                    any JavaScript has arrived. */}
+                <Link
+                  href={`/app/learning/skill/${id}`}
+                  className="flex min-h-11 items-center justify-between gap-3 px-4 py-3"
+                >
+                  <span className="text-ink">{skill.name}</span>
+                  <span className="text-sm text-ink-muted">
+                    {t('evidenceCount', { count: skill.count })}
+                  </span>
+                </Link>
               </li>
             ))}
           </ul>
