@@ -4,6 +4,8 @@ import { getTranslations, getFormatter } from 'next-intl/server';
 import { ParentShell } from '@/components/app/ParentShell';
 import { PageHeader, Card, StatusBadge } from '@/components/ui/primitives';
 import { DocumentViewer } from '@/components/documents/DocumentViewer';
+import { SmartIntakeReview } from '@/components/intake/SmartIntakeReview';
+import { getIntakeReview } from '@/server/queries/intake';
 import { VisibilityControl } from '@/components/documents/VisibilityControl';
 import { ShareDialog } from '@/components/documents/ShareDialog';
 import { createClient } from '@/lib/supabase/server';
@@ -60,6 +62,13 @@ export default async function Page({ params }: PageProps<'/app/documents/[id]'>)
       }))
     : [];
 
+  // Smart Intake, if this document has been analysed. Read through RLS as the
+  // caller like everything else on this page.
+  const intake = await getIntakeReview(doc.id, {
+    title: doc.title,
+    documentDate: doc.document_date,
+  });
+
   const nameFor: Record<string, string> = {};
   for (const person of recipients?.people ?? []) nameFor[person.userId] = person.name;
   for (const org of recipients?.organizations ?? []) nameFor[org.organizationId] = org.name;
@@ -83,11 +92,24 @@ export default async function Page({ params }: PageProps<'/app/documents/[id]'>)
       />
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr),minmax(0,1fr)]">
-        <DocumentViewer
-          documentId={doc.id}
-          scanStatus={doc.scan_status}
-          filename={doc.original_filename}
-        />
+        <div className="space-y-6">
+          <DocumentViewer
+            documentId={doc.id}
+            scanStatus={doc.scan_status}
+            filename={doc.original_filename}
+          />
+
+          {intake && intake.suggestionId ? (
+            <SmartIntakeReview
+              suggestionId={intake.suggestionId}
+              documentId={doc.id}
+              studentId={doc.student_id}
+              fields={intake.fields}
+              skills={intake.skills}
+              analysisStatus={intake.analysisStatus}
+            />
+          ) : null}
+        </div>
 
         <div className="space-y-6">
           <Card as="section" aria-labelledby="file-facts">

@@ -788,5 +788,103 @@
   },
   "notifications": {
     "heading": "Necesita tu atención"
+  },
+  "intake": {
+    "title": "Encontramos algunos detalles",
+    "doesThisLookRight": "¿Esto se ve correcto?",
+    "youDecide": "Tú decides qué se guarda.",
+    "suggested": "Sugerido",
+    "notSure": "No estamos seguros",
+    "yourValue": "(lo que escribiste)",
+    "use": "Usar",
+    "edit": "Editar",
+    "discard": "Descartar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "useSuggestions": "Usar sugerencias",
+    "applied": "Guardado.",
+    "queued": "Lo revisaremos en un momento.",
+    "alreadyDone": "Ya revisamos este archivo.",
+    "saved": "Guardado.",
+    "nothingToApply": "Todavía no hay nada que guardar.",
+    "unsupported": "Todavía no podemos leer este tipo de archivo. Tu archivo está guardado y seguro.",
+    "possibleSkills": "Posibles habilidades de aprendizaje",
+    "possibleSkillsHelp": "Si estás de acuerdo, anotamos que este trabajo se relaciona con la habilidad. No marca nada como aprendido.",
+    "yesShowsSkill": "Sí, este trabajo muestra esa habilidad",
+    "skillRecorded": "Anotado",
+    "status": {
+      "accepted": "En uso",
+      "edited": "Editado",
+      "rejected": "Descartado",
+      "pending": "Sugerido"
+    },
+    "fields": {
+      "document_kind": "Tipo",
+      "portfolio_kind": "Tipo de trabajo",
+      "title": "Título",
+      "date": "Fecha",
+      "subject": "Materia",
+      "topic": "Tema",
+      "student_name_if_visible": "Nombre en la página",
+      "grade_level_if_explicit": "Grado",
+      "curriculum_name_if_visible": "Currículo",
+      "course_name_if_visible": "Curso",
+      "lesson_number_if_visible": "Lección",
+      "unit_name_if_visible": "Unidad",
+      "assignment_name_if_visible": "Tarea",
+      "score_if_explicit": "Puntaje",
+      "short_portfolio_description": "Descripción",
+      "keywords": "Palabras clave"
+    },
+    "errors": {
+      "notScannedYet": "Todavía estamos revisando este archivo. Inténtalo en un momento.",
+      "couldNotQueue": "No pudimos empezar. Inténtalo de nuevo.",
+      "couldNotDecide": "No pudimos guardar eso. Inténtalo de nuevo.",
+      "couldNotApply": "No pudimos guardarlos. Inténtalo de nuevo."
+    }
+  },
+  "learn": {
+    "curriculum": "Currículo",
+    "skills": "Habilidades",
+    "skillsHelp": "Evidencia de aprendizaje que confirmaste. Nada aquí es una calificación ni un nivel de dominio.",
+    "addCurriculum": "Agregar currículo",
+    "addCurriculumHelp": "Usa el currículo que ya tienes.",
+    "backToLearn": "Volver a Aprender",
+    "provider": "Currículo",
+    "providerHelp": "Elige uno que reconozcas o agrega el tuyo. Funcionan todos igual aquí.",
+    "providerName": "¿Quién lo hace?",
+    "anotherCurriculum": "Otro currículo",
+    "courseName": "¿Cómo se llama?",
+    "subject": "Materia",
+    "noSubject": "Sin materia",
+    "website": "Sitio web (opcional)",
+    "websiteHelp": "Lo abriremos por ti. No podemos ver tu progreso en su sitio, así que marcarás las lecciones aquí.",
+    "willBeAddedFor": "Se agregará para {name}.",
+    "save": "Guardar",
+    "openLesson": "Abrir lección",
+    "markComplete": "Marcar como terminado",
+    "recorded": "Registrado",
+    "evidenceCount": "{count, plural, one {# trabajo} other {# trabajos}}",
+    "mode": {
+      "manual": "Seguimiento manual",
+      "linked": "Sitio web enlazado",
+      "integrated": "Integrado"
+    },
+    "empty": {
+      "title": "Todavía no hay nada aquí",
+      "body": "Agrega un estudiante para empezar.",
+      "curriculumTitle": "Usa el currículo que ya tienes",
+      "curriculumBody": "Usa el Currículo Nestra más adelante, o conecta los libros, sitios y programas que tu familia ya disfruta.",
+      "skillsTitle": "Todavía no hay evidencia de aprendizaje",
+      "skillsBody": "Cuando confirmes que un trabajo muestra una habilidad, aparecerá aquí."
+    },
+    "errors": {
+      "notPermitted": "No tienes permiso para hacer eso.",
+      "nameRequired": "Ponle un nombre al currículo.",
+      "badUrl": "Eso no parece una dirección web.",
+      "couldNotAdd": "No pudimos agregarlo. Inténtalo de nuevo.",
+      "couldNotConfirm": "No pudimos guardarlo. Inténtalo de nuevo.",
+      "couldNotRecord": "No pudimos registrarlo. Inténtalo de nuevo."
+    }
   }
 }

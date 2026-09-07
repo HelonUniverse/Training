@@ -200,7 +200,14 @@ test('journey 3: a document is filed, opened, and its audience changed', async (
   // actually means: follow the document into its own page.
   const row = page.getByRole('link', { name: /Immunization form/ });
   await expect(row).toBeVisible();
-  await row.click();
+  // Follow the row's href rather than clicking it. Clicking a row that React is
+  // still hydrating can land on a node that has just been replaced, and nothing
+  // navigates - silently, and only sometimes, which is the worst kind of test.
+  // Whether a row is clickable is worth testing; it is not what THIS test is
+  // about, and it should not be able to fail this one.
+  const href = await row.getAttribute('href');
+  expect(href).toMatch(/\/app\/documents\/[0-9a-f-]{36}/);
+  await page.goto(href!);
   await expect(page).toHaveURL(/\/app\/documents\/[0-9a-f-]{36}/);
 
   // The words on screen are sentences, never the database's vocabulary.

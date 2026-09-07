@@ -40,6 +40,45 @@ import { mkdirSync, writeFileSync, readFileSync, existsSync, rmSync } from 'node
 import { dirname, join } from 'node:path';
 import pg from 'pg';
 
+/**
+ * jsonb columns need JSON, not a JavaScript value.
+ *
+ * PostgREST receives a JSON document and casts each field to its column type,
+ * so `{"suggested_value": "Math"}` reaches a jsonb column as the JSON string
+ * `"Math"`, and `[0.9]` as a JSON array. Binding the raw JS value through
+ * node-postgres instead sends `Math` (not valid JSON) and `{0.9}` (a Postgres
+ * ARRAY literal, also not valid JSON), and the insert fails with "invalid input
+ * syntax for type json".
+ *
+ * That is a difference between the harness and production, which is precisely
+ * what this harness exists NOT to have - so the column types are read once from
+ * the catalogue and the values encoded the way PostgREST would.
+ */
+const jsonColumnCache = new Map();
+
+async function jsonColumns(client, table) {
+  if (jsonColumnCache.has(table)) return jsonColumnCache.get(table);
+  const r = await client.query(
+    `select column_name from information_schema.columns
+      where table_schema = 'public' and table_name = $1
+        and data_type in ('json', 'jsonb')`,
+    [table],
+  );
+  const set = new Set(r.rows.map((row) => row.column_name));
+  jsonColumnCache.set(table, set);
+  return set;
+}
+
+function encodeForColumn(value, key, jsonCols) {
+  if (!jsonCols.has(key)) return value;
+  if (value === null || value === undefined) return null;
+  // Already a JSON document as text: leave it be.
+  if (typeof value === 'string') {
+    try { JSON.parse(value); return value; } catch { return JSON.stringify(value); }
+  }
+  return JSON.stringify(value);
+}
+
 const DB = process.env.DATABASE_URL ?? 'postgresql://postgres:localdev@127.0.0.1:5433/hos_test';
 const PORT = Number(process.env.FAKE_SUPABASE_PORT ?? 54321);
 
@@ -362,9 +401,10 @@ async function handleRest(req, res, url, userId, body) {
       const returning = prefer.includes('return=representation');
       const out = await asUser(userId, async (c) => {
         const inserted = [];
+        const jsonCols = await jsonColumns(c, table);
         for (const row of rows) {
           const keys = Object.keys(row);
-          const vals = keys.map((k) => row[k]);
+          const vals = keys.map((k) => encodeForColumn(row[k], k, jsonCols));
           const ph = keys.map((_, i) => `$${i + 1}`);
           const sql =
             `insert into public."${table}" (${keys.map((k) => `"${k}"`).join(',')}) ` +
@@ -378,15 +418,18 @@ async function handleRest(req, res, url, userId, body) {
     }
 
     if (req.method === 'PATCH') {
-      const values = [];
-      const sets = Object.entries(body).map(([k, v]) => {
-        values.push(v);
-        return `"${k}" = $${values.length}`;
+      await asUser(userId, async (c) => {
+        const jsonCols = await jsonColumns(c, table);
+        const values = [];
+        const sets = Object.entries(body).map(([k, v]) => {
+          values.push(encodeForColumn(v, k, jsonCols));
+          return `"${k}" = $${values.length}`;
+        });
+        const where = buildFilters(params, values);
+        let sql = `update public."${table}" set ${sets.join(', ')}`;
+        if (where.length) sql += ` where ${where.join(' and ')}`;
+        await c.query(sql, values);
       });
-      const where = buildFilters(params, values);
-      let sql = `update public."${table}" set ${sets.join(', ')}`;
-      if (where.length) sql += ` where ${where.join(' and ')}`;
-      await asUser(userId, (c) => c.query(sql, values));
       return json(res, 204, null);
     }
 

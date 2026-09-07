@@ -28,6 +28,9 @@ export NEXT_PUBLIC_SUPABASE_ANON_KEY="test-anon-key"
 export SUPABASE_SERVICE_ROLE_KEY="test-service-role-key"
 export NEXT_PUBLIC_APP_URL="http://127.0.0.1:${PORT}"
 export SCANNER_PROVIDER=dev
+# The dev AI adapter reads real bytes and never guesses. Without it the product
+# analyses nothing at all, which is the correct default and a useless test.
+export AI_PROVIDER=dev
 export CRON_SECRET=test-cron-secret
 export FAKE_SUPABASE_PORT="${SUPA_PORT}"
 export FAKE_STORAGE_DIR="${STORAGE_DIR}"

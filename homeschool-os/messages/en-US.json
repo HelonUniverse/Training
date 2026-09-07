@@ -788,5 +788,103 @@
   },
   "notifications": {
     "heading": "Needs your attention"
+  },
+  "intake": {
+    "title": "We found a few details",
+    "doesThisLookRight": "Does this look right?",
+    "youDecide": "You decide what gets saved.",
+    "suggested": "Suggested",
+    "notSure": "Not sure",
+    "yourValue": "(what you entered)",
+    "use": "Use",
+    "edit": "Edit",
+    "discard": "Discard",
+    "save": "Save",
+    "cancel": "Cancel",
+    "useSuggestions": "Use suggestions",
+    "applied": "Saved.",
+    "queued": "We'll take a look at this shortly.",
+    "alreadyDone": "We've already looked at this one.",
+    "saved": "Saved.",
+    "nothingToApply": "Nothing to save yet.",
+    "unsupported": "We can't read this kind of file yet. Your file is saved and safe.",
+    "possibleSkills": "Possible learning skills",
+    "possibleSkillsHelp": "If you agree, we'll note that this work relates to the skill. It doesn't mark anything as learned.",
+    "yesShowsSkill": "Yes, this work shows that skill",
+    "skillRecorded": "Noted",
+    "status": {
+      "accepted": "Using",
+      "edited": "Edited",
+      "rejected": "Discarded",
+      "pending": "Suggested"
+    },
+    "fields": {
+      "document_kind": "Type",
+      "portfolio_kind": "Kind of work",
+      "title": "Title",
+      "date": "Date",
+      "subject": "Subject",
+      "topic": "Topic",
+      "student_name_if_visible": "Name on the page",
+      "grade_level_if_explicit": "Grade",
+      "curriculum_name_if_visible": "Curriculum",
+      "course_name_if_visible": "Course",
+      "lesson_number_if_visible": "Lesson",
+      "unit_name_if_visible": "Unit",
+      "assignment_name_if_visible": "Assignment",
+      "score_if_explicit": "Score",
+      "short_portfolio_description": "Description",
+      "keywords": "Keywords"
+    },
+    "errors": {
+      "notScannedYet": "We're still checking this file. Try again in a moment.",
+      "couldNotQueue": "We couldn't start that. Please try again.",
+      "couldNotDecide": "We couldn't save that. Please try again.",
+      "couldNotApply": "We couldn't save those. Please try again."
+    }
+  },
+  "learn": {
+    "curriculum": "Curriculum",
+    "skills": "Skills",
+    "skillsHelp": "Learning evidence you've confirmed. Nothing here is a grade or a mastery score.",
+    "addCurriculum": "Add curriculum",
+    "addCurriculumHelp": "Bring the curriculum you already use.",
+    "backToLearn": "Back to Learn",
+    "provider": "Curriculum",
+    "providerHelp": "Pick one you recognise, or add your own. We work with all of them the same way.",
+    "providerName": "Who makes it?",
+    "anotherCurriculum": "Another curriculum",
+    "courseName": "What's it called?",
+    "subject": "Subject",
+    "noSubject": "No subject",
+    "website": "Website (optional)",
+    "websiteHelp": "We'll open this for you. We can't see your progress on their site, so you'll mark lessons done here.",
+    "willBeAddedFor": "This will be added for {name}.",
+    "save": "Save",
+    "openLesson": "Open lesson",
+    "markComplete": "Mark complete",
+    "recorded": "Recorded",
+    "evidenceCount": "{count, plural, one {# piece of work} other {# pieces of work}}",
+    "mode": {
+      "manual": "Manual tracking",
+      "linked": "Linked website",
+      "integrated": "Integrated"
+    },
+    "empty": {
+      "title": "Nothing here yet",
+      "body": "Add a child to get started.",
+      "curriculumTitle": "Bring the curriculum you already use",
+      "curriculumBody": "Use Nestra Curriculum later, or connect the books, websites and programs your family already loves.",
+      "skillsTitle": "No learning evidence yet",
+      "skillsBody": "When you confirm that a piece of work shows a skill, it'll appear here."
+    },
+    "errors": {
+      "notPermitted": "You don't have permission to do that.",
+      "nameRequired": "Give the curriculum a name.",
+      "badUrl": "That doesn't look like a web address.",
+      "couldNotAdd": "We couldn't add that. Please try again.",
+      "couldNotConfirm": "We couldn't save that. Please try again.",
+      "couldNotRecord": "We couldn't record that. Please try again."
+    }
   }
 }

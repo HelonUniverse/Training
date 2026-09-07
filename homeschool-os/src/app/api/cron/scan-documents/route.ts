@@ -64,9 +64,69 @@ export async function POST(request: Request) {
   for (const doc of pending ?? []) {
     const verdict = await scanOne(service, scanner, doc);
     counts[verdict] = (counts[verdict] ?? 0) + 1;
+
+    // THE HANDOFF. A document that has just been cleared is the first moment
+    // Smart Intake is allowed to look at it, so this is where analysis is
+    // queued - after the gate, never before, and never for anything else.
+    //
+    // Queued here rather than at upload because at upload the answer to "is
+    // this safe" is not yet known, and a job created then would be a job
+    // waiting for permission it might never get.
+    if (verdict === 'clean') await queueAnalysis(service, doc.id);
   }
 
   return Response.json({ scanner: scanner.name, scanned: pending?.length ?? 0, counts });
+}
+
+/**
+ * Create the analysis row for a freshly cleared document.
+ *
+ * Written directly rather than through public.queue_document_analysis because
+ * that function is deliberately user-facing: it demands auth.uid(), and the
+ * worker has no user. The scan gate it enforces has already been satisfied here
+ * by construction - this line is only reached when the scanner said clean.
+ *
+ * The unique index on (document, version, analysis_version) does the rest: a
+ * re-run of this worker, or a parent who also pressed Analyze, collides
+ * harmlessly instead of paying twice.
+ */
+async function queueAnalysis(
+  service: ReturnType<typeof createServiceClient>,
+  documentId: string,
+): Promise<void> {
+  const { data: doc } = await service
+    .from('documents')
+    .select('id, family_id, owner_organization_id, scan_status')
+    .eq('id', documentId)
+    .maybeSingle();
+
+  // Re-read rather than trust the local variable: between the scan result and
+  // here the row could have moved, and this is the last check before a job
+  // exists that will hand bytes to a provider.
+  if (!doc || doc.scan_status !== 'clean') return;
+
+  const { data: version } = await service
+    .from('document_versions')
+    .select('id')
+    .eq('document_id', documentId)
+    .order('version', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  await service.from('document_ai_analysis').insert({
+    document_id: documentId,
+    document_version_id: version?.id ?? null,
+    analysis_version: 1,
+    analysis_status: 'queued',
+    family_id: doc.family_id,
+    organization_id: doc.owner_organization_id,
+    provider: 'pending',
+    model: 'pending',
+    prompt_version: 'smart_intake.v1',
+    schema_version: 'document_analysis.v1',
+  });
+  // A duplicate is expected and is not an error worth reporting: the unique
+  // index refusing a second row is the cost control doing its job.
 }
 
 type PendingDoc = {

@@ -73,29 +73,51 @@ export async function POST(request: Request) {
 
   const db = createServiceClient();
 
-  // Work to do: analyses that are queued (or failed and due a retry) AND whose
-  // document the scanner has already cleared. The join is the first gate.
-  const { data: pending, error } = await db
+  // Work to do, in two explicit steps rather than one embedded join.
+  //
+  // The gate reads better this way: the second query says, in one line, that a
+  // document is only ever selected for analysis when the scanner has cleared
+  // it. Buried inside a PostgREST embed it is a filter on a nested resource,
+  // which is exactly the kind of thing that survives a refactor by accident.
+  const { data: queued, error } = await db
     .from('document_ai_analysis')
-    .select(
-      'id, document_id, document_version_id, analysis_version, attempts, ' +
-        'documents!inner(id, family_id, student_id, owner_organization_id, ' +
-        'storage_path, mime_type, scan_status, title, document_date)',
-    )
+    .select('id, document_id, document_version_id, analysis_version, attempts')
     .in('analysis_status', ['queued', 'failed'])
-    .eq('documents.scan_status', 'clean')
     .lt('attempts', MAX_ATTEMPTS)
+    // Oldest first. Without an order the batch is whatever the planner returns,
+    // so under a backlog a freshly captured document can be passed over
+    // indefinitely while older ones are re-picked - and the family watching the
+    // page sees nothing happen, for no reason they could ever discover.
+    .order('created_at', { ascending: true })
     .limit(BATCH);
 
   if (error) return Response.json({ error: error.message }, { status: 500 });
 
+  const documentIds = [...new Set((queued ?? []).map((a) => a.document_id))];
+  const { data: documents } = documentIds.length
+    ? await db
+        .from('documents')
+        .select(
+          'id, family_id, student_id, owner_organization_id, storage_path, ' +
+            'mime_type, scan_status, title, document_date',
+        )
+        .in('id', documentIds)
+        // THE GATE. Nothing that is not clean is even fetched, so nothing that
+        // is not clean can reach a provider.
+        .eq('scan_status', 'clean')
+    : { data: [] as WorkDocument[] };
+
+  const documentById = new Map(
+    ((documents ?? []) as WorkDocument[]).map((d) => [d.id, d]),
+  );
+
+  const pending = (queued ?? [])
+    .map((a) => ({ ...a, documents: documentById.get(a.document_id) }))
+    .filter((a): a is typeof a & { documents: WorkDocument } => a.documents !== undefined);
+
   const results: { id: string; status: string; note?: string }[] = [];
 
-  for (const row of (pending ?? []) as unknown as {
-    id: string;
-    attempts: number;
-    documents: WorkDocument;
-  }[]) {
+  for (const row of pending) {
     const doc = row.documents;
     const analysisId = row.id;
 
@@ -332,7 +354,14 @@ async function writeSuggestions(
     subject: null,
   };
 
-  const { data: suggestion } = await db.from('ai_suggestions').insert({
+  // The id is minted here rather than read back from the insert. The child
+  // rows need it, and depending on a returned representation makes the write of
+  // the fields conditional on how the REST layer was asked to respond - which
+  // is a strange thing for correctness to hinge on.
+  const suggestionId = crypto.randomUUID();
+
+  const { error: suggestionError } = await db.from('ai_suggestions').insert({
+    id: suggestionId,
     kind: 'classify_document',
     source_type: 'document_extraction',
     document_id: doc.id,
@@ -347,9 +376,9 @@ async function writeSuggestions(
     ai_usage_event_id: usageEventId,
     source_record_type: 'document_ai_analysis',
     source_record_id: analysisId,
-  }).select('id').single();
+  });
 
-  if (!suggestion) return;
+  if (suggestionError) return;
 
   const rows = Object.entries(result.fields)
     // A field with no value is not worth a review card. It is still recorded on
@@ -357,7 +386,7 @@ async function writeSuggestions(
     // preserved without asking a parent to decide about nothing.
     .filter(([, field]) => field.value !== null && field.value !== '')
     .map(([key, field]) => ({
-      suggestion_id: suggestion.id,
+      suggestion_id: suggestionId,
       field_key: key,
       suggested_value: field.value as never,
       confidence: field.confidence,
@@ -372,7 +401,7 @@ async function writeSuggestions(
   // out of the record until a person agrees.
   for (const skill of result.possibleSkills) {
     rows.push({
-      suggestion_id: suggestion.id,
+      suggestion_id: suggestionId,
       field_key: `possible_skill:${skill.name}`,
       suggested_value: skill.name as never,
       confidence: skill.confidence,
