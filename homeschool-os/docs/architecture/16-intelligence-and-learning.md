@@ -102,6 +102,11 @@ moment a skill *is* its B.E.S.T. code it cannot also be a Common Core code. The
 crosswalk **ships empty**: an invented standard code in a compliance product is
 worse than no code, because a family may repeat it to a district.
 
+And a crosswalk is all it is. From STEP 6 the governing rule is
+`17-child-paced-learning.md`: standards are optional reference maps that
+determine nothing about what a child learns next, how fast, or whether the
+homeschool is succeeding. The arrow runs skill -> standard and never back.
+
 ## Nestra is a provider row
 
 Non-negotiable: `provider = Nestra` is a row in `curriculum_providers`, and a

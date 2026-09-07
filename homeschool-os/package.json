@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test:e2e": "playwright test",
-    "guard": "bash scripts/check-service-role.sh && node scripts/check-i18n.mjs",
+    "guard": "bash scripts/check-service-role.sh && node scripts/check-i18n.mjs && node scripts/check-family-language.mjs",
     "test:sql": "bash tests/local/test.sh"
   },
   "dependencies": {
