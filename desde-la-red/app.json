@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "Desde la Red",
+    "slug": "desde-la-red",
+    "version": "1.0.0",
+    "scheme": "desdelared",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#04070F",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "cover",
+      "backgroundColor": "#04070F"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.helonium.desdelared",
+      "userInterfaceStyle": "dark"
+    },
+    "android": {
+      "package": "com.helonium.desdelared",
+      "userInterfaceStyle": "dark",
+      "adaptiveIcon": {
+        "backgroundColor": "#04070F",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": ["expo-router", "expo-font"],
+    "experiments": {
+      "typedRoutes": false
+    }
+  }
+}
