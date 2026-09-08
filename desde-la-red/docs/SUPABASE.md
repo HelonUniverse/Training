@@ -28,6 +28,8 @@ En el proyecto → **SQL Editor** → pegar y ejecutar, en este orden:
    que crea el perfil al registrarse.
 2. `supabase/migrations/0002_seed.sql` — las 8 enseñanzas, 5 guías, 10 servicios,
    3 círculos, 4 encuentros y 5 voces con las que nace la Red.
+3. `supabase/migrations/0003_admin_lectura.sql` — deja que las administradoras
+   lean las reservas de todo el mundo, para el panel.
 
 Para regenerar el segundo archivo desde el contenido de `src/data/`:
 
@@ -72,9 +74,13 @@ set role = 'admin'
 where email = 'admin@heloniuminnovation.com';
 ```
 
-Una administradora puede escribir contenido —enseñanzas, guías, servicios,
-círculos, encuentros— desde cualquier cliente. El panel para hacerlo dentro de la
-app es el siguiente paso del camino.
+Con eso, esa persona ve el **Panel** en su Perfil: escribe y publica enseñanzas,
+da de alta guías y lee las reservas que llegan, sin tocar código. Los permisos
+los hace cumplir la base, no la interfaz: aunque alguien sin rol llegue a la ruta
+`/admin` a mano, Postgres rechaza cualquier escritura.
+
+Lo que el panel todavía no edita —círculos, encuentros en vivo y las preguntas de
+Mi Camino— se cambia desde el editor de SQL.
 
 ## Qué guarda cada tabla
 

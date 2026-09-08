@@ -138,6 +138,25 @@ export default function PerfilScreen() {
         </View>
       </View>
 
+      {/* Panel: solo lo ve quien puede publicar */}
+      {state.user?.role === 'admin' ? (
+        <View style={styles.section}>
+          <SectionHeader overline="Panel" title="Publicar en la Red" />
+          <View style={{ height: spacing.lg }} />
+          <Card onPress={() => router.push('/admin')} glow accent="glow">
+            <View style={styles.adminRow}>
+              <View style={styles.adminText}>
+                <Text style={styles.adminTitle}>Enseñanzas, guías y reservas</Text>
+                <Text style={styles.adminCaption}>
+                  Escribe y publica sin tocar código. Lo que guardes lo ve todo el mundo.
+                </Text>
+              </View>
+              <Feather name="arrow-up-right" size={18} color={colors.cyan} />
+            </View>
+          </Card>
+        </View>
+      ) : null}
+
       {/* Preferencias */}
       <View style={styles.section}>
         <SectionHeader overline="Preferencias" title="Cómo te avisamos" />
@@ -331,6 +350,10 @@ const styles = StyleSheet.create({
   toggleCaption: { fontFamily: fonts.body, fontSize: 11.5, color: colors.textMuted },
   divider: { height: StyleSheet.hairlineWidth, backgroundColor: colors.borderSoft, marginLeft: 68 },
 
+  adminRow: { flexDirection: 'row', alignItems: 'center', gap: 14 },
+  adminText: { flex: 1, gap: 5 },
+  adminTitle: { fontFamily: fonts.displaySemi, fontSize: 16, color: colors.text },
+  adminCaption: { fontFamily: fonts.body, fontSize: 12.5, lineHeight: 19, color: colors.textMuted },
   demoText: {
     fontFamily: fonts.body,
     fontSize: 13,

@@ -68,6 +68,15 @@ export default function RootLayout() {
                   name="reserva/[serviceId]"
                   options={{ animation: 'slide_from_bottom' }}
                 />
+                <Stack.Screen name="admin/index" />
+                <Stack.Screen
+                  name="admin/ensenanza/[id]"
+                  options={{ animation: 'slide_from_bottom' }}
+                />
+                <Stack.Screen
+                  name="admin/guia/[id]"
+                  options={{ animation: 'slide_from_bottom' }}
+                />
               </Stack>
             </ToastProvider>
           </ContentProvider>
