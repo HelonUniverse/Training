@@ -9,10 +9,13 @@
  * count one lower than it should be.
  *
  * That is not hypothetical. In the CPALMS B.E.S.T. Mathematics export, exactly
- * one K-5 benchmark (MA.5.AR.3.2) illustrates itself with a nested input/output
- * table, and a flat regex returns 183 benchmarks instead of 184. A parser that
- * loses one row in 184 without saying so is worse than one that fails, because
- * the result looks finished.
+ * one K-5 benchmark illustrates itself with a nested input/output table. Read
+ * flatly, the inner table's cells are counted as the outer row's own, the row
+ * fails a "exactly two cells" test that every real benchmark passes, and the
+ * document yields 183 benchmarks instead of 184. A parser that loses one row in
+ * 184 without saying so is worse than one that fails, because the result looks
+ * finished. The regression fixture in tests/fixtures/standards reproduces the
+ * shape; the test suite names the benchmark.
  *
  * So these functions track NESTING DEPTH. A `<tr>` at depth 0 opens a row; the
  * `</tr>` that returns depth to 0 closes it; everything between is the row's
@@ -128,9 +131,11 @@ const BREAKS = /<\s*\/?\s*(br|p|div|li|tr|td|th|table|ul|ol|h[1-6])\b[^>]*>/gi;
  * Markup to the text a reader would see.
  *
  * Block boundaries become newlines so a benchmark's paragraphs stay separate
- * paragraphs; runs of spaces collapse, because HTML whitespace is not
- * significant and preserving the source's line wrapping would make two
- * identical statements compare as different.
+ * paragraphs - both the opening and the closing tag break, so two adjacent
+ * paragraphs end up separated by a blank line rather than running together.
+ * Runs of spaces collapse, because HTML whitespace is not significant and
+ * preserving the source's line wrapping would make two identical statements
+ * compare as different.
  *
  * Nothing here removes, completes or normalises WORDS. The only transformations
  * are markup-to-text ones.

@@ -1,0 +1,70 @@
+<html><body>
+<!--
+  The CPALMS export's SHAPE, with invented content.
+
+  Nothing here is Florida's. The codes use a subject prefix no state uses (ZZ)
+  and the wording is nonsense on purpose: this fixture exists to pin down the
+  MARKUP a parser has to survive, and a fixture carrying real benchmark text
+  would be a second, unversioned copy of a state's publication living in a test
+  directory.
+
+  Three traps, each of which silently loses or corrupts a benchmark:
+
+    row 3  a nested table inside the wording cell. A flat /<tr>(.*?)<\/tr>/gs
+           ends at the INNER </tr>, so this row disappears and the count comes
+           out one low with no error at all.
+    row 2  the section heading in the OTHER nesting order (<u><i>Examples</i></u>
+           rather than <i><u>Clarifications</u></i>). The document really does
+           use both. A matcher that knows one puts the whole examples block,
+           images and all, inside the benchmark statement.
+    row 4  character references in the wording, including one this codebase
+           does not have a name for, which must survive rather than vanish.
+-->
+<p align="center"><img src="logo.png"/></p>
+<table align="center" width="100%"><tr align="center"><td>
+  <asp:Label ID="lblGradeLevelTitle" runat="server" Font-Bold="true">Grade: 5</asp:Label>
+</td></tr></table>
+<div id="BokDiv"><table align="center" width="100%" border="1"><tr><td width="100%">
+  <asp:Label ID="lblBOKDescription" runat="server">Strand: ALGEBRAIC REASONING</asp:Label>
+</td></tr></table></div>
+<div id="ShowBOKLabels"><table align="center" width="100%" border="1"><tr><td width="100%">
+  <asp:Label Font-Bold="true" ID="Label2" runat="server">Standard</asp:Label><asp:Label ID="Label3" runat="server"> 3: </asp:Label><asp:Label ID="Label5" runat="server">A made-up standard heading.</asp:Label>
+</td></tr></table></div>
+<table align="center" width="100%" border="1"><tr>
+  <td width="25%" align="center" bgcolor="#CCCCCC"><b>BENCHMARK CODE</b></td>
+  <td width="75%" align="center" bgcolor="#CCCCCC"><b>BENCHMARK</b></td>
+</tr></table>
+
+<table align="center" width="100%" border="1"><tr>
+  <td width="25%" align="center" Valign="top"><span>ZZ.5.AR.3.1</span></td>
+  <td width="75%"><span>A plain benchmark with no sub-sections at all.</span></td>
+</tr></table>
+
+<table align="center" width="100%" border="1"><tr>
+  <td width="25%" align="center" Valign="top"><span>ZZ.5.AR.3.2</span></td>
+  <td width="75%"><span>A benchmark whose examples heading uses the other nesting order.<br /><br /><u><i>Examples</i></u>:<br/><p>This sentence is an example and is not part of the benchmark.</p></span></td>
+</tr></table>
+
+<table align="center" width="100%" border="1"><tr>
+  <td width="25%" align="center" Valign="top"><span>ZZ.5.AR.3.3</span></td>
+  <td width="75%"><span>A benchmark that illustrates itself with a two-column table.<br /><br /><i><u>Clarifications</u></i>:<br/><i>Clarification 1:</i> A clarification.<br /><br /><u><i>Examples</i></u>:<br/>
+    <table border="1"><tr><td>Input</td><td>0</td><td>1</td></tr><tr><td>Output</td><td>6</td><td>8</td></tr></table>
+  </span></td>
+</tr></table>
+
+<table align="center" width="100%" border="1"><tr>
+  <td width="25%" align="center" Valign="top"><span>ZZ.5.AR.3.4</span></td>
+  <td width="75%"><span>A benchmark using &lt;, &gt; and &frac12; as well as &nbsp;spacing&nbsp;and an &thinsp;unnamed reference.</span></td>
+</tr></table>
+
+<table align="center" width="100%"><tr align="center"><td>
+  <asp:Label ID="lblGradeLevelTitle" runat="server">Grade: 6</asp:Label>
+</td></tr></table>
+<div id="BokDiv"><table align="center" width="100%" border="1"><tr><td width="100%">
+  <asp:Label ID="lblBOKDescription" runat="server">Strand: FRACTIONS</asp:Label>
+</td></tr></table></div>
+<table align="center" width="100%" border="1"><tr>
+  <td width="25%" align="center" Valign="top"><span>ZZ.6.FR.1.1</span></td>
+  <td width="75%"><span>A grade six benchmark, which a K-5 run must not stage.</span></td>
+</tr></table>
+</body></html>

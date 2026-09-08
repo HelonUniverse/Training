@@ -100,7 +100,7 @@ export function assessLayout(lines: PdfLine[]): {
   // the two cells sit at different y positions, the extracted order becomes
   //
   //     <first half of the statement>
-  //     MA.K.NSO.2.1
+  //     <the benchmark code>
   //     <second half of the statement>
   //
   // and a "code to next code" segmenter attaches the SECOND half to the right
