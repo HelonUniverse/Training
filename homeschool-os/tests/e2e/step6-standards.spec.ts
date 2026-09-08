@@ -279,6 +279,8 @@ test.describe('deterministic mapping before AI', () => {
 
 import { classifyArtifact } from '../../src/server/standards/classify';
 import { assessLayout, segment } from '../../src/server/standards/adapters/florida-best-pdf';
+import { checkGlyphFidelity, hasUnmappedGlyphs, looksLikeDroppedRun, summariseGlyphFidelity }
+  from '../../src/server/standards/glyphs';
 
 /** Synthetic pages. The codes below use the published SHAPE with a strand that
  *  does not exist, so nothing here can be mistaken for a real benchmark. */
@@ -332,7 +334,11 @@ test.describe('the source-of-truth rule is enforced, not remembered', () => {
       openingText: 'Aligned to the B.E.S.T. Standards for Mathematics throughout.',
     });
     expect(result.kind).toBe('other_reference');
-    expect(result.reason).toContain('does not declare itself to BE them');
+    // The refusal still stands; the REASON is now the sharper one. This
+    // document mentions the standards in its opening text, so the classifier
+    // reaches the provenance test and fails it there - which is the check that
+    // actually matters for a curriculum map claiming alignment.
+    expect(result.reason).toContain('not retrieved from the authority');
   });
 
   test('P6 an unidentifiable document is not assumed to be the standards', () => {
@@ -493,5 +499,136 @@ test.describe('the PDF path refuses what it cannot read', () => {
       const literal = source.match(/\bMA\.\d{1,2}\.(?:NSO|FR|AR|M|GR|DP|NR|AL|GR)\.\d+\.\d+\b/g) ?? [];
       expect(literal, `${path} must contain no real benchmark`).toEqual([]);
     }
+  });
+});
+
+
+/* =========================================================================== *
+ * GATE 4 - GLYPH FIDELITY, and GATE 6 - CLASSIFICATION
+ *
+ * Both written against what the authoritative artifact actually does.
+ * ========================================================================== */
+
+test.describe('glyph fidelity is a hard gate', () => {
+  // The real shape: a font with no ToUnicode map, so glyph INDICES leak through
+  // as control bytes. MuPDF produced exactly this from the FLDOE artifact.
+  // Built from char codes rather than pasted, so the fixture stays readable.
+  const RAW_GLYPHS = [0, 88, 0, 86, 0, 76, 0, 81, 0, 74, 0, 3, 0, 87, 0, 75, 0, 72]
+    .map((c) => String.fromCharCode(c)).join('');
+
+  test('G11 raw glyph indices are detected, never decoded', () => {
+    expect(hasUnmappedGlyphs(RAW_GLYPHS)).toBe(true);
+    expect(hasUnmappedGlyphs('Compare two whole numbers within twenty.')).toBe(false);
+
+    const findings = checkGlyphFidelity({
+      code: 'MA.K.ZZ.1.1', extractorA: RAW_GLYPHS, extractorB: RAW_GLYPHS, locator: 'p18:434',
+    });
+    expect(findings.some((f) => f.kind === 'unmapped_glyphs')).toBe(true);
+    // The module reports. Nothing here turns those bytes into words: the
+    // constant offset that would is one font's glyph order, not a decoding
+    // rule, and applying it would be reconstruction.
+    expect(JSON.stringify(findings)).not.toContain('using the');
+  });
+
+  test('G12 a sentence with a hole in it is detected', () => {
+    // What pdf.js produced from the same page: prose survives, symbols do not,
+    // and it still reads as a finished sentence.
+    expect(looksLikeDroppedRun(
+      'Clarification 2: the expectation is not to use the relational symbols .')).toBe(true);
+    expect(looksLikeDroppedRun('Example:')).toBe(true);
+    expect(looksLikeDroppedRun(
+      'Compare two whole numbers within twenty using appropriate language.')).toBe(false);
+  });
+
+  test('G13 two extractors disagreeing blocks the benchmark', () => {
+    const findings = checkGlyphFidelity({
+      code: 'MA.K.ZZ.1.1',
+      extractorA: 'the expectation is not to use the relational symbols .',
+      extractorB: 'the expectation is not to use the relational symbols LAEP O.',
+      locator: 'p18:434',
+    });
+    expect(findings.some((f) => f.kind === 'extractor_disagreement')).toBe(true);
+  });
+
+  test('G14 agreement on clean prose leaves a benchmark stageable', () => {
+    const clean = 'Compare two whole numbers from 0 to 20 using the terms less than or equal to.';
+    expect(checkGlyphFidelity({
+      code: 'MA.K.ZZ.1.1', extractorA: clean, extractorB: `${clean}  `, locator: 'p19:12',
+    })).toEqual([]);
+  });
+
+  test('G15 the summary counts blocked rows without a tunable threshold', () => {
+    const summary = summariseGlyphFidelity([
+      { code: 'a', findings: [] },
+      { code: 'b', findings: [{ kind: 'unmapped_glyphs', detail: 'x', sample: 'y' }] },
+      { code: 'c', findings: [{ kind: 'dropped_run', detail: 'x', sample: 'y' }] },
+    ]);
+    expect(summary).toEqual({ stageable: 1, blocked: 2,
+      byKind: { unmapped_glyphs: 1, dropped_run: 1 } });
+  });
+});
+
+test.describe('classification combines provenance, content and structure', () => {
+  const STANDARDS_STRUCTURE = { benchmarkCodes: 184, gradeSections: 6, domains: 5 };
+  const OFFICIAL = { retrievedFromOfficialSource: true, sourceUrl: 'https://example.gov/best.pdf' };
+
+  test('G16 blank PDF metadata no longer demotes the real publication', () => {
+    // The FLDOE artifact: no Title, no Subject, cover page is an image.
+    const result = classifyArtifact({
+      title: null, subject: null, artifactName: 'anything.pdf',
+      openingText: 'Standards for Mathematics K-5 Kindergarten Number Sense and Operations',
+      structure: STANDARDS_STRUCTURE, provenance: OFFICIAL,
+    });
+    expect(result.kind).toBe('canonical_standards_publication');
+    expect(result.confidence).toBe('clear');
+    expect(result.signals.join(' ')).toContain('184 codes');
+  });
+
+  test('G17 structure WITHOUT official provenance is still refused', () => {
+    // A convincing document from an unverified source is what a stale mirror or
+    // a re-save looks like. This is the case that blocked the first attempt.
+    const result = classifyArtifact({
+      title: null, subject: null, artifactName: 'mathbeststandardsfinal.pdf',
+      openingText: 'Standards for Mathematics K-5 Kindergarten',
+      structure: STANDARDS_STRUCTURE,
+      provenance: { retrievedFromOfficialSource: false },
+    });
+    expect(result.kind).toBe('other_reference');
+    expect(result.reason).toContain('not retrieved from the authority');
+  });
+
+  test('G18 the conservative exclusions all still hold', () => {
+    const cases = [
+      ['B.E.S.T. Standards for Mathematics Parent Guide', 'parent_guide'],
+      ['Mathematics Learning Progression Document', 'progression_document'],
+      ['Grade 4 Mathematics Test Item Specifications', 'assessment_blueprint'],
+      ['Instructional Materials Correlation to the Standards', 'correlation_spreadsheet'],
+      ['Grade 4 Mathematics Instructional Guide', 'instructional_guide'],
+    ] as const;
+    for (const [title, expected] of cases) {
+      // Even with perfect provenance and standards-like structure: what the
+      // document IS beats where it came from.
+      expect(classifyArtifact({
+        title, subject: null, artifactName: 'x.pdf', openingText: title,
+        structure: STANDARDS_STRUCTURE, provenance: OFFICIAL,
+      }).kind).toBe(expected);
+    }
+  });
+
+  test('G19 an unknown document is refused even from an official source', () => {
+    expect(classifyArtifact({
+      title: null, subject: null, artifactName: 'download.pdf', openingText: 'Page 1',
+      provenance: OFFICIAL,
+    }).kind).toBe('other_reference');
+  });
+
+  test('G20 the filename is never evidence of identity', () => {
+    const result = classifyArtifact({
+      title: null, subject: null,
+      artifactName: 'Floridas-BEST-Standards-for-Mathematics-OFFICIAL-FINAL.pdf',
+      openingText: 'This packet supports families.',
+      provenance: OFFICIAL,
+    });
+    expect(result.kind).not.toBe('canonical_standards_publication');
   });
 });

@@ -68,6 +68,26 @@ const THIRD_PARTY = [
   /\bkhan academy\b/i, /\bihomeschool\b/i, /\bstudy\.com\b/i, /\bcourse\s*hero\b/i,
 ];
 
+/**
+ * Evidence that an artifact is what it claims, independent of PDF metadata.
+ *
+ * A canonical standards publication may legitimately carry an empty Title and
+ * Subject - the FLDOE B.E.S.T. Mathematics PDF does, and its cover page is an
+ * image. Demoting it for that was wrong: metadata is one signal among several
+ * and the weakest of them, because it is trivially absent and trivially edited.
+ *
+ * What may NOT stand in for it is the filename, which is whatever the last
+ * person to save the file typed. So identity is established from the two things
+ * that are hard to fake: where the bytes came from, and what the document
+ * structurally contains.
+ */
+export type ProvenanceEvidence = {
+  /** Bytes retrieved from the authority's own published URL, hash recorded. */
+  retrievedFromOfficialSource: boolean;
+  /** The exact URL, for the record. */
+  sourceUrl?: string | null;
+};
+
 export function classifyArtifact(input: {
   title: string | null;
   subject?: string | null;
@@ -75,6 +95,16 @@ export function classifyArtifact(input: {
   artifactName: string;
   /** The opening of the document. Enough to read a cover page, not the whole file. */
   openingText: string;
+  /** Structural markers found by the parser, not by reading prose. */
+  structure?: {
+    /** Benchmark codes matching the published layout. */
+    benchmarkCodes: number;
+    /** Grade section headings found in the body. */
+    gradeSections: number;
+    /** Domain/strand headings found in the body. */
+    domains: number;
+  };
+  provenance?: ProvenanceEvidence;
 }): Classification {
   // The title and subject the DOCUMENT carries are worth more than its filename,
   // which is whatever the last person to save it typed. Both are read; the
@@ -102,22 +132,61 @@ export function classifyArtifact(input: {
 
     if (candidate.kind === 'canonical_standards_publication') {
       // One more hurdle for the only kind that may publish: a document that
-      // merely MENTIONS the standards is not the standards. Require that the
-      // claim appears in the title or subject the document itself carries,
-      // rather than somewhere in the body of a guide that cites them.
+      // merely MENTIONS the standards is not the standards. Three ways to clear
+      // it, and none of them is the filename.
       const declared = [input.title, input.subject].filter(Boolean).join('\n');
-      const inTitle = candidate.patterns.some((p) => p.test(declared));
-      if (!inTitle) {
+      const inMetadata = declared.length > 0 && candidate.patterns.some((p) => p.test(declared));
+
+      // The document says so on its own opening pages. This is how a printed
+      // publication declares itself, and it survives empty PDF metadata.
+      const inDocumentText = candidate.patterns.some((p) => p.test(input.openingText));
+
+      // It is SHAPED like a standards publication: many benchmark codes, grade
+      // sections, domain headings. A guide cites a handful of codes; the
+      // standards themselves carry hundreds, in grade order.
+      const st = input.structure;
+      const structurallyStandards =
+        !!st && st.benchmarkCodes >= 50 && st.gradeSections >= 3 && st.domains >= 3;
+
+      // And the bytes came from the authority's own published URL.
+      const fromOfficialSource = input.provenance?.retrievedFromOfficialSource === true;
+
+      if (inMetadata) {
+        signals.push('declared in PDF metadata');
+      }
+      if (inDocumentText) signals.push('declared in the document text');
+      if (structurallyStandards) {
+        signals.push(`structure: ${st!.benchmarkCodes} codes, ${st!.gradeSections} grade sections, ${st!.domains} domains`);
+      }
+      if (fromOfficialSource) signals.push(`retrieved from ${input.provenance?.sourceUrl ?? 'the official source'}`);
+
+      // Metadata alone still counts, as before. Without it, identity needs BOTH
+      // deterministic document content AND trusted source provenance - a
+      // structurally convincing document from an unverified source is exactly
+      // what a good forgery or a stale mirror looks like.
+      if (inMetadata || ((inDocumentText || structurallyStandards) && fromOfficialSource)) {
         return {
-          kind: 'other_reference', confidence: 'uncertain',
-          reason: 'the document mentions the standards but does not declare itself to BE them ' +
-                  '(no matching title or subject); registering as a secondary reference',
+          kind: 'canonical_standards_publication', confidence: 'clear',
+          reason: 'identified as the standards publication itself',
           signals,
         };
       }
+
+      if (inDocumentText || structurallyStandards) {
+        return {
+          kind: 'other_reference', confidence: 'uncertain',
+          reason: 'the document looks like the standards publication, but its bytes were not ' +
+                  'retrieved from the authority\'s own published URL. Content without ' +
+                  'provenance is a mirror or a re-save, not a canonical source',
+          signals,
+        };
+      }
+
       return {
-        kind: 'canonical_standards_publication', confidence: 'clear',
-        reason: `the document declares itself as ${candidate.label}`,
+        kind: 'other_reference', confidence: 'uncertain',
+        reason: 'the document mentions the standards but does not declare itself to BE them, ' +
+                'and carries none of the structure of the publication; registering as a ' +
+                'secondary reference',
         signals,
       };
     }
