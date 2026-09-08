@@ -218,8 +218,11 @@ alter table public.path_answers    enable row level security;
 alter table public.bookings        enable row level security;
 
 -- Perfiles: cada quien ve y edita el suyo; las administradoras ven todos.
+drop policy if exists "perfil propio visible" on public.profiles;
 create policy "perfil propio visible" on public.profiles
   for select using (auth.uid() = id or public.is_admin());
+
+drop policy if exists "perfil propio editable" on public.profiles;
 create policy "perfil propio editable" on public.profiles
   for update using (auth.uid() = id) with check (auth.uid() = id);
 
@@ -229,19 +232,28 @@ declare t text;
 begin
   foreach t in array array['guides','teachings','services','circles','live_events','path_questions']
   loop
+    execute format('drop policy if exists "contenido visible" on public.%I', t);
     execute format(
       'create policy "contenido visible" on public.%I for select using (true)', t);
+    execute format('drop policy if exists "solo admin escribe" on public.%I', t);
     execute format(
       'create policy "solo admin escribe" on public.%I for all using (public.is_admin()) with check (public.is_admin())', t);
   end loop;
 end $$;
 
 -- Voces: se leen abiertas; una persona escribe y borra las suyas.
+drop policy if exists "voces visibles" on public.posts;
 create policy "voces visibles" on public.posts for select using (true);
+
+drop policy if exists "escribo mis voces" on public.posts;
 create policy "escribo mis voces" on public.posts
   for insert with check (auth.uid() = author_id);
+
+drop policy if exists "edito mis voces" on public.posts;
 create policy "edito mis voces" on public.posts
   for update using (auth.uid() = author_id) with check (auth.uid() = author_id);
+
+drop policy if exists "borro mis voces" on public.posts;
 create policy "borro mis voces" on public.posts
   for delete using (auth.uid() = author_id or public.is_admin());
 
@@ -252,6 +264,7 @@ begin
   foreach t in array array['saved_teachings','read_teachings','circle_members',
                            'post_resonances','path_answers','bookings']
   loop
+    execute format('drop policy if exists "solo lo mio" on public.%I', t);
     execute format(
       'create policy "solo lo mio" on public.%I for all using (auth.uid() = user_id) with check (auth.uid() = user_id)', t);
   end loop;
