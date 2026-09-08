@@ -876,7 +876,31 @@ function main() {
     }),
   );
 
-  console.log('  ✓ icon.png / splash.png / favicon.png');
+  // --- Iconos de la app instalable (PWA) ------------------------------
+  const pwaDir = path.join(__dirname, '..', 'public');
+  fs.mkdirSync(pwaDir, { recursive: true });
+  const appIcon = (size) =>
+    render({
+      w: size,
+      h: size,
+      style: null,
+      seed: 1111,
+      stars: size > 256 ? 0.0006 : 0,
+      globe: {
+        cx: 0.5,
+        cy: 0.52,
+        r: 0.4,
+        tilt: 16 * DEG,
+        spin: -20 * DEG,
+        nodeCount: size > 256 ? 120 : 70,
+      },
+    });
+  for (const size of [192, 512]) {
+    fs.writeFileSync(path.join(pwaDir, `icon-${size}.png`), appIcon(size));
+  }
+  fs.writeFileSync(path.join(pwaDir, 'apple-touch-icon.png'), appIcon(180));
+
+  console.log('  ✓ icon.png / splash.png / favicon.png / iconos PWA');
 }
 
 main();

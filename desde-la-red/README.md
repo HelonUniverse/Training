@@ -110,6 +110,23 @@ npm run assets
 | `npm run assets` | Regenera las imágenes cósmicas |
 | `npm run web` | Abre la app en el navegador (útil para revisar diseño) |
 | `npm run demo` | Empaqueta la app en un solo HTML para compartir (ver abajo) |
+| `npm run build:web` | Compila la web instalable en `dist/`, lista para publicar |
+
+---
+
+## Publicarla en internet
+
+`npm run build:web` deja en `dist/` una web estática que además es una **app
+instalable**: manifiesto, iconos y pantalla completa en iOS. Quien abra el
+enlace en el iPhone puede hacer *Compartir → Añadir a pantalla de inicio* y la
+app queda con su icono, sin barra del navegador.
+
+Sirve cualquier hosting estático. Lo único que necesita es que **todas las
+rutas devuelvan `index.html`** (es una SPA):
+
+- **Vercel** — `vercel.json` ya lo configura; basta conectar el repositorio.
+- **Cloudflare Pages / Netlify** — `public/_redirects` ya lo configura.
+  Comando de build: `npm run build:web`, carpeta de salida: `dist`.
 
 ---
 

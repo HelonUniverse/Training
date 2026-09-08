@@ -7,12 +7,12 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "dark",
-    "backgroundColor": "#04070F",
+    "backgroundColor": "#01050D",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "cover",
-      "backgroundColor": "#04070F"
+      "backgroundColor": "#01050D"
     },
     "ios": {
       "supportsTablet": true,
@@ -23,7 +23,7 @@
       "package": "com.helonium.desdelared",
       "userInterfaceStyle": "dark",
       "adaptiveIcon": {
-        "backgroundColor": "#04070F",
+        "backgroundColor": "#01050D",
         "foregroundImage": "./assets/android-icon-foreground.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
@@ -31,9 +31,22 @@
     },
     "web": {
       "favicon": "./assets/favicon.png",
-      "bundler": "metro"
+      "bundler": "metro",
+      "output": "single",
+      "name": "Desde la Red",
+      "shortName": "Desde la Red",
+      "themeColor": "#01050D",
+      "backgroundColor": "#01050D",
+      "display": "standalone",
+      "orientation": "portrait",
+      "startUrl": "/",
+      "lang": "es",
+      "description": "Ense\u00f1anza viva para el alma contempor\u00e1nea."
     },
-    "plugins": ["expo-router", "expo-font"],
+    "plugins": [
+      "expo-router",
+      "expo-font"
+    ],
     "experiments": {
       "typedRoutes": false
     }
