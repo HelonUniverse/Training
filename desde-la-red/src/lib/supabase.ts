@@ -30,7 +30,7 @@ export function authErrorMessage(error: { message?: string } | null): string {
   if (raw.includes('invalid login credentials')) return 'Ese correo o esa contraseña no coinciden.';
   if (raw.includes('email not confirmed')) return 'Falta confirmar tu correo. Revisa tu bandeja.';
   if (raw.includes('user already registered')) return 'Ese correo ya tiene cuenta. Entra en vez de crearla.';
-  if (raw.includes('password should be at least')) return 'La contraseña necesita al menos 6 caracteres.';
+  if (raw.includes('password should be at least')) return 'Esa contraseña es demasiado corta.';
   if (raw.includes('unable to validate email')) return 'Ese correo no parece válido.';
   if (raw.includes('rate limit') || raw.includes('too many')) return 'Demasiados intentos. Espera un momento.';
   if (raw.includes('failed to fetch') || raw.includes('network')) return 'Sin conexión. Inténtalo de nuevo.';
