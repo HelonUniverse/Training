@@ -164,3 +164,27 @@ def main(ts_json):
 
 if __name__ == '__main__':
     sys.exit(main(sys.argv[1] if len(sys.argv) > 1 else '/tmp/ts.json'))
+
+# -----------------------------------------------------------------------------
+# Comparing two DEPLOYMENTS rather than two readings
+# -----------------------------------------------------------------------------
+# This file compares two independent readings of the artifact. To compare two
+# databases that ingested it, digest the staged rows - but EXCLUDE `status`.
+#
+# It is a lifecycle column: publication rewrites every row from 'staged' to
+# 'published', so a digest containing it changes on both sides at that moment
+# and two deployments at different stages look like corrupted copies of each
+# other. That is the one false alarm a parity check must never raise.
+#
+#   select md5(string_agg(
+#            concat_ws('|', row_number, source_code, source_statement,
+#                      source_grade, source_domain_code, source_domain_name,
+#                      source_language, normalized_code, normalized_grade,
+#                      normalized_subject, reference_kind::text,
+#                      array_to_string(search_aliases, ','), warnings::text,
+#                      source_locator, raw::text),
+#            chr(10) order by row_number))
+#     from public.standards_staged_records;
+#
+# For this ingestion that value is b0c0d24c365da8ac39524aa30640d229 on both
+# local and homeschool-os-dev.

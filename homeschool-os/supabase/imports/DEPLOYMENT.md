@@ -8,7 +8,8 @@ The same ingestion, run twice, proved equal rather than assumed equal.
 | rows seen in artifact | 642 | 642 |
 | rows in scope (K-5) | 184 | 184 |
 | rows staged | 184 | 184 |
-| staged-row digest | `f8161bec912af5c59970fd9756def1e6` | `f8161bec912af5c59970fd9756def1e6` |
+| staged-row content digest | `b0c0d24c365da8ac39524aa30640d229` | `b0c0d24c365da8ac39524aa30640d229` |
+| staged-row digest incl. status | `414afb602269d5ca067aaff8863d4ead` | `414afb602269d5ca067aaff8863d4ead` |
 | rows approved by a person | 184 | 184 |
 | rows published | 184 | 184 |
 | rows skipped | 0 | 0 |
@@ -26,11 +27,20 @@ The same ingestion, run twice, proved equal rather than assumed equal.
 
 ## The digest is the point
 
-`f8161bec912af5c59970fd9756def1e6` is an md5 over every column each staged row
-asserts — status, code, statement, grade, strand, language, normalization,
-aliases, warnings, locator and the raw parse — for all 184 rows in order. It was
-produced by the local dialect, by the managed dialect run locally, and by the
-managed database after transmission. Three runs, one value.
+`b0c0d24c365da8ac39524aa30640d229` is an md5 over every column each staged row
+asserts about the DOCUMENT — code, statement, grade, strand, language,
+normalization, aliases, warnings, locator and the raw parse — for all 184 rows
+in order. Local and managed agree on it.
+
+**Use this one, not a digest that includes `status`.** The first version of this
+check folded `status` in, and that value (`f8161bec912af5c59970fd9756def1e6`)
+is real but only comparable at one instant: publication legitimately rewrites
+every row's status from `staged` to `published`, so the digest changes to
+`414afb602269d5ca067aaff8863d4ead` on both sides. Two deployments at different
+points in the lifecycle would then look like corrupted copies of each other,
+which is exactly the false alarm a parity check must not raise. Both values are
+recorded above so either can be reproduced; the content digest is the one that
+means "these are the same 184 benchmarks".
 
 That matters because the two deployments are reached by different channels. The
 local one applies a generated SQL file over a socket. The managed one crosses a
