@@ -390,15 +390,23 @@ test.describe('the PDF path refuses what it cannot read', () => {
   });
 
   test('P11 a code with no statement is unresolved, never reconstructed', () => {
+    // One bare code among many well-formed ones: below the table threshold, so
+    // the layout is accepted and the ROW-level rule is what gets tested. (A
+    // document where bare codes are the norm is a table, and P16 covers that.)
     const outcome = segment([
-      line(1, 1, 'MA.4.ZZ.1.1'),
+      line(1, 1, 'MA.4.ZZ.1.1 A synthetic statement.'),
       line(1, 2, 'MA.4.ZZ.1.2 A synthetic statement.'),
+      line(1, 3, 'MA.4.ZZ.1.3 A synthetic statement.'),
+      line(1, 4, 'MA.4.ZZ.1.4 A synthetic statement.'),
+      line(1, 5, 'MA.4.ZZ.1.5 A synthetic statement.'),
+      line(2, 6, 'MA.4.ZZ.2.1'),
     ]);
     expect(outcome.ok).toBe(true);
     if (!outcome.ok) return;
-    expect(outcome.rows[0]!.status).toBe('unresolved');
-    expect(outcome.rows[0]!.source.statement).toBeNull();
-    expect(outcome.rows[0]!.warnings.join(' ')).toContain('not reconstructed');
+    const bare = outcome.rows.find((r) => r.normalized.code === 'MA.4.ZZ.2.1')!;
+    expect(bare.status).toBe('unresolved');
+    expect(bare.source.statement).toBeNull();
+    expect(bare.warnings.join(' ')).toContain('not reconstructed');
   });
 
   test('P12 a practice code is cross-cutting and gets no grade', () => {
@@ -423,7 +431,56 @@ test.describe('the PDF path refuses what it cannot read', () => {
   test('P14 layout assessment reports its evidence rather than a verdict alone', () => {
     const good = assessLayout([line(1, 1, 'MA.4.ZZ.1.1 Statement.')]);
     expect(good.ok).toBe(true);
-    expect(good.codesAtLineStart).toBe(1);
+    expect(good.codesWithStatement).toBe(1);
+  });
+
+  test('P16 a TWO-COLUMN table is refused - the case that reached production', () => {
+    // The shape the authoritative FLDOE artifact actually has. The code sits in
+    // its own cell, so extraction order splits each statement around its own
+    // code:
+    //     <first half>
+    //     CODE
+    //     <second half>
+    // A code-to-next-code segmenter would give this code the SECOND half and
+    // donate the first half to the previous benchmark - every row well-formed,
+    // every statement wrong. The earlier guard counted a bare code as "starts a
+    // line" and let it through; measuring that says nothing about whether the
+    // STATEMENT follows.
+    const outcome = segment([
+      line(19, 1, 'Recite the number names to one hundred by ones and by tens. Starting at a given'),
+      line(19, 2, 'MA.K.ZZ.2.1'),
+      line(19, 3, 'number, count forward within one hundred and backward within twenty.'),
+      line(19, 4, 'Represent whole numbers from ten to twenty, using a unit of ten and a group of'),
+      line(19, 5, 'MA.K.ZZ.2.2'),
+      line(19, 6, 'ones, with objects, drawings and expressions or equations.'),
+    ]);
+    expect(outcome.ok).toBe(false);
+    if (outcome.ok) return;
+    expect(outcome.refusal).toContain('two-column table');
+    expect(outcome.refusal).toContain('column-aware parser');
+    expect(outcome.diagnostics.codesAlone).toBe(2);
+    expect(outcome.diagnostics.codesWithStatement).toBe(0);
+  });
+
+  test('P17 a table layout is refused even when most codes look well placed', () => {
+    // 4 inline + 2 isolated. The old 70%-at-line-start rule passed this; the
+    // isolated ones are still a table, and still enough to corrupt those rows.
+    const outcome = segment([
+      line(1, 1, 'MA.4.ZZ.1.1 A statement.'),
+      line(1, 2, 'MA.4.ZZ.1.2 A statement.'),
+      line(1, 3, 'MA.4.ZZ.1.3 A statement.'),
+      line(1, 4, 'MA.4.ZZ.1.4 A statement.'),
+      line(2, 5, 'First half of a statement'),
+      line(2, 6, 'MA.4.ZZ.2.1'),
+      line(2, 7, 'second half of a statement.'),
+      line(2, 8, 'First half of another'),
+      line(2, 9, 'MA.4.ZZ.2.2'),
+      line(2, 10, 'second half of another.'),
+    ]);
+    expect(outcome.ok).toBe(false);
+    if (outcome.ok) return;
+    expect(outcome.diagnostics.codesAlone).toBe(2);
+    expect(outcome.diagnostics.codesWithStatement).toBe(4);
   });
 
   test('P15 neither PDF file contains a real Florida benchmark', () => {

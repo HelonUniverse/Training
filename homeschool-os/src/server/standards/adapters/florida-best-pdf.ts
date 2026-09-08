@@ -27,7 +27,9 @@ const BENCHMARK_CODE = /^(MA)\.(K|[1-9]|1[0-2])\.([A-Z]{1,3})\.(\d+)\.(\d+)$/;
 /** Practices span K-12 and carry no grade position. */
 const PRACTICE_CODE = /^MA\.K12\.MTR\.\d+\.\d+$/;
 /** A code appearing at the start of a line, possibly followed by its statement. */
-const LINE_STARTS_WITH_CODE = /^(MA\.(?:K12\.MTR|(?:K|\d{1,2})\.[A-Z]{1,3})\.\d+\.\d+)\b[:.\s-]*(.*)$/;
+const LINE_STARTS_WITH_CODE = /^(MA\.(?:K12\.MTR|(?:K|\d{1,2})\.[A-Z]{1,4})\.\d+\.\d+)\b[:.\s-]*(.*)$/;
+/** A code occupying a whole line: the signature of a table cell, not a heading. */
+const CODE_ALONE = /^MA\.(?:K12\.MTR|(?:K|\d{1,2})\.[A-Z]{1,4})\.\d+\.\d+$/;
 
 export const FLORIDA_BEST_PDF_ADAPTER_VERSION = '2.0.0';
 
@@ -65,37 +67,68 @@ export function assessLayout(lines: PdfLine[]): {
   ok: boolean;
   reason: string;
   codesFound: number;
-  codesAtLineStart: number;
+  codesWithStatement: number;
+  codesAlone: number;
   codesMidLine: number;
 } {
-  let codesAtLineStart = 0;
-  let codesMidLine = 0;
+  let codesWithStatement = 0;   // "CODE Statement text..." - what this parser reads
+  let codesAlone = 0;           // "CODE" and nothing else - a table cell
+  let codesMidLine = 0;         // buried in a sentence - a flowed layout
 
-  const anyCode = /MA\.(?:K12\.MTR|(?:K|\d{1,2})\.[A-Z]{1,3})\.\d+\.\d+/g;
+  const anyCode = /MA\.(?:K12\.MTR|(?:K|\d{1,2})\.[A-Z]{1,4})\.\d+\.\d+/g;
   for (const line of lines) {
-    const matches = [...line.text.matchAll(anyCode)];
+    const text = line.text.trim();
+    const matches = [...text.matchAll(anyCode)];
     if (matches.length === 0) continue;
-    if (LINE_STARTS_WITH_CODE.test(line.text)) codesAtLineStart += 1;
+    if (CODE_ALONE.test(text)) codesAlone += 1;
+    else if (LINE_STARTS_WITH_CODE.test(text)) codesWithStatement += 1;
     else codesMidLine += matches.length;
   }
-  const codesFound = codesAtLineStart + codesMidLine;
+  const codesFound = codesWithStatement + codesAlone + codesMidLine;
+  const base = { codesFound, codesWithStatement, codesAlone, codesMidLine };
 
   if (codesFound === 0) {
-    return { ok: false, codesFound, codesAtLineStart, codesMidLine,
+    return { ...base, ok: false,
       reason: 'no benchmark codes matching the published layout were found anywhere in the ' +
               'document. Either this is not the standards publication, or its text layer is ' +
               'not readable in the order this parser assumes. Refusing rather than returning ' +
               'zero rows as if the framework were empty.' };
   }
-  if (codesAtLineStart < codesFound * 0.7) {
-    return { ok: false, codesFound, codesAtLineStart, codesMidLine,
+
+  // A code ALONE on its line is the signature of a two-column table: the code
+  // lives in its own cell, and the statement is in the cell beside it. Because
+  // the two cells sit at different y positions, the extracted order becomes
+  //
+  //     <first half of the statement>
+  //     MA.K.NSO.2.1
+  //     <second half of the statement>
+  //
+  // and a "code to next code" segmenter attaches the SECOND half to the right
+  // code while donating the first half to the previous benchmark. Every row
+  // looks well-formed and the wording is wrong, which is the one outcome this
+  // whole pipeline exists to prevent.
+  //
+  // The earlier version of this check counted such a line as "starts with a
+  // code" and passed. It was measuring the wrong thing: whether a code opens a
+  // line says nothing about whether its STATEMENT follows it.
+  if (codesAlone > codesFound * 0.2) {
+    return { ...base, ok: false,
+      reason: `${codesAlone} of ${codesFound} codes sit alone on their line with no statement ` +
+              'following. That is a two-column table: the code is in its own cell and the ' +
+              'statement is beside it, so the extracted reading order splits each statement ' +
+              'around its own code. A code-to-next-code segmenter would attach the wrong ' +
+              'wording to real benchmark codes. Refusing: this document needs a column-aware ' +
+              'parser that groups text by x position, not this one.' };
+  }
+
+  if (codesMidLine > codesFound * 0.3) {
+    return { ...base, ok: false,
       reason: `${codesMidLine} of ${codesFound} codes appear mid-line rather than starting one. ` +
               'This parser segments a benchmark from a code at the start of a line to the next ' +
-              'such code; a flowed or multi-column layout would pair statements with the wrong ' +
-              'codes. Refusing: this needs a layout-specific segmenter written against the ' +
-              'actual document, not this one.' };
+              'such code; a flowed layout would pair statements with the wrong codes.' };
   }
-  return { ok: true, codesFound, codesAtLineStart, codesMidLine, reason: 'layout matches' };
+
+  return { ...base, ok: true, reason: 'layout matches' };
 }
 
 /**
@@ -118,7 +151,8 @@ export function segment(
       diagnostics: {
         lines: lines.length,
         codesFound: layout.codesFound,
-        codesAtLineStart: layout.codesAtLineStart,
+        codesWithStatement: layout.codesWithStatement,
+        codesAlone: layout.codesAlone,
         codesMidLine: layout.codesMidLine,
       },
     };
