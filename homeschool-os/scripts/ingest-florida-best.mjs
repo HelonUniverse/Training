@@ -19,6 +19,7 @@
  *   node --import ./scripts/ts-register.mjs scripts/ingest-florida-best.mjs \
  *        --admin <uuid> > /tmp/ingest.sql
  */
+import { createHash } from 'node:crypto';
 import { parseArtifact, countGate, wordingGate, ARTIFACT, EXPECTED_SHA256, EXPECTED_BYTES }
   from './parse-florida-best.mjs';
 
@@ -43,6 +44,24 @@ const PROVENANCE = {
 };
 
 const q = (v) => (v === null || v === undefined ? 'null' : `'${String(v).replace(/'/g, "''")}'`);
+
+/**
+ * What the database must hold after a chunk is applied.
+ *
+ * Deliberately built the way Postgres will build it - concat_ws over the same
+ * columns in the same order, newline separated, NULL rendered as an empty field
+ * exactly as concat_ws does - so agreement means the values agree and not that
+ * two different formatters happened to produce the same string.
+ */
+function chunkDigest(chunk) {
+  const field = (v) => (v === null || v === undefined ? '' : String(v));
+  const line = (row) => [
+    row.rowNumber, row.status, row.source.code, row.source.statement,
+    row.source.grade, row.source.domainCode, row.normalized.code,
+    row.normalized.grade, row.locator,
+  ].map(field).filter((_, i, a) => a).join('|');
+  return createHash('md5').update(chunk.map(line).join('\n')).digest('hex');
+}
 const jsonb = (v) => `${q(JSON.stringify(v))}::jsonb`;
 const arr = (v) => (v.length === 0 ? "'{}'::text[]"
   : `array[${v.map(q).join(', ')}]::text[]`);
@@ -285,6 +304,30 @@ function main() {
       w("      p_warnings => r->'warn', p_source_locator => r->>'loc');");
       w('  end loop;');
       w('end $stage$;');
+
+      // SELF-VERIFYING. These rows cross a channel where the SQL text is
+      // retyped, and a single altered character inside a benchmark statement
+      // would be invisible: the row count would still be right and the wording
+      // would be a state's wording with one word changed. So each chunk carries
+      // the md5 of what it is supposed to have written, computed here from the
+      // parsed values, and checks it after writing. A corrupted chunk fails
+      // loudly instead of publishing quietly.
+      const expected = chunkDigest(chunk);
+      w('do $verify$');
+      w('declare v_actual text;');
+      w('begin');
+      w('  select md5(string_agg(concat_ws(\'|\', row_number, status::text, source_code,');
+      w('                source_statement, source_grade, source_domain_code, normalized_code,');
+      w('                normalized_grade, source_locator), chr(10) order by row_number))');
+      w('    into v_actual from public.standards_staged_records');
+      w(`   where batch_id = ${batchRef}`);
+      w(`     and row_number between ${chunk[0].rowNumber} and ${chunk[chunk.length - 1].rowNumber};`);
+      w(`  if v_actual is distinct from ${q(expected)} then`);
+      w('    raise exception ');
+      w(`      'chunk ${index + 1} did not arrive intact: expected md5 %, stored %',`);
+      w(`      ${q(expected)}, v_actual using errcode = 'data_corrupted';`);
+      w('  end if;');
+      w('end $verify$;');
     });
     w();
   }
