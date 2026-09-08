@@ -44,7 +44,7 @@
     "typecheck": "tsc --noEmit",
     "assets": "node scripts/generate-assets.js",
     "demo": "node scripts/build-web-demo.js",
-    "build:web": "expo export --platform web --output-dir dist && node scripts/finish-web-build.js dist"
+    "build:web": "node scripts/generate-assets.js && expo export --platform web --output-dir dist && node scripts/finish-web-build.js dist"
   },
   "private": true
 }
