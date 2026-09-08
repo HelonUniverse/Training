@@ -140,6 +140,21 @@ function main() {
   <div class="phone"><div id="root"></div></div>
 </div>
 
+<script>
+  // La página puede servirse en una ruta profunda (un visor, un iframe, una
+  // subcarpeta). El router de la app resuelve rutas contra el path, así que
+  // lo devolvemos a la raíz antes de arrancar, conservando la query original.
+  (function () {
+    try {
+      if (location.pathname !== '/') {
+        history.replaceState(null, '', '/' + location.search + location.hash);
+      }
+    } catch (e) {
+      /* Origen opaco: el arranque de abajo se encarga. */
+    }
+  })();
+</script>
+
 <script>${safeBundle}</script>
 `;
 
