@@ -42,7 +42,8 @@
     "web": "expo start --web",
     "doctor": "expo-doctor",
     "typecheck": "tsc --noEmit",
-    "assets": "node scripts/generate-assets.js"
+    "assets": "node scripts/generate-assets.js",
+    "demo": "node scripts/build-web-demo.js"
   },
   "private": true
 }

@@ -109,6 +109,25 @@ npm run assets
 | `npm run typecheck` | TypeScript en modo estricto |
 | `npm run assets` | Regenera las imágenes cósmicas |
 | `npm run web` | Abre la app en el navegador (útil para revisar diseño) |
+| `npm run demo` | Empaqueta la app en un solo HTML para compartir (ver abajo) |
+
+---
+
+## Compartir la app sin instalar nada
+
+La app se puede empaquetar en **un único archivo HTML** —bundle, imágenes y
+tipografías incluidos— que se abre en cualquier navegador, también en el
+teléfono:
+
+```bash
+ASSET_SCALE=0.58 node scripts/generate-assets.js      # imágenes ligeras
+npx expo export --platform web --output-dir /tmp/demo-web
+npm run demo -- /tmp/demo-web desde-la-red-demo.html
+node scripts/generate-assets.js                       # restaura la resolución
+```
+
+Pesa unos 9 MB y no depende de ningún servidor: se puede subir a cualquier
+sitio, mandar por mensaje o abrir desde el propio archivo.
 
 ---
 

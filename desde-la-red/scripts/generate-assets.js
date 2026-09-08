@@ -695,6 +695,13 @@ function render(spec) {
 
 // ---------------------------------------------------------------- manifiesto
 
+/**
+ * Escala global de salida. `ASSET_SCALE=0.6 node scripts/generate-assets.js`
+ * genera una versión ligera, útil para la demo web de un solo archivo.
+ */
+const S = Number(process.env.ASSET_SCALE || 1);
+const px = (v) => Math.max(8, Math.round(v * S));
+
 const W = 960;
 const H = 680;
 
@@ -826,7 +833,7 @@ function main() {
   fs.mkdirSync(outDir, { recursive: true });
 
   for (const img of IMAGES) {
-    const buf = render({ w: W, h: H, ...img });
+    const buf = render({ ...img, w: px(img.w ?? W), h: px(img.h ?? H) });
     fs.writeFileSync(path.join(outDir, img.file), buf);
     console.log(`  ✓ ${img.file}  ${(buf.length / 1024).toFixed(0)} KB`);
   }
@@ -835,8 +842,8 @@ function main() {
   const brandDir = path.join(__dirname, '..', 'assets');
 
   const icon = render({
-    w: 1024,
-    h: 1024,
+    w: px(1024),
+    h: px(1024),
     style: null,
     seed: 1111,
     stars: 0.0006,
@@ -847,8 +854,8 @@ function main() {
   fs.writeFileSync(
     path.join(brandDir, 'favicon.png'),
     render({
-      w: 196,
-      h: 196,
+      w: px(196),
+      h: px(196),
       style: null,
       seed: 1111,
       stars: 0,
@@ -859,8 +866,8 @@ function main() {
   fs.writeFileSync(
     path.join(brandDir, 'splash.png'),
     render({
-      w: 828,
-      h: 1792,
+      w: px(828),
+      h: px(1792),
       style: 'veil',
       palette: 'abyss',
       seed: 4242,
