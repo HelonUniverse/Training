@@ -10,17 +10,18 @@ import { Screen } from '@/components/Screen';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { SectionHeader } from '@/components/SectionHeader';
 import { useToast } from '@/components/Toast';
-import { circles, pathQuestions } from '@/data/community';
-import { teachings } from '@/data/teachings';
 import * as haptics from '@/lib/haptics';
+import { useContent } from '@/store/content';
 import { useApp } from '@/store/app-store';
 import { colors, fonts, glowText, radius, screenPadding, spacing } from '@/theme';
 
 /** Pantalla 14 — Perfil. */
 export default function PerfilScreen() {
+  const { pathQuestions } = useContent();
   const router = useRouter();
   const toast = useToast();
-  const { state, signOut, resetDemo } = useApp();
+  const { state, signOut, resetDemo, hasAccounts } = useApp();
+  const { source, teachings, circles, guides } = useContent();
 
   const [reminders, setReminders] = useState(true);
   const [liveAlerts, setLiveAlerts] = useState(true);
@@ -38,7 +39,7 @@ export default function PerfilScreen() {
     const question = pathQuestions[0];
     const chosen = state.pathAnswers[question.id] ?? [];
     return question.options.filter((o) => chosen.includes(o.id)).map((o) => o.label);
-  }, [state.pathAnswers]);
+  }, [pathQuestions, state.pathAnswers]);
 
   const myCircles = circles.filter((c) => state.joinedCircles.includes(c.id));
 
@@ -49,8 +50,18 @@ export default function PerfilScreen() {
         <Text style={styles.name}>{state.user?.name ?? 'Carla'}</Text>
         <Text style={styles.email}>{state.user?.email ?? 'invitada@desdelared.app'}</Text>
         <View style={styles.memberTag}>
-          <Feather name="star" size={11} color={colors.glow} />
-          <Text style={styles.memberText}>Miembro de la Red</Text>
+          <Feather
+            name={state.user?.role === 'admin' ? 'shield' : 'star'}
+            size={11}
+            color={colors.glow}
+          />
+          <Text style={styles.memberText}>
+            {state.user?.role === 'admin'
+              ? 'Administradora de la Red'
+              : state.user?.id
+                ? 'Miembro de la Red'
+                : 'Invitada · sin cuenta'}
+          </Text>
         </View>
       </View>
 
@@ -152,23 +163,25 @@ export default function PerfilScreen() {
 
       {/* Cuenta */}
       <View style={styles.section}>
-        <SectionHeader overline="Cuenta" title="Modo demo" />
+        <SectionHeader overline="Cuenta" title={hasAccounts ? 'Tu cuenta' : 'Modo demo'} />
         <View style={{ height: spacing.lg }} />
         <Card>
           <Text style={styles.demoText}>
-            Todo lo que ves está guardado solo en este dispositivo con AsyncStorage. Aún no hay
-            backend conectado: {teachings.length} enseñanzas, {circles.length} círculos y las guías
-            son contenido de demostración.
+            {hasAccounts && state.user?.id
+              ? `Tu camino se guarda en tu cuenta y viaja contigo a cualquier dispositivo. Contenido ${source === 'remote' ? 'en vivo' : 'local'}: ${teachings.length} enseñanzas, ${circles.length} círculos y ${guides.length} guías.`
+              : hasAccounts
+                ? `Estás explorando sin cuenta: lo que marcas se guarda solo en este dispositivo. Crea una cuenta para conservarlo. Contenido ${source === 'remote' ? 'en vivo' : 'local'}: ${teachings.length} enseñanzas, ${circles.length} círculos y ${guides.length} guías.`
+                : `Todo lo que ves está guardado solo en este dispositivo con AsyncStorage: ${teachings.length} enseñanzas, ${circles.length} círculos y ${guides.length} guías de demostración.`}
           </Text>
           <View style={styles.accountActions}>
             <Button
-              label="Reiniciar demo"
+              label={hasAccounts ? 'Borrar datos locales' : 'Reiniciar demo'}
               variant="outline"
               size="sm"
               icon="refresh-ccw"
               onPress={() => {
                 resetDemo();
-                toast({ text: 'Datos de demo reiniciados', icon: 'refresh-ccw' });
+                toast({ text: 'Datos locales reiniciados', icon: 'refresh-ccw' });
                 router.replace('/(auth)/login');
               }}
             />
@@ -177,8 +190,8 @@ export default function PerfilScreen() {
               variant="ghost"
               size="sm"
               icon="log-out"
-              onPress={() => {
-                signOut();
+              onPress={async () => {
+                await signOut();
                 router.replace('/(auth)/login');
               }}
             />

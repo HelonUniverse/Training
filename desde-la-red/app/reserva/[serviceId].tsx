@@ -9,14 +9,15 @@ import { Card } from '@/components/Card';
 import { Screen } from '@/components/Screen';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { useToast } from '@/components/Toast';
-import { findGuide, findService } from '@/data/guides';
 import { formatDuration, formatPrice, timeSlots, upcomingDays } from '@/lib/format';
 import * as haptics from '@/lib/haptics';
+import { useContent } from '@/store/content';
 import { useApp } from '@/store/app-store';
 import { colors, fonts, glowText, radius, screenPadding, spacing } from '@/theme';
 
 /** Pantalla 12 — Reserva. */
 export default function ReservaScreen() {
+  const { findGuide, findService } = useContent();
   const { serviceId } = useLocalSearchParams<{ serviceId: string }>();
   const router = useRouter();
   const toast = useToast();

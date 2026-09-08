@@ -11,22 +11,22 @@ import { CosmicBackground } from '@/components/CosmicBackground';
 import { LiveEventCard } from '@/components/LiveEventCard';
 import { SectionHeader } from '@/components/SectionHeader';
 import { useToast } from '@/components/Toast';
-import { liveEvents } from '@/data/community';
-import { findGuide } from '@/data/guides';
 import { formatDuration } from '@/lib/format';
+import { useContent } from '@/store/content';
 import { colors, fonts, glowText, screenPadding, spacing, tabBarHeight } from '@/theme';
 
 type Filter = 'todos' | 'hoy' | 'proximos';
 
 /** Pantalla 6 — En Vivo. */
 export default function EnVivoScreen() {
+  const { findGuide, liveEvents } = useContent();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const toast = useToast();
   const [filter, setFilter] = useState<Filter>('todos');
   const [joined, setJoined] = useState<string[]>([]);
 
-  const live = useMemo(() => liveEvents.filter((e) => e.status === 'live'), []);
+  const live = useMemo(() => liveEvents.filter((e) => e.status === 'live'), [liveEvents]);
   const rest = useMemo(
     () =>
       liveEvents
@@ -36,7 +36,7 @@ export default function EnVivoScreen() {
           if (filter === 'proximos') return !e.startsAt.toLowerCase().includes('hoy');
           return true;
         }),
-    [filter],
+    [liveEvents, filter],
   );
 
   const toggleJoin = (id: string, title: string) => {

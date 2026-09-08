@@ -11,13 +11,12 @@ import { Screen } from '@/components/Screen';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { SectionHeader } from '@/components/SectionHeader';
 import { ServiceCard } from '@/components/ServiceCard';
-import { circles } from '@/data/community';
-import { findGuide, servicesOfGuide } from '@/data/guides';
-import { teachings } from '@/data/teachings';
+import { useContent } from '@/store/content';
 import { colors, fonts, glowText, radius, screenPadding, spacing } from '@/theme';
 
 /** Pantalla 10 — Perfil de Guía. */
 export default function GuiaPerfilScreen() {
+  const { circles, findGuide, servicesOfGuide, teachings } = useContent();
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
 

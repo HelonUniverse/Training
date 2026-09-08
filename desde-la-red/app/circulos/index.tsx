@@ -6,14 +6,14 @@ import { CircleCard } from '@/components/CircleCard';
 import { Screen } from '@/components/Screen';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { SearchField } from '@/components/SearchField';
-import { circles } from '@/data/community';
-import { findGuide } from '@/data/guides';
 import { matches } from '@/lib/format';
+import { useContent } from '@/store/content';
 import { useApp } from '@/store/app-store';
 import { colors, fonts, glowText, screenPadding, spacing } from '@/theme';
 
 /** Pantalla 8 — Círculos. */
 export default function CirculosScreen() {
+  const { circles, findGuide } = useContent();
   const router = useRouter();
   const { state } = useApp();
   const [query, setQuery] = useState('');
@@ -24,7 +24,7 @@ export default function CirculosScreen() {
         const guide = findGuide(c.guideId);
         return matches(query, c.name, c.intention, c.cadence, guide?.name, ...c.topics);
       }),
-    [query],
+    [circles, findGuide, query],
   );
 
   return (

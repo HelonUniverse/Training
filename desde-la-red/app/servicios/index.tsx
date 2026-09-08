@@ -7,9 +7,9 @@ import { Screen } from '@/components/Screen';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { SearchField } from '@/components/SearchField';
 import { ServiceCard } from '@/components/ServiceCard';
-import { findGuide, services } from '@/data/guides';
 import { Service } from '@/data/types';
 import { matches } from '@/lib/format';
+import { useContent } from '@/store/content';
 import { colors, fonts, glowText, screenPadding, spacing } from '@/theme';
 
 type Format = Service['format'] | 'Todos';
@@ -18,6 +18,7 @@ const FORMATS: Format[] = ['Todos', 'Individual', 'Círculo', 'Intensivo'];
 
 /** Pantalla 11 — Servicios. */
 export default function ServiciosScreen() {
+  const { findGuide, services } = useContent();
   const router = useRouter();
   const { guideId } = useLocalSearchParams<{ guideId?: string }>();
 
@@ -35,7 +36,7 @@ export default function ServiciosScreen() {
           const owner = findGuide(s.guideId);
           return matches(query, s.name, s.description, s.format, s.modality, owner?.name);
         }),
-    [guideId, format, query],
+    [services, findGuide, guideId, format, query],
   );
 
   return (

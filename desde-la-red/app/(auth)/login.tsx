@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import {
+  ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -29,17 +30,30 @@ type Mode = 'login' | 'registro';
 export default function LoginScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { signIn } = useApp();
+  const { signIn, signUp, continueAsGuest, hasAccounts, busy } = useApp();
   const toast = useToast();
 
   const [mode, setMode] = useState<Mode>('login');
-  const [name, setName] = useState('Carla Melendez');
-  const [email, setEmail] = useState('carla@desdelared.app');
-  const [password, setPassword] = useState('••••••••');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
 
-  const submit = () => {
-    if (!email.trim() || !email.includes('@')) {
+  const submit = async () => {
+    if (busy) return;
+    setNotice(null);
+
+    if (!hasAccounts) {
+      // Sin backend configurado la app sigue funcionando en modo demo local.
+      continueAsGuest(name.trim() || undefined);
+      haptics.success();
+      router.replace('/(tabs)/hoy');
+      return;
+    }
+
+    const mail = email.trim().toLowerCase();
+    if (!mail || !mail.includes('@')) {
       setError('Escribe un correo válido para continuar.');
       return;
     }
@@ -47,15 +61,42 @@ export default function LoginScreen() {
       setError('¿Cómo quieres que te llamemos?');
       return;
     }
+    if (password.length < 8) {
+      setError('La contraseña necesita al menos 8 caracteres.');
+      return;
+    }
     setError(null);
-    signIn(email, mode === 'registro' ? name : name || 'Carla');
+
+    const result =
+      mode === 'login'
+        ? await signIn(mail, password)
+        : await signUp(mail, password, name.trim());
+
+    if (!result.ok) {
+      setError(result.message ?? 'No pudimos completar la entrada.');
+      haptics.warn();
+      return;
+    }
+
+    // El registro puede requerir confirmar el correo: en ese caso no hay sesión.
+    if (result.message) {
+      setNotice(result.message);
+      haptics.success();
+      return;
+    }
+
     haptics.success();
-    toast({ text: mode === 'login' ? 'Bienvenida de vuelta' : 'Tu lugar en la Red está abierto', icon: 'sun' });
+    toast({
+      text: mode === 'login' ? 'Bienvenida de vuelta' : 'Tu lugar en la Red está abierto',
+      icon: 'sun',
+    });
     router.replace('/(tabs)/hoy');
   };
 
   const enterAsGuest = () => {
-    signIn('invitada@desdelared.app', 'Carla');
+    if (busy) return;
+    continueAsGuest(name.trim() || undefined);
+    haptics.select();
     router.replace('/(tabs)/hoy');
   };
 
@@ -99,6 +140,7 @@ export default function LoginScreen() {
                   haptics.select();
                   setMode(m);
                   setError(null);
+                  setNotice(null);
                 }}
                 style={[styles.switchItem, mode === m && styles.switchItemActive]}
               >
@@ -117,6 +159,7 @@ export default function LoginScreen() {
                 value={name}
                 onChangeText={setName}
                 placeholder="Tu nombre"
+                editable={!busy}
               />
             ) : null}
             <Field
@@ -126,38 +169,51 @@ export default function LoginScreen() {
               onChangeText={setEmail}
               placeholder="tucorreo@ejemplo.com"
               keyboardType="email-address"
+              editable={!busy}
             />
             <Field
               icon="lock"
               label="Contraseña"
               value={password}
               onChangeText={setPassword}
-              placeholder="Tu contraseña"
+              placeholder={mode === 'registro' ? 'Mínimo 8 caracteres' : 'Tu contraseña'}
               secure
+              editable={!busy}
             />
 
             {error ? <Text style={styles.error}>{error}</Text> : null}
+            {notice ? <Text style={styles.notice}>{notice}</Text> : null}
 
             <Button
               label={mode === 'login' ? 'Entrar a la Red' : 'Crear mi cuenta'}
               onPress={submit}
               size="lg"
               full
+              disabled={busy}
               style={{ marginTop: spacing.sm }}
             />
 
-            <Pressable
-              accessibilityRole="button"
-              onPress={enterAsGuest}
-              style={({ pressed }) => [styles.guest, pressed && { opacity: 0.6 }]}
-            >
-              <Text style={styles.guestText}>Explorar en modo demo</Text>
-              <Feather name="arrow-right" size={14} color={colors.cyan} />
-            </Pressable>
+            {busy ? (
+              <View style={styles.busy}>
+                <ActivityIndicator color={colors.cyan} size="small" />
+                <Text style={styles.busyText}>Conectando con la Red…</Text>
+              </View>
+            ) : (
+              <Pressable
+                accessibilityRole="button"
+                onPress={enterAsGuest}
+                style={({ pressed }) => [styles.guest, pressed && { opacity: 0.6 }]}
+              >
+                <Text style={styles.guestText}>Explorar sin cuenta</Text>
+                <Feather name="arrow-right" size={14} color={colors.cyan} />
+              </Pressable>
+            )}
           </View>
 
           <Text style={styles.legal}>
-            Modo demo · los datos se guardan solo en este dispositivo
+            {hasAccounts
+              ? 'Tu cuenta guarda tu camino en todos tus dispositivos'
+              : 'Modo demo · los datos se guardan solo en este dispositivo'}
           </Text>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -172,6 +228,7 @@ interface FieldProps {
   onChangeText: (v: string) => void;
   placeholder: string;
   secure?: boolean;
+  editable?: boolean;
   keyboardType?: 'default' | 'email-address';
 }
 
@@ -182,12 +239,13 @@ function Field({
   onChangeText,
   placeholder,
   secure,
+  editable = true,
   keyboardType = 'default',
 }: FieldProps) {
   return (
     <View style={styles.field}>
       <Text style={styles.fieldLabel}>{label}</Text>
-      <View style={styles.fieldBox}>
+      <View style={[styles.fieldBox, !editable && styles.fieldBoxOff]}>
         <Feather name={icon} size={16} color={colors.textMuted} />
         <TextInput
           value={value}
@@ -196,6 +254,8 @@ function Field({
           placeholderTextColor={colors.textMuted}
           secureTextEntry={secure}
           keyboardType={keyboardType}
+          editable={editable}
+          textContentType={secure ? 'password' : keyboardType === 'email-address' ? 'emailAddress' : 'name'}
           autoCapitalize={keyboardType === 'email-address' ? 'none' : 'words'}
           autoCorrect={false}
           style={styles.fieldInput}
@@ -267,6 +327,7 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     backgroundColor: colors.surface,
   },
+  fieldBoxOff: { opacity: 0.55 },
   fieldInput: {
     flex: 1,
     fontFamily: fonts.body,
@@ -278,6 +339,24 @@ const styles = StyleSheet.create({
     fontFamily: fonts.body,
     fontSize: 12.5,
     color: colors.live,
+  },
+  notice: {
+    fontFamily: fonts.body,
+    fontSize: 12.5,
+    lineHeight: 19,
+    color: colors.success,
+  },
+  busy: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
+    paddingVertical: 12,
+  },
+  busyText: {
+    fontFamily: fonts.body,
+    fontSize: 13,
+    color: colors.textMuted,
   },
   guest: {
     flexDirection: 'row',

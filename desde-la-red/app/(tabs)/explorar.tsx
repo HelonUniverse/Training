@@ -9,10 +9,8 @@ import { CosmicBackground } from '@/components/CosmicBackground';
 import { SearchField } from '@/components/SearchField';
 import { SectionHeader } from '@/components/SectionHeader';
 import { TeachingCard } from '@/components/TeachingCard';
-import { circles } from '@/data/community';
-import { findGuide, guides } from '@/data/guides';
-import { teachingThemes, teachings } from '@/data/teachings';
 import { matches } from '@/lib/format';
+import { useContent } from '@/store/content';
 import { useApp } from '@/store/app-store';
 import { colors, fonts, glowText, radius, screenPadding, spacing, tabBarHeight } from '@/theme';
 
@@ -20,6 +18,7 @@ type Filter = 'todas' | 'guardadas' | 'sin-leer';
 
 /** Pantalla 5 — Biblioteca Viva. */
 export default function ExplorarScreen() {
+  const { circles, findGuide, guides, teachingThemes, teachings } = useContent();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { state, isSaved } = useApp();
@@ -36,7 +35,7 @@ export default function ExplorarScreen() {
       if (filter === 'sin-leer' && state.readTeachings.includes(t.id)) return false;
       return matches(query, t.title, t.subtitle, t.excerpt, t.theme, guide?.name, ...t.tags);
     });
-  }, [query, theme, filter, state.savedTeachings, state.readTeachings]);
+  }, [teachings, findGuide, query, theme, filter, state.savedTeachings, state.readTeachings]);
 
   const filters: { id: Filter; label: string }[] = [
     { id: 'todas', label: 'Todas' },

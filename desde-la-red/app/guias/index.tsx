@@ -7,17 +7,21 @@ import { GuideCard } from '@/components/GuideCard';
 import { Screen } from '@/components/Screen';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { SearchField } from '@/components/SearchField';
-import { guides } from '@/data/guides';
 import { matches } from '@/lib/format';
+import { useContent } from '@/store/content';
 import { colors, fonts, glowText, screenPadding, spacing } from '@/theme';
-
-const APPROACHES = Array.from(new Set(guides.flatMap((g) => g.approach)));
 
 /** Pantalla 9 — Guías de la Red. */
 export default function GuiasScreen() {
+  const { guides } = useContent();
   const router = useRouter();
   const [query, setQuery] = useState('');
   const [approach, setApproach] = useState<string | null>(null);
+
+  const approaches = useMemo(
+    () => Array.from(new Set(guides.flatMap((g) => g.approach))),
+    [guides],
+  );
 
   const results = useMemo(
     () =>
@@ -25,7 +29,7 @@ export default function GuiasScreen() {
         if (approach && !g.approach.includes(approach)) return false;
         return matches(query, g.name, g.title, g.location, ...g.approach, ...g.languages);
       }),
-    [query, approach],
+    [guides, query, approach],
   );
 
   return (
@@ -51,7 +55,7 @@ export default function GuiasScreen() {
         contentContainerStyle={styles.chipRow}
       >
         <Chip label="Todas" selected={approach === null} onPress={() => setApproach(null)} />
-        {APPROACHES.map((a) => (
+        {approaches.map((a) => (
           <Chip
             key={a}
             label={a}

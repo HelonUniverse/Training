@@ -8,6 +8,7 @@
     "@expo/metro-runtime": "~57.0.15",
     "@expo/vector-icons": "^15.1.1",
     "@react-native-async-storage/async-storage": "^2.2.0",
+    "@supabase/supabase-js": "^2.116.0",
     "expo": "~57.0.20",
     "expo-blur": "~57.0.2",
     "expo-constants": "~57.0.17",
@@ -44,7 +45,8 @@
     "typecheck": "tsc --noEmit",
     "assets": "node scripts/generate-assets.js",
     "demo": "node scripts/build-web-demo.js",
-    "build:web": "node scripts/generate-assets.js && expo export --platform web --output-dir dist && node scripts/finish-web-build.js dist"
+    "build:web": "node scripts/generate-assets.js && expo export --platform web --output-dir dist && node scripts/finish-web-build.js dist",
+    "seed": "node scripts/generate-seed.js"
   },
   "private": true
 }

@@ -9,15 +9,14 @@ import { Card } from '@/components/Card';
 import { CosmicBackground } from '@/components/CosmicBackground';
 import { SectionHeader } from '@/components/SectionHeader';
 import { useToast } from '@/components/Toast';
-import { pathQuestions } from '@/data/community';
-import { findGuide, findService } from '@/data/guides';
-import { teachings } from '@/data/teachings';
 import * as haptics from '@/lib/haptics';
+import { useContent } from '@/store/content';
 import { useApp } from '@/store/app-store';
 import { colors, fonts, glowText, radius, screenPadding, spacing, tabBarHeight } from '@/theme';
 
 /** Pantalla 13 — Mi Camino. */
 export default function MiCaminoScreen() {
+  const { findGuide, findService, pathQuestions, teachings } = useContent();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const toast = useToast();
@@ -25,14 +24,14 @@ export default function MiCaminoScreen() {
 
   const answered = useMemo(
     () => pathQuestions.filter((q) => (state.pathAnswers[q.id] ?? []).length > 0).length,
-    [state.pathAnswers],
+    [pathQuestions, state.pathAnswers],
   );
   const progress = answered / pathQuestions.length;
   const complete = answered === pathQuestions.length;
 
   const savedList = useMemo(
     () => teachings.filter((t) => state.savedTeachings.includes(t.id)),
-    [state.savedTeachings],
+    [teachings, state.savedTeachings],
   );
 
   return (

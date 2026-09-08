@@ -10,10 +10,9 @@ import { GuideCard } from '@/components/GuideCard';
 import { PostCard } from '@/components/PostCard';
 import { SearchField } from '@/components/SearchField';
 import { SectionHeader } from '@/components/SectionHeader';
-import { circles, networkPosts } from '@/data/community';
-import { findGuide, guides } from '@/data/guides';
 import { matches } from '@/lib/format';
 import * as haptics from '@/lib/haptics';
+import { useContent } from '@/store/content';
 import { useApp } from '@/store/app-store';
 import { colors, fonts, glowText, radius, screenPadding, spacing, tabBarHeight } from '@/theme';
 
@@ -21,6 +20,7 @@ type Tab = 'voces' | 'guias' | 'circulos';
 
 /** Pantalla 7 — La Red. */
 export default function LaRedScreen() {
+  const { circles, findGuide, guides, posts: networkPosts } = useContent();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const { toggleResonance, hasResonated, state } = useApp();
@@ -33,18 +33,18 @@ export default function LaRedScreen() {
       networkPosts.filter((p) =>
         matches(query, p.text, p.authorName, p.role, p.circleName),
       ),
-    [query],
+    [networkPosts, query],
   );
   const guideResults = useMemo(
     () =>
       guides.filter((g) =>
         matches(query, g.name, g.title, g.location, ...g.approach),
       ),
-    [query],
+    [guides, query],
   );
   const circleResults = useMemo(
     () => circles.filter((c) => matches(query, c.name, c.intention, ...c.topics)),
-    [query],
+    [circles, query],
   );
 
   const tabs: { id: Tab; label: string; icon: keyof typeof Feather.glyphMap }[] = [

@@ -12,3 +12,5 @@ export const press = () => safe(() => Haptics.impactAsync(Haptics.ImpactFeedback
 export const success = () =>
   safe(() => Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success));
 export const select = () => safe(() => Haptics.selectionAsync());
+export const warn = () =>
+  safe(() => Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning));

@@ -13,16 +13,15 @@ import { SectionHeader } from '@/components/SectionHeader';
 import { TeachingCard } from '@/components/TeachingCard';
 import { TeachingHero } from '@/components/TeachingHero';
 import { useToast } from '@/components/Toast';
-import { circles, liveEvents } from '@/data/community';
-import { findGuide, guides } from '@/data/guides';
-import { featuredTeaching, teachings } from '@/data/teachings';
 import { greetingForNow, todayLabel } from '@/lib/format';
 import * as haptics from '@/lib/haptics';
+import { useContent } from '@/store/content';
 import { useApp } from '@/store/app-store';
 import { colors, fonts, glowText, radius, screenPadding, spacing, tabBarHeight, type } from '@/theme';
 
 /** Pantalla 3 — Hoy. La pieza central de la app. */
 export default function HoyScreen() {
+  const { circles, featuredTeaching, findGuide, guides, liveEvents, teachings } = useContent();
   const router = useRouter();
   const insets = useSafeAreaInsets();
   const toast = useToast();
@@ -33,10 +32,13 @@ export default function HoyScreen() {
   const saved = isSaved(teaching.id);
   const nextEvent = useMemo(
     () => liveEvents.find((e) => e.status === 'live') ?? liveEvents[0],
-    [],
+    [liveEvents],
   );
   const nextGuide = findGuide(nextEvent.guideId);
-  const moreTeachings = useMemo(() => teachings.filter((t) => t.id !== teaching.id).slice(0, 5), [teaching.id]);
+  const moreTeachings = useMemo(
+    () => teachings.filter((t) => t.id !== teaching.id).slice(0, 5),
+    [teachings, teaching.id],
+  );
 
   const firstName = (state.user?.name ?? 'Carla').split(' ')[0];
 

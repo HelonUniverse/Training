@@ -22,6 +22,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { ToastProvider } from '@/components/Toast';
 import { AppProvider } from '@/store/app-store';
+import { ContentProvider } from '@/store/content';
 import { colors } from '@/theme';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -49,22 +50,27 @@ export default function RootLayout() {
     <GestureHandlerRootView style={styles.flex}>
       <SafeAreaProvider>
         <AppProvider>
-          <ToastProvider>
-            <StatusBar style="light" />
-            <Stack
-              screenOptions={{
-                headerShown: false,
-                animation: 'fade',
-                contentStyle: { backgroundColor: colors.night },
-              }}
-            >
-              <Stack.Screen name="index" options={{ animation: 'none' }} />
-              <Stack.Screen name="(auth)" />
-              <Stack.Screen name="(tabs)" />
-              <Stack.Screen name="lectura/[id]" options={{ animation: 'slide_from_bottom' }} />
-              <Stack.Screen name="reserva/[serviceId]" options={{ animation: 'slide_from_bottom' }} />
-            </Stack>
-          </ToastProvider>
+          <ContentProvider>
+            <ToastProvider>
+              <StatusBar style="light" />
+              <Stack
+                screenOptions={{
+                  headerShown: false,
+                  animation: 'fade',
+                  contentStyle: { backgroundColor: colors.night },
+                }}
+              >
+                <Stack.Screen name="index" options={{ animation: 'none' }} />
+                <Stack.Screen name="(auth)" />
+                <Stack.Screen name="(tabs)" />
+                <Stack.Screen name="lectura/[id]" options={{ animation: 'slide_from_bottom' }} />
+                <Stack.Screen
+                  name="reserva/[serviceId]"
+                  options={{ animation: 'slide_from_bottom' }}
+                />
+              </Stack>
+            </ToastProvider>
+          </ContentProvider>
         </AppProvider>
       </SafeAreaProvider>
     </GestureHandlerRootView>

@@ -14,14 +14,14 @@ import { ScreenHeader } from '@/components/ScreenHeader';
 import { TeachingCard } from '@/components/TeachingCard';
 import { useToast } from '@/components/Toast';
 import { imageSource } from '@/data/images';
-import { findGuide } from '@/data/guides';
-import { findTeaching, teachings } from '@/data/teachings';
 import * as haptics from '@/lib/haptics';
+import { useContent } from '@/store/content';
 import { useApp } from '@/store/app-store';
 import { colors, fonts, glowText, gradients, radius, screenPadding, spacing } from '@/theme';
 
 /** Pantalla 4 — Lectura completa. */
 export default function LecturaScreen() {
+  const { findGuide, findTeaching, teachings } = useContent();
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -43,7 +43,7 @@ export default function LecturaScreen() {
             .filter((t) => t.id !== teaching.id && t.tags.some((tag) => teaching.tags.includes(tag)))
             .slice(0, 4)
         : [],
-    [teaching],
+    [teachings, teaching],
   );
 
   if (!teaching) {

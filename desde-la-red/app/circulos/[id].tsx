@@ -15,14 +15,14 @@ import { PostCard } from '@/components/PostCard';
 import { ScreenHeader } from '@/components/ScreenHeader';
 import { SectionHeader } from '@/components/SectionHeader';
 import { useToast } from '@/components/Toast';
-import { findCircle, networkPosts } from '@/data/community';
-import { findGuide } from '@/data/guides';
 import { imageSource } from '@/data/images';
+import { useContent } from '@/store/content';
 import { useApp } from '@/store/app-store';
 import { colors, fonts, glowText, gradients, screenPadding, spacing } from '@/theme';
 
 /** Pantalla 8b — Detalle de un Círculo. */
 export default function CirculoDetalleScreen() {
+  const { findCircle, findGuide, posts: networkPosts } = useContent();
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const insets = useSafeAreaInsets();
