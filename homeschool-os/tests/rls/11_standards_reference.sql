@@ -629,14 +629,26 @@ rollback;
 -- =============================================================================
 -- 10. Nothing escaped
 -- =============================================================================
-select t.assert_eq((select count(*)::int from public.standards), 0,
-  '10a. the standards catalogue still ships empty');
+-- Section 10 is about THIS FILE's rows not surviving its rollback. Asserting
+-- the whole catalogue is empty conflated that with "nothing has ever been
+-- published", which stopped being true the moment a real ingestion ran.
+select t.assert_eq((select count(*)::int from public.standards
+                     where code like 'TEST6%'), 0,
+  '10a. no fixture standard survived');
 select t.assert_eq((select count(*)::int from public.skills where code like 'TEST6%'), 0,
   '10b. no fixture skill survived');
 select t.assert_eq((select count(*)::int from public.standards_frameworks where code like 'TEST6%'), 0,
   '10c. no fixture framework survived');
 select t.assert_eq((select count(*)::int from public.standards_frameworks), 3,
   '10d. the three seeded frameworks are exactly as 0070 left them');
+-- The fixture grant is the one this file made, to a family-fixture account.
+-- The standards operator's grant is deployment state and is deliberately not
+-- swept up here: this file cleans up after itself, not after the deployment.
 select t.assert_eq((select count(*)::int from public.user_permissions
-                     where permission = 'standards.administer'), 0,
+                     where permission = 'standards.administer'
+                       and user_id = '11111111-1111-4111-8111-000000000004'), 0,
   '10e. and the fixture capability grant is gone');
+select t.assert(exists (select 1 from public.user_permissions
+                         where permission = 'standards.administer'
+                           and user_id <> '11111111-1111-4111-8111-000000000004'),
+  '10f. while the deployment''s own standards operator keeps theirs');

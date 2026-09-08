@@ -54,6 +54,26 @@ for f in "${FIXTURES[@]}"; do
 done
 echo "fixtures:   ok (${#FIXTURES[@]})"
 
+# --- the real standards ingestion -------------------------------------------
+# Not a fixture: this is the generated import of the authoritative Florida
+# artifact, plus the review decision, run end to end on every local run. It
+# lives here rather than in tests/rls because it is the actual production
+# ingestion, and a test suite that exercises a hand-written imitation of it
+# would pass while the real one was broken. Applied in order, and a failure in
+# any of them fails the suite before a single test runs.
+IMPORTS=("_grant_admin.sql"
+         "20260908_florida_best_mathematics_k5.sql"
+         "20260908_florida_best_mathematics_k5_review.sql")
+for f in "${IMPORTS[@]}"; do
+  if [ ! -f "$ROOT/supabase/imports/$f" ]; then
+    echo "MISSING import: supabase/imports/$f"; exit 1
+  fi
+  if ! su postgres -c "$PSQL -d $DB -f $ROOT/supabase/imports/$f" > /tmp/import.out 2>&1; then
+    echo "IMPORT FAILED: $f"; sed -n '1,40p' /tmp/import.out; exit 1
+  fi
+done
+echo "imports:    ok (${#IMPORTS[@]}) - Florida B.E.S.T. K-5 staged, reviewed and published"
+
 # --- execution ---------------------------------------------------------------
 status=0
 EXECUTED=()

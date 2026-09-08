@@ -411,10 +411,21 @@ test.describe('B6 the count and wording gates', () => {
     expect((row!.source.raw as { wordingCellHtml: string }).wordingCellHtml).toContain('<table');
   });
 
-  test('B6.10 every row can be found again in the artifact', () => {
+  test('B6.10 every row can be found again in the artifact, uniquely', () => {
+    const offsets = new Set<number>();
     for (const row of parsed.rows) {
-      expect(row.locator).toMatch(/^line \d+, Grade: (K|[1-5]), Strand: [A-Z ]+$/);
+      expect(row.locator).toMatch(/^line \d+, char \d+, Grade: (K|[1-5]), Strand: [A-Z ]+$/);
+      // The character offset is what makes a locator identify ONE row. This
+      // document puts as many as 26 benchmarks on a single line, so a
+      // line-only locator names a region, not a benchmark.
+      const at = Number(/char (\d+)/.exec(row.locator)![1]);
+      expect(offsets.has(at)).toBe(false);
+      offsets.add(at);
+      // And the offset must actually land on this row's wording.
+      expect(artifactText.slice(at, at + 400)).toContain(
+        row.source.statement!.split(/[.!?]/)[0]!.trim().slice(0, 40));
     }
+    expect(offsets.size).toBe(184);
   });
 
   test('B6.11 the domains are the ones the document declares', () => {

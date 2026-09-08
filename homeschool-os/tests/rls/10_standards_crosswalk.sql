@@ -296,8 +296,13 @@ rollback;
 -- =============================================================================
 -- 7. Nothing escaped
 -- =============================================================================
-select t.assert_eq((select count(*)::int from public.standards), 0,
-  '7a. the standards catalogue still ships empty - no test code survived');
+-- This used to assert the catalogue was EMPTY, which was true only while
+-- nothing had ever been published and was never what the check was for. The
+-- claim worth making is that this file's rows did not survive its rollback -
+-- and it has to keep holding now that 184 real benchmarks are published.
+select t.assert_eq((select count(*)::int from public.standards
+                     where code like 'TEST%' or code like 'XW%'), 0,
+  '7a. no test standard survived');
 select t.assert_eq((select count(*)::int from public.skill_standards), 0,
   '7b. and so does the crosswalk');
 select t.assert_eq((select count(*)::int from public.skills where code = 'TEST.XW.1'), 0,

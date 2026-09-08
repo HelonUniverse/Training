@@ -160,7 +160,16 @@ export const floridaBestStructuredAdapter: SourceAdapter = {
       }
 
       rowNumber += 1;
-      const locator = `line ${lineAt(text, marker.wordingAt)}`
+      // A CHARACTER OFFSET, not only a line.
+      //
+      // This document has 611 lines and 836,609 characters. One line carries as
+      // many as 26 benchmarks, and a strand heading can change halfway along
+      // one. "line 15" therefore does not identify a benchmark - it names a
+      // region containing dozens - and a locator that cannot single out the row
+      // it belongs to is not a locator, however official it looks in a
+      // provenance record. The offset is exact, and the sha256 on the source is
+      // what makes it stay exact.
+      const locator = `line ${lineAt(text, marker.wordingAt)}, char ${marker.wordingAt}`
         + (grade ? `, Grade: ${grade}` : '')
         + (strand ? `, Strand: ${strand}` : '');
       const { statementHtml, sections } = splitWording(marker.wordingHtml);

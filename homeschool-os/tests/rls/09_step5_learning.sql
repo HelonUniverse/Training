@@ -73,8 +73,14 @@ begin
   end;
 end $$;
 
-select t.assert_eq((select count(*)::int from public.standards), 0,
-  '1f. the standards crosswalk ships EMPTY - no invented codes');
+-- This asserted the table was EMPTY, which was a proxy for the real claim
+-- while nothing had been ingested. The claim is "no invented codes", and it is
+-- now checkable directly and far more strongly: every standard that exists came
+-- out of a registered artifact and points at the staged row it was read from.
+-- An invented code has nowhere to come from.
+select t.assert_eq((select count(*)::int from public.standards
+                     where source_id is null or staged_record_id is null), 0,
+  '1f. no standard exists that no artifact produced - no invented codes');
 select t.assert((select count(*) from public.standards_frameworks) >= 3,
   '1g. but the frameworks are named, with their own URLs');
 commit;
