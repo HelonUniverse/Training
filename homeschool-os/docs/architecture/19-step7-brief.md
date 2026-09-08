@@ -120,10 +120,18 @@ Split into three distinct concepts, each its own column:
    Proposed: `parent · teacher · tutor · evaluator · student_self ·
    assessment_instrument · provider_system · portfolio_artifact ·
    diagnostic_session`.
-2. **Evidence confidence** — *how much this particular observation tells us,*
-   independent of who made it. A parent watching carefully over a week can be
-   more informative than a single test item. Proposed: `incidental · observed ·
-   corroborated`. **Vocabulary needs approval — see §28.**
+2. **Evidence confidence** — *how strong the evidence is, and nothing else.*
+   **APPROVED: `preliminary · supported · corroborated`.**
+
+   This axis describes evidence strength only. It must **not** encode who
+   observed it, source authority, AI provenance, or the child's mastery state —
+   those are axes 1, 3 and §4 respectively. A parent watching carefully over a
+   week can reach `corroborated`; a single test item is `preliminary`. Who
+   observed it does not move this axis, and this axis does not move the state.
+
+   Enforce it: a test must show that changing only the observation authority
+   leaves evidence confidence untouched, and that changing only evidence
+   confidence does not by itself change a skill state.
 3. **Record provenance** — *how this row came to exist.* Proposed:
    `human_entered · human_confirmed_ai_proposal · ai_proposed_unreviewed ·
    document_extraction · provider_import · system_computed`.
@@ -223,8 +231,24 @@ like it is.
 **`refresh_suggested` is a separate, derived, advisory signal. It is not a
 mastery state and it never appears in the state model of §4.**
 
-- It is computed alongside the state, from time since last evidence and nothing
-  else about the child.
+**DEFAULT: OFF for newly onboarded families.** Build the capability; do not let
+it fire on day one, and never let elapsed time alone produce a recommendation.
+
+**Elapsed time is necessary but not sufficient.** A refresh suggestion requires
+all three:
+
+1. prior **`secure`** evidence — nothing below `secure` may be "refreshed",
+   because refreshing something never established is just instruction framed as
+   maintenance;
+2. **current relevance** — the skill still matters to what this child is doing
+   now;
+3. elapsed time beyond the configured interval.
+
+If a technical default interval is required, use **180 days**, and make it
+configurable per family. The interval is a floor on the third condition, never
+a trigger on its own.
+
+- It is computed alongside the state, from those three conditions together.
 - It **never** downgrades `secure`. A child who showed something six months ago
   is still `secure`; the signal says only that revisiting it might be
   worthwhile. If a recompute would move `secure` to a lower state because time
@@ -233,6 +257,9 @@ mastery state and it never appears in the state model of §4.**
 - It carries its own reason ("last shown in March") and is always dismissible.
 - A family can turn it off entirely, and the parameters are visible and
   adjustable rather than hidden constants.
+- It **never**: alters a mastery state, classifies a child as deficient, or
+  enters a "needs attention" queue by itself. It is an offer, and a family that
+  ignores every one of them forever is using Nestra correctly.
 - Family-facing wording is *worth revisiting*, never *expired*, *stale*,
   *lapsed*, or *lost*.
 
@@ -344,6 +371,20 @@ cover every new string STEP 7 introduces, in **both** `en-US` and `es-US`.
 - The §3 decisions land **first**, in their own migrations, before any new
   profile table exists. Building the profile and then fixing the enums
   underneath it is how the old semantics survive in a new table.
+- **DECIDED: reshape `student_skills` and `student_skill_events` IN PLACE.**
+  Both are empty. Do not create parallel, superseded or `_v2` tables — one
+  canonical lineage, or the next person inherits two tables and a trap.
+  - Drop the obsolete columns explicitly (`score`, and the old `mastery_level`
+    and `confidence` columns as they are replaced). No dead columns left behind.
+  - Drop the retired enums (`app.mastery_level`, `app.confidence_level`) once no
+    column uses them. An enum nobody dropped is an enum somebody will use.
+  - **Add the retired semantics to `app.assert_schema_invariants()`**, following
+    the precedent of migration 0072, which forbids `framework`, `framework_ref`,
+    `standard`, `standard_id`, `standard_ref`, `standard_code` and
+    `standards_code` from ever reappearing on `public.skills` by checking
+    `pg_attribute`. Do the same on the profile tables for `score`,
+    `mastery_level`, `percent`, `percentage` and `grade_level`. A decision that
+    lives only in a document is a decision that comes back.
 - **Migrating must not invent knowledge about a child.** All five affected
   columns currently hold zero rows, so the honest migration is structural. But
   write it as though rows existed, because one day they will:
@@ -500,21 +541,65 @@ End with exactly one of:
     STEP 7 PASS — STUDENT SKILL PROFILE + ADAPTIVE DIAGNOSTIC COMPLETE
     STOP — STEP 7 NOT COMPLETE
 
-## 27. Open decisions requiring approval before implementation
+## 27. Consistency review against the existing schema (2026-09-08)
 
-Everything in §3 is decided. These are not, and must be resolved with Carla
-rather than chosen by the implementer:
+Every decision is resolved. What follows is what a reshape in place actually
+touches — verified against the migrations and `homeschool-os-dev`, not assumed.
+**Read this before writing the first migration.**
 
-1. **The `evidence_confidence` vocabulary.** §3.3 proposes `incidental ·
-   observed · corroborated`. The axis is settled; the words are not, and they
-   will surface in the UI.
-2. **Whether `student_skills` / `student_skill_events` are migrated or
-   superseded.** Both are empty. Reshaping them keeps one lineage; replacing
-   them with purpose-built tables leaves two tables where one is a trap for the
-   next person. Recommend one, with reasons, before writing the migration.
-3. **The `refresh_suggested` default window**, and whether it is on or off for
-   a newly onboarded family. Recommend off until a family has enough history
-   for the signal to mean anything.
+**Safe — no change needed:**
+
+- **RLS policies do not reference the reshaped columns.** Every policy on
+  `student_skills` and `student_skill_events` keys on `student_id` through
+  `app.my_student_ids_for(...)` and `app.can_student_action(...)`. Dropping
+  `score`, `mastery_level` and `confidence` breaks no policy. Re-run the RLS
+  suite anyway, but do not expect to rewrite policies.
+- **No application code reads or writes mastery.** The only occurrences in
+  `src/` are two comments explaining that STEP 5 deliberately does not write it.
+  There is no UI, action or type to migrate.
+
+**Must be handled — these will break or silently rot:**
+
+- **`app.attach_history('public.student_skills')`** (migration 0028) attaches
+  record history to the table. Verify it after the reshape and confirm it
+  captures the new columns rather than the retired ones.
+- **`student_skills_review_idx` is on `(student_id, mastery_level)`** — an index
+  on a column being replaced. Drop and recreate it against the new state column.
+- **`student_skill_events` keeps history natively** (per 0028). That is
+  compatible with the new model and should be preserved: the events table is the
+  immutable record, `student_skills` the current state. Do not make it mutable.
+- **`student_skills.ai_suggestion_id`** (FK added in 0019) is the existing link
+  to the AI proposal layer, and the natural anchor for `record_provenance`.
+  Reconcile the two rather than adding a second parallel mechanism.
+
+**Existing tests the reshape will break — update them, do not delete them:**
+
+- `tests/rls/02_invariants.sql:14,21` inserts `mastery_level, confidence, score`
+  directly. Rewrite against the new columns.
+- `tests/rls/02_invariants.sql:167–175` proves `student_skill_events` is
+  append-only by attempting `update ... set score = 99` and requiring a refusal.
+  **`score` is the column being retired**, so the append-only guarantee needs a
+  new column to test against. Losing this test would silently drop an
+  append-only guarantee — re-point it and assert it still refuses.
+- `tests/rls/09_step5_learning.sql:335–337` counts rows in both tables to prove
+  STEP 5 never writes mastery. That assertion still matters: STEP 7 writes state
+  through its own reviewed path, never as a side effect of evidence capture.
+  Keep it, adapted.
+- `tests/rls/06_privilege_escalation.sql` references `'student_skills'` as a
+  table-name string in audit and permission tests. Confirm it still resolves.
+
+**STEP 6 invariants that must still hold afterwards — re-run, do not assume:**
+
+- `app.prerequisites_are_not_imported()` still refuses `import` and
+  `ai_suggestion` prerequisite edges.
+- `app.is_standards_admin()` remains the only write path to standards, and
+  reading the catalogue still does not confer it.
+- The 184 published benchmarks, locators and provenance untouched: content
+  digest `b0c0d24c365da8ac39524aa30640d229`.
+- `skill_standards` and imported prerequisites remain at zero after every STEP 7
+  migration and every recompute.
+- The retired-column invariant from 0072 still fires on `public.skills`.
+- The §15 standards-independence test passes in both directions.
 
 ## 28. Stop conditions
 
