@@ -2,8 +2,21 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { Platform } from 'react-native';
 
-const url = process.env.EXPO_PUBLIC_SUPABASE_URL?.trim();
-const anonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY?.trim();
+/**
+ * El proyecto de la Red. Estas dos van dentro del paquete de la app a
+ * propósito: la clave `publishable` está diseñada para viajar en el cliente y
+ * lo que protege los datos son las políticas por fila de la base, no el
+ * secreto de esta cadena. Cualquiera que abra la web puede leerla del bundle,
+ * viva en el repositorio o en una variable de entorno.
+ *
+ * Las variables de entorno tienen prioridad, por si algún día hace falta
+ * apuntar a otro proyecto sin tocar el código.
+ */
+const DEFAULT_URL = 'https://jbitaqbzeklcztnqxylb.supabase.co';
+const DEFAULT_KEY = 'sb_publishable_g03pLbrR0wGkd4vLTFEqpg_9BO3DLA_';
+
+const url = process.env.EXPO_PUBLIC_SUPABASE_URL?.trim() || DEFAULT_URL;
+const anonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY?.trim() || DEFAULT_KEY;
 
 /**
  * La app funciona con y sin backend. Si faltan las variables de entorno se
