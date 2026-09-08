@@ -54,38 +54,99 @@ before learning may continue.
 If a screen or a field would let a parent conclude "my child is behind", it is
 wrong, however accurate the number behind it.
 
-## 3. Three inherited defects to confront BEFORE building on them
+## 3. Three inherited defects — DECIDED. Migrate forward before building.
 
-Do not build the profile on top of these. Decide, migrate forward, and say why
-in the migration.
+These are **product decisions, already made**. They are not open questions.
+Implement them in migrations that run before anything else in STEP 7, and state
+the reasoning in the migration itself.
 
-**3.1 `app.mastery_level` has no "unknown".** Its values are `not_started,
-introduced, developing, progressing, proficient, mastered`, and the column
-defaults to `not_started`. That is a *claim about the child* — "has not
-started" — where the truth is almost always "we have no evidence yet". A
-profile whose default state is a judgment will quietly tell thousands of
-parents their child has not started things the child does every day.
-**"We don't know" must be a first-class state, and it must be the default.**
+**Scope, verified 2026-09-08 against `homeschool-os-dev` and the migrations:**
+five columns carry the affected types, and every one of them holds **zero
+rows**. No fixture inserts into them either.
 
-**3.2 `student_skills.score` is `numeric(5,2)` bounded 0–100.** A percentage
-on a child. Justify it, restrict it, or retire it — but do not leave it there
-unexamined. If it survives, it must be impossible to render to a family as a
-percentage, and it must never be comparable between children.
+| table | column | type | current default | rows |
+|---|---|---|---|---|
+| `student_skills` | `mastery_level` | `app.mastery_level` | `'not_started'` NOT NULL | 0 |
+| `student_skills` | `confidence` | `app.confidence_level` | `'ai_suggested'` NOT NULL | 0 |
+| `student_skill_events` | `mastery_level` | `app.mastery_level` | none, nullable | 0 |
+| `student_skill_events` | `confidence` | `app.confidence_level` | none, NOT NULL | 0 |
+| `assessment_results` | `confidence` | `app.confidence_level` | `'assessment_confirmed'` NOT NULL | 0 |
 
-**3.3 `app.confidence_level` conflates two different questions.** Its values
-mix *who said it* (`parent_reported`, `teacher_observed`, `self_reported`) with
-*how strong the claim is* (`ai_suggested`, `assessment_confirmed`). These are
-independent axes — the same mistake STEP 6 corrected by separating authority,
-artifact kind and representation. A parent's careful observation and an AI
-guess must not be orderable on one scale. Separate **source** from **strength**.
+Two of those defaults are claims nobody made. `student_skills.confidence`
+defaults to `'ai_suggested'`, so a row a **parent** inserts asserts by default
+that AI suggested it. `assessment_results.confidence` defaults to
+`'assessment_confirmed'`, so any assessment result asserts by default that it is
+confirmed. Re-verify all five counts before migrating; if any is non-zero, stop
+and report rather than guessing what the rows meant.
+
+**3.1 `app.mastery_level` has no "unknown" — DECIDED: replace it.**
+Its values are `not_started, introduced, developing, progressing, proficient,
+mastered`, defaulting to `not_started`. That is a *claim about the child* where
+the truth is almost always "we have no evidence yet". A profile whose default
+state is a judgment will quietly tell thousands of parents their child has not
+started things the child does every day.
+
+Replace it with the state model in §4. `not_started` is retired as a state:
+there is no such thing in Nestra as a child who has not started. There is only
+a skill Nestra cannot yet characterize.
+
+**3.2 `student_skills.score` (0–100) — DECIDED: retire it as a mastery
+representation.** A percentage on a child is exactly the field that becomes
+"your child is at 62%".
+
+- It is retired as a representation of a child's mastery, and as the conceptual
+  source of truth for anything.
+- Numerical internal signals **may** exist where technically justified — for
+  example an uncertainty measure used to choose the next diagnostic probe.
+- Any such signal must satisfy all of: it is never rendered to a family as a
+  percentage or score; it is never the source of truth for a skill state; it is
+  never comparable between children; and its purpose is documented where it is
+  defined. A number that cannot meet all four does not get to exist.
+- The state model in §4 is the conceptual source of truth. Numbers serve it;
+  they never replace it.
+
+**3.3 `app.confidence_level` conflates three different questions — DECIDED:
+split it into three.** Its values mix *who observed it* (`parent_reported`,
+`teacher_observed`, `self_reported`), *how strong the observation is*
+(`assessment_confirmed`), and *how the record came to exist* (`ai_suggested`).
+Three independent axes flattened onto one scale — the same mistake STEP 6
+corrected by separating authority, artifact kind and representation. A parent's
+careful sustained observation and an AI guess must not be orderable against each
+other on a single enum.
+
+Split into three distinct concepts, each its own column:
+
+1. **Observation authority / source** — *who or what observed this.*
+   Proposed: `parent · teacher · tutor · evaluator · student_self ·
+   assessment_instrument · provider_system · portfolio_artifact ·
+   diagnostic_session`.
+2. **Evidence confidence** — *how much this particular observation tells us,*
+   independent of who made it. A parent watching carefully over a week can be
+   more informative than a single test item. Proposed: `incidental · observed ·
+   corroborated`. **Vocabulary needs approval — see §28.**
+3. **Record provenance** — *how this row came to exist.* Proposed:
+   `human_entered · human_confirmed_ai_proposal · ai_proposed_unreviewed ·
+   document_extraction · provider_import · system_computed`.
+
+Hard invariant on the third axis: a row whose provenance is
+`ai_proposed_unreviewed` may **never** contribute to a skill state. That is
+"AI proposes, humans decide" made structural rather than procedural, and it
+must be enforced by a constraint or trigger, not by convention.
+
+Fix the two dishonest defaults while you are there: no column may default to
+asserting who observed something or how the record came to exist.
 
 ## 4. The skill state model
 
 For each (student, skill), the profile records at minimum:
 
-- **state** — including an explicit unknown. Suggested shape:
-  `unknown · emerging · developing · secure · needs_refresh`. `unknown` is not
-  a deficiency and must never be rendered as one.
+- **state** — exactly four values, in this order:
+
+      unknown → emerging → developing → secure
+
+  This is the complete state model. Nothing else is a state. In particular
+  `needs_refresh` is **not** a state — see §9. `unknown` is not a deficiency
+  and must never be rendered as one.
 - **evidence sufficiency** — how much we have to go on, kept *separate* from
   state. "Secure on thin evidence" and "secure on rich evidence" are different
   claims and a parent deserves to see which one they are looking at.
@@ -103,13 +164,34 @@ the same position, even if both look "developing". Keep the two axes apart in
 the schema, in the recompute, and on screen. Collapsing them is how a system
 becomes confidently wrong about a child.
 
-## 6. Unknown is a first-class, non-negative state
+## 6. `unknown` means exactly one thing
+
+**`unknown` means only that Nestra lacks sufficient evidence to characterize
+the skill.** It is a statement about what Nestra knows, not about the child.
+
+It must never imply, in data, in copy, in styling, in ordering, or in any
+export, that the child:
+
+- has not started,
+- cannot do it,
+- is deficient or has a gap,
+- is behind,
+- or needs instruction in it.
+
+Consequences that follow from that and are not negotiable:
 
 - `unknown` is the default for every (student, skill) pair with no evidence.
-- It must never be styled as red, missing, incomplete, or a gap to close.
+- It is never styled as red, missing, incomplete, overdue, or a gap to close.
+- It never generates a prompt, badge, nag or notification framed as something
+  to fix, and it never sorts to the top of a list of things needing attention.
+- It may generate an **invitation** ("want to explore this?"), never a warning.
 - The family-facing word for it is closer to *"not shown yet"* than *"missing"*.
-- A profile that is 90% unknown for a newly onboarded child is **correct**, and
-  the UI must make that feel normal rather than alarming.
+- A profile that is 90% `unknown` for a newly onboarded child is **correct**,
+  and the UI must make that feel normal rather than alarming.
+
+Test the negative directly: assert that no `unknown` state produces a
+deficit-framed string in either locale, and that `unknown` is never an input to
+a "needs attention" surface.
 
 ## 7. Recompute must be deterministic and explainable
 
@@ -132,17 +214,31 @@ becomes confidently wrong about a child.
 - The system may show that it disagrees with a parent. It may not act on that
   disagreement.
 
-## 9. Decay and refresh
+## 9. `refresh_suggested` is a recommendation, not a state
 
-Skills fade, and pretending otherwise makes a profile slowly untrue. But decay
-must never *demote* a child.
+Skills fade, and pretending otherwise makes a profile slowly untrue. But time
+passing is not evidence about a child, and it must never be allowed to look
+like it is.
 
-- Time since last evidence may move a state to `needs_refresh`.
-- It may **never** move a state downward on the strength axis, and never to
-  `unknown`.
-- `needs_refresh` means "worth revisiting", not "lost".
-- Decay parameters must be visible and adjustable, not hidden constants, and a
-  family must be able to turn decay off entirely.
+**`refresh_suggested` is a separate, derived, advisory signal. It is not a
+mastery state and it never appears in the state model of §4.**
+
+- It is computed alongside the state, from time since last evidence and nothing
+  else about the child.
+- It **never** downgrades `secure`. A child who showed something six months ago
+  is still `secure`; the signal says only that revisiting it might be
+  worthwhile. If a recompute would move `secure` to a lower state because time
+  passed, the recompute is wrong and must fail its test.
+- It never moves any state downward, and never to `unknown`.
+- It carries its own reason ("last shown in March") and is always dismissible.
+- A family can turn it off entirely, and the parameters are visible and
+  adjustable rather than hidden constants.
+- Family-facing wording is *worth revisiting*, never *expired*, *stale*,
+  *lapsed*, or *lost*.
+
+Model it as its own column or its own table — not as a value that could ever be
+assigned to the state column. Making it structurally impossible to store as a
+state is the point.
 
 ## 10. Readiness suggestions, never locks
 
@@ -235,13 +331,33 @@ Follow the table in `17-child-paced-learning.md`. Non-negotiable substitutions:
 | gap / deficiency | *worth revisiting* |
 | failed / incorrect | *not yet* |
 | test / assessment | *a few questions to find a starting point* |
+| not started | *not shown yet* — see §6, this is about Nestra, not the child |
+| expired / stale / lapsed | *worth revisiting* |
+| 62% / score / level | there is no family-facing equivalent — see §3.2 |
 
 `scripts/check-family-language.mjs` already enforces part of this. Extend it to
 cover every new string STEP 7 introduces, in **both** `en-US` and `es-US`.
 
-## 17. Schema requirements
+## 17. Schema requirements, and the migration of §3
 
 - Forward-only migrations, continuing from 0080.
+- The §3 decisions land **first**, in their own migrations, before any new
+  profile table exists. Building the profile and then fixing the enums
+  underneath it is how the old semantics survive in a new table.
+- **Migrating must not invent knowledge about a child.** All five affected
+  columns currently hold zero rows, so the honest migration is structural. But
+  write it as though rows existed, because one day they will:
+  - No old `mastery_level` value may be mapped to a *higher* new state than the
+    evidence supports. `not_started` maps to `unknown` — never to `emerging`,
+    because "we were told nothing" is not "the child is beginning".
+  - No old `confidence_level` value may be split into all three new axes by
+    guessing the two it never carried. `parent_reported` tells you the source;
+    it tells you nothing about confidence or provenance, and those must migrate
+    to an explicit unknown rather than to a plausible-looking default.
+  - Where the old value cannot answer a new question, the new column records
+    that it does not know. Refuse to fill it in.
+- If any of the five columns is non-zero at migration time, **stop and report**.
+  Do not migrate rows whose meaning you inferred.
 - Every new table has RLS enabled and explicit policies. No table without a
   policy — 0074 shipped a readable, unwritable table and nobody noticed.
 - `app.assert_schema_invariants()` must pass after every migration.
@@ -303,6 +419,20 @@ If a state cannot be explained, it must not be shown.
   session yields partial proposals; no probe selection reads grade, age or
   standards; results never write state directly.
 - The identical-results test from §15, run both ways.
+- **Migration regression tests for §3, written against synthetic pre-migration
+  rows — not against the empty tables.** A migration test run on zero rows
+  proves nothing and passes for the wrong reason; that is precisely the vacuous
+  test §23.3 forbids. Insert rows carrying every old `mastery_level` and every
+  old `confidence_level` value, migrate, and assert:
+  - `not_started` became `unknown`, and no row moved to a state above what its
+    evidence supports;
+  - no new axis was populated with a value the old enum could not have carried;
+  - unanswerable axes came out explicitly unknown rather than defaulted;
+  - no row gained a claim about a child that did not exist before the migration.
+- A test that `refresh_suggested` cannot be written into the state column at
+  all — attempt it and assert the database refuses.
+- A test that a row with provenance `ai_proposed_unreviewed` cannot contribute
+  to a state.
 - Family-language guard extended to all new strings, both locales.
 - E2E at desktop / tablet / mobile.
 - No test may pass by doing nothing — assert the precondition before asserting
@@ -343,6 +473,9 @@ If a state cannot be explained, it must not be shown.
 - Grade-level placement, or any "your child is at grade N" output.
 - Percentiles, norms, grade equivalents, cohort comparison.
 - Any score shown to a child.
+- Any child-facing mastery percentage, for a child or for a parent.
+- Any numeric signal that is the conceptual source of truth for a skill state.
+- `needs_refresh`, or any other value, as a fifth state.
 - Automatic skill↔standard mapping.
 - Standards-driven next-skill selection.
 - A diagnostic that is required, gated, timed by default, or that continues
@@ -354,8 +487,9 @@ If a state cannot be explained, it must not be shown.
 
 ## 26. Final report
 
-Return a numbered report covering: the three inherited defects and what was
-decided about each · the state model · recompute determinism evidence ·
+Return a numbered report covering: the three inherited defects and the
+migration that implemented each decision, including the pre-migration row counts
+you re-verified · the state model · recompute determinism evidence ·
 parent-override proof · decay behaviour · readiness · diagnostic safety rules
 with the test that proves each · the standards-independence result from §15 ·
 RLS and privacy proofs · family language · local and managed counts and the
@@ -366,7 +500,23 @@ End with exactly one of:
     STEP 7 PASS — STUDENT SKILL PROFILE + ADAPTIVE DIAGNOSTIC COMPLETE
     STOP — STEP 7 NOT COMPLETE
 
-## 27. Stop conditions
+## 27. Open decisions requiring approval before implementation
+
+Everything in §3 is decided. These are not, and must be resolved with Carla
+rather than chosen by the implementer:
+
+1. **The `evidence_confidence` vocabulary.** §3.3 proposes `incidental ·
+   observed · corroborated`. The axis is settled; the words are not, and they
+   will surface in the UI.
+2. **Whether `student_skills` / `student_skill_events` are migrated or
+   superseded.** Both are empty. Reshaping them keeps one lineage; replacing
+   them with purpose-built tables leaves two tables where one is a trap for the
+   next person. Recommend one, with reasons, before writing the migration.
+3. **The `refresh_suggested` default window**, and whether it is on or off for
+   a newly onboarded family. Recommend off until a family has enough history
+   for the signal to mean anything.
+
+## 28. Stop conditions
 
 STOP and report rather than proceeding if:
 
@@ -375,6 +525,8 @@ STOP and report rather than proceeding if:
 - the standards-independence test in §15 does not produce identical results;
 - cross-family isolation cannot be proved;
 - the diagnostic cannot be made to terminate safely under the frustration floor;
-- any inherited defect in §3 cannot be resolved without breaking existing data.
+- any inherited defect in §3 cannot be resolved without breaking existing data;
+- any of the five columns in §3 holds rows at migration time whose meaning
+  cannot be established without guessing.
 
 Do not begin STEP 8.
