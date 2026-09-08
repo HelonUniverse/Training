@@ -56,9 +56,9 @@ insert into _ingest (source_id) select public.register_standards_source(
 -- different things in two editions.
 insert into public.standards_framework_versions
   (framework_id, version_label, jurisdiction, subject, status, source_id, source_url)
-select f.id, '2020', 'FL', 'mathematics', 'active', i.source_id,
+select f.id, '2020', 'FL', 'mathematics', 'active', (select source_id from _ingest),
        'https://www.cpalms.org/downloads'
-  from public.standards_frameworks f, _ingest i where f.code = 'FL_BEST'
+  from public.standards_frameworks f where f.code = 'FL_BEST'
 on conflict (framework_id, version_label, subject) do nothing;
 update _ingest set version_id = (
   select v.id from public.standards_framework_versions v
@@ -70,30 +70,30 @@ update _ingest set version_id = (
 -- Called domains and not strands: "strand" is Florida's word, and the schema
 -- does not learn one authority's vocabulary.
 insert into public.standards_domains (framework_version_id, code, name, sequence)
-select version_id, 'NSO', 'NUMBER SENSE AND OPERATIONS', 10 from _ingest
+select (select version_id from _ingest), 'NSO', 'NUMBER SENSE AND OPERATIONS', 10
 on conflict (framework_version_id, code) do nothing;
 insert into public.standards_domains (framework_version_id, code, name, sequence)
-select version_id, 'AR', 'ALGEBRAIC REASONING', 20 from _ingest
+select (select version_id from _ingest), 'AR', 'ALGEBRAIC REASONING', 20
 on conflict (framework_version_id, code) do nothing;
 insert into public.standards_domains (framework_version_id, code, name, sequence)
-select version_id, 'M', 'MEASUREMENT', 30 from _ingest
+select (select version_id from _ingest), 'M', 'MEASUREMENT', 30
 on conflict (framework_version_id, code) do nothing;
 insert into public.standards_domains (framework_version_id, code, name, sequence)
-select version_id, 'GR', 'GEOMETRIC REASONING', 40 from _ingest
+select (select version_id from _ingest), 'GR', 'GEOMETRIC REASONING', 40
 on conflict (framework_version_id, code) do nothing;
 insert into public.standards_domains (framework_version_id, code, name, sequence)
-select version_id, 'DP', 'DATA ANALYSIS AND PROBABILITY', 50 from _ingest
+select (select version_id from _ingest), 'DP', 'DATA ANALYSIS AND PROBABILITY', 50
 on conflict (framework_version_id, code) do nothing;
 insert into public.standards_domains (framework_version_id, code, name, sequence)
-select version_id, 'FR', 'FRACTIONS', 60 from _ingest
+select (select version_id from _ingest), 'FR', 'FRACTIONS', 60
 on conflict (framework_version_id, code) do nothing;
 
 -- --- 4. the batch ----------------------------------------------------------
 update _ingest set batch_id = (public.open_standards_import(
-  p_source => source_id,
+  p_source => (select source_id from _ingest),
   p_adapter => 'florida-best-structured',
   p_adapter_version => '1.0.0',
-  p_framework_version => version_id,
+  p_framework_version => (select version_id from _ingest),
   p_scope => '{"grades":["K","1","2","3","4","5"],"subject":"mathematics","accessPoints":false}'::jsonb) ->> 'batch_id')::uuid;
 
 -- --- 5. staging: 184 rows ------------------------------------------------

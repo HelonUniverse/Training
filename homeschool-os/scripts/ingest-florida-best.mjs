@@ -47,8 +47,29 @@ const jsonb = (v) => `${q(JSON.stringify(v))}::jsonb`;
 const arr = (v) => (v.length === 0 ? "'{}'::text[]"
   : `array[${v.map(q).join(', ')}]::text[]`);
 
+/**
+ * TWO DIALECTS, ONE INGESTION.
+ *
+ * Local psql has the test harness's `t.login()` and can hold a temporary table
+ * across the whole file. The managed project is reached through an MCP channel
+ * that wraps every call in its own transaction, so a temporary table does not
+ * survive between calls and the session's identity has to be re-established at
+ * the top of each one.
+ *
+ * The DIFFERENCE IS ONLY IN HOW A SESSION IS ESTABLISHED AND HOW THE BATCH IS
+ * FOUND. Every row, every value and every RPC call is generated from the same
+ * parse, so "local and managed ran the same ingestion" is a fact about the
+ * generator rather than a claim about two runs that happened to agree.
+ *
+ * In managed mode the batch is re-derived from the artifact's sha256 in every
+ * chunk, which is also the safer construction: a chunk cannot append rows to
+ * whatever batch happens to be newest.
+ */
 function main() {
   const admin = process.argv[process.argv.indexOf('--admin') + 1];
+  const managed = process.argv.includes('--managed');
+  const chunkAt = process.argv.indexOf('--chunk');
+  const chunkSize = chunkAt > -1 ? Number(process.argv[chunkAt + 1]) : 0;
   if (!admin || !/^[0-9a-f-]{36}$/.test(admin)) {
     process.stderr.write('STOP: --admin <uuid> is required. Ingestion runs as a person.\n');
     process.exit(2);
@@ -99,9 +120,25 @@ function main() {
   w('-- person would use. Nothing here uses a service role.');
   w('-- =============================================================================');
   w();
-  w('begin;');
+  if (!managed) w('begin;');
   w();
-  w(`select t.login(${q(admin)});`);
+  // The session, established the way this deployment can establish one.
+  const session = () => {
+    if (managed) {
+      w("set local role authenticated;");
+      w("select set_config('request.jwt.claims',");
+      w(`  json_build_object('sub', ${q(admin)}, 'role', 'authenticated')::text, true);`);
+    } else {
+      w(`select t.login(${q(admin)});`);
+    }
+  };
+  const batchRef = managed
+    ? `(select b.id from public.standards_import_batches b
+        join public.standards_sources s on s.id = b.source_id
+       where s.sha256 = ${q(EXPECTED_SHA256)} and b.adapter = ${q(parsed.adapter)})`
+    : '(select batch_id from _ingest)';
+
+  session();
   w('-- Refuse loudly rather than staging 184 rows as the wrong user. Written as a');
   w('-- raise and not as a CASE over 1/0: Postgres folds constant expressions at');
   w('-- plan time, so that guard fires whichever branch is taken - it would have');
@@ -115,8 +152,12 @@ function main() {
   w();
 
   w('-- --- 1. the artifact -------------------------------------------------------');
-  w('create temporary table _ingest (source_id uuid, version_id uuid, batch_id uuid);');
-  w('insert into _ingest (source_id) select public.register_standards_source(');
+  if (managed) {
+    w('select public.register_standards_source(');
+  } else {
+    w('create temporary table _ingest (source_id uuid, version_id uuid, batch_id uuid);');
+    w('insert into _ingest (source_id) select public.register_standards_source(');
+  }
   w(`  p_authority       => ${q(PROVENANCE.authority)},`);
   w(`  p_authority_name  => ${q(PROVENANCE.authorityName)},`);
   w(`  p_artifact_name   => ${q(PROVENANCE.artifactName)},`);
@@ -137,17 +178,28 @@ function main() {
   w('-- --- 2. the framework version ----------------------------------------------');
   w('-- A benchmark code is not an identity without one: the same code can mean');
   w('-- different things in two editions.');
+  const sourceRef = managed
+    ? `(select id from public.standards_sources where sha256 = ${q(EXPECTED_SHA256)})`
+    : '(select source_id from _ingest)';
+  const versionRef = managed
+    ? `(select v.id from public.standards_framework_versions v
+        join public.standards_frameworks f on f.id = v.framework_id
+       where f.code = ${q(FRAMEWORK_CODE)} and v.version_label = ${q(VERSION_LABEL)}
+         and v.subject = ${q(SUBJECT)})`
+    : '(select version_id from _ingest)';
   w('insert into public.standards_framework_versions');
   w('  (framework_id, version_label, jurisdiction, subject, status, source_id, source_url)');
-  w(`select f.id, ${q(VERSION_LABEL)}, 'FL', ${q(SUBJECT)}, 'active', i.source_id,`);
+  w(`select f.id, ${q(VERSION_LABEL)}, 'FL', ${q(SUBJECT)}, 'active', ${sourceRef},`);
   w(`       ${q(PROVENANCE.officialSourcePage)}`);
-  w(`  from public.standards_frameworks f, _ingest i where f.code = ${q(FRAMEWORK_CODE)}`);
+  w(`  from public.standards_frameworks f where f.code = ${q(FRAMEWORK_CODE)}`);
   w('on conflict (framework_id, version_label, subject) do nothing;');
-  w('update _ingest set version_id = (');
-  w('  select v.id from public.standards_framework_versions v');
-  w('    join public.standards_frameworks f on f.id = v.framework_id');
-  w(`   where f.code = ${q(FRAMEWORK_CODE)} and v.version_label = ${q(VERSION_LABEL)}`);
-  w(`     and v.subject = ${q(SUBJECT)});`);
+  if (!managed) {
+    w('update _ingest set version_id = (');
+    w('  select v.id from public.standards_framework_versions v');
+    w('    join public.standards_frameworks f on f.id = v.framework_id');
+    w(`   where f.code = ${q(FRAMEWORK_CODE)} and v.version_label = ${q(VERSION_LABEL)}`);
+    w(`     and v.subject = ${q(SUBJECT)});`);
+  }
   w();
 
   w('-- --- 3. the domains the document declares ----------------------------------');
@@ -155,26 +207,103 @@ function main() {
   w('-- does not learn one authority\'s vocabulary.');
   for (const [i, d] of parsed.domains.entries()) {
     w('insert into public.standards_domains (framework_version_id, code, name, sequence)');
-    w(`select version_id, ${q(d.code)}, ${q(d.name)}, ${(i + 1) * 10} from _ingest`);
+    w(`select ${versionRef}, ${q(d.code)}, ${q(d.name)}, ${(i + 1) * 10}`);
     w('on conflict (framework_version_id, code) do nothing;');
   }
   w();
 
   w('-- --- 4. the batch ----------------------------------------------------------');
-  w('update _ingest set batch_id = (public.open_standards_import(');
-  w('  p_source => source_id,');
+  w(managed ? 'select public.open_standards_import('
+            : 'update _ingest set batch_id = (public.open_standards_import(');
+  w(`  p_source => ${sourceRef},`);
   w(`  p_adapter => ${q(parsed.adapter)},`);
   w(`  p_adapter_version => ${q(parsed.adapterVersion)},`);
-  w('  p_framework_version => version_id,');
-  w(`  p_scope => ${jsonb(ADAPTER_SCOPE)}) ->> 'batch_id')::uuid;`);
+  w(`  p_framework_version => ${versionRef},`);
+  w(`  p_scope => ${jsonb(ADAPTER_SCOPE)})${managed ? ';' : " ->> 'batch_id')::uuid;"}`);
   w();
 
   w(`-- --- 5. staging: ${parsed.rows.length} rows ------------------------------------------------`);
   w('-- The importer writes here and has no path to public.standards.');
-  for (const row of parsed.rows) {
+
+  const rowDocument = (row) => {
     const raw = row.source.raw;
+    return {
+      n: row.rowNumber, st: row.status,
+      code: row.source.code, grade: row.source.grade,
+      dom: row.source.domainCode, domName: row.source.domainName,
+      lang: row.source.language, stmt: row.source.statement,
+      nCode: row.normalized.code, nGrade: row.normalized.grade,
+      nSubj: row.normalized.subject, kind: row.normalized.referenceKind,
+      aliases: row.normalized.aliases, warn: row.warnings, loc: row.locator,
+      raw: { sections: raw.sections, statedGrade: raw.statedGrade,
+             statedStrand: raw.statedStrand, codeGrade: raw.codeGrade,
+             codeStrand: raw.codeStrand, locator: raw.locator },
+    };
+  };
+
+  if (managed) {
+    // THE SAME RPC, THE SAME VALUES, A DIFFERENT ENVELOPE.
+    //
+    // The named-argument form used locally repeats sixteen parameter names 184
+    // times, which is more than half the bytes of this file. That is free on a
+    // local socket and is not free across a channel where every byte is paid
+    // for twice. So the values travel as one JSON document and a loop hands
+    // each one to `stage_standard_record` - the same function, with the same
+    // arguments, called the same number of times.
+    //
+    // The short keys are not obfuscation; they are the difference between one
+    // request and two.
+    const chunks = [];
+    for (let i = 0; i < parsed.rows.length; i += (chunkSize || parsed.rows.length)) {
+      chunks.push(parsed.rows.slice(i, i + (chunkSize || parsed.rows.length)));
+    }
+    chunks.forEach((chunk, index) => {
+      if (index > 0) {
+        w();
+        w(`-- ==== CHUNK ${index + 1} (rows ${chunk[0].rowNumber}-`
+          + `${chunk[chunk.length - 1].rowNumber}) ====`);
+        session();
+        w();
+      }
+      w('do $stage$');
+      w('declare r jsonb;');
+      w('begin');
+      w('  for r in select * from jsonb_array_elements($rows$');
+      w(`  ${JSON.stringify(chunk.map(rowDocument))}`);
+      w('  $rows$::jsonb) loop');
+      w('    perform public.stage_standard_record(');
+      w(`      p_batch => ${batchRef},`);
+      w("      p_row => (r->>'n')::integer, p_status => r->>'st',");
+      w("      p_source_code => r->>'code', p_source_statement => r->>'stmt',");
+      w("      p_source_grade => r->>'grade', p_source_domain_code => r->>'dom',");
+      w("      p_source_domain_name => r->>'domName', p_source_language => r->>'lang',");
+      w("      p_raw => r->'raw',");
+      w("      p_normalized_code => r->>'nCode', p_normalized_grade => r->>'nGrade',");
+      w("      p_normalized_subject => r->>'nSubj', p_reference_kind => r->>'kind',");
+      w("      p_aliases => (select coalesce(array_agg(value #>> '{}'), '{}')");
+      w("                      from jsonb_array_elements(r->'aliases')),");
+      w("      p_warnings => r->'warn', p_source_locator => r->>'loc');");
+      w('  end loop;');
+      w('end $stage$;');
+    });
+    w();
+  }
+
+  if (!managed) parsed.rows.forEach((row) => {
+    const raw = row.source.raw;
+    if (chunkSize > 0 && row.rowNumber > 1 && (row.rowNumber - 1) % chunkSize === 0) {
+      // A chunk boundary. Each chunk re-establishes its own session and finds
+      // its own batch, so it is a complete, independently runnable transaction
+      // rather than a fragment that only works after its predecessor.
+      w();
+      w(`-- ==== CHUNK ${Math.floor((row.rowNumber - 1) / chunkSize) + 1} `
+        + `(rows ${row.rowNumber}-`
+        + `${Math.min(row.rowNumber + chunkSize - 1, parsed.rows.length)}) ====`);
+      session();
+      w();
+    }
     w('select public.stage_standard_record(');
-    w(`  p_batch => (select batch_id from _ingest), p_row => ${row.rowNumber},`);
+    w(`  p_batch => ${batchRef}, p_row => ${row.rowNumber},`);
     w(`  p_status => ${q(row.status)},`);
     w(`  p_source_code => ${q(row.source.code)},`);
     w(`  p_source_statement => ${q(row.source.statement)},`);
@@ -192,7 +321,7 @@ function main() {
     w(`  p_aliases => ${arr(row.normalized.aliases)},`);
     w(`  p_warnings => ${jsonb(row.warnings)},`);
     w(`  p_source_locator => ${q(row.locator)});`);
-  }
+  });
   w();
 
   w('-- --- 6. the batch is parsed, not approved ----------------------------------');
@@ -200,9 +329,9 @@ function main() {
   w(`       rows_seen = ${parsed.rows.length + parsed.outOfScope.length},`);
   w(`       rows_staged = ${parsed.rows.length}, rows_unresolved = 0,`);
   w(`       warnings = ${jsonb(parsed.warnings)}`);
-  w(' where id = (select batch_id from _ingest);');
+  w(` where id = ${batchRef};`);
   w();
-  w('commit;');
+  if (!managed) w('commit;');
   w();
   w('-- Publication is NOT in this file. A person reviews the staged rows and');
   w('-- approves them, and only then does publish_standards_batch run. The gate');
