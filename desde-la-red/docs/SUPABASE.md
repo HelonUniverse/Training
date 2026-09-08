@@ -22,14 +22,18 @@ sola si nadie la usa durante una semana y se despierta con un clic).
 
 ## 2 · Aplicar el esquema
 
-En el proyecto → **SQL Editor** → pegar y ejecutar, en este orden:
+En el proyecto → **SQL Editor** → pegar `supabase/instalar.sql` entero y ejecutar.
+Trae dentro las tres migraciones en orden y se puede correr dos veces sin duplicar
+nada:
 
-1. `supabase/migrations/0001_schema.sql` — tablas, permisos por fila y el disparador
-   que crea el perfil al registrarse.
-2. `supabase/migrations/0002_seed.sql` — las 8 enseñanzas, 5 guías, 10 servicios,
-   3 círculos, 4 encuentros y 5 voces con las que nace la Red.
-3. `supabase/migrations/0003_admin_lectura.sql` — deja que las administradoras
-   lean las reservas de todo el mundo, para el panel.
+1. `0001_schema.sql` — tablas, permisos por fila y el disparador que crea el perfil
+   al registrarse.
+2. `0002_seed.sql` — las 8 enseñanzas, 5 guías, 10 servicios, 3 círculos,
+   4 encuentros y 5 voces con las que nace la Red.
+3. `0003_admin_lectura.sql` — deja que las administradoras lean las reservas de
+   todo el mundo, para el panel.
+
+Las migraciones son la fuente; `instalar.sql` se regenera con `npm run sql`.
 
 Para regenerar el segundo archivo desde el contenido de `src/data/`:
 

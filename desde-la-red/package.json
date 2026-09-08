@@ -46,7 +46,8 @@
     "assets": "node scripts/generate-assets.js",
     "demo": "node scripts/build-web-demo.js",
     "build:web": "node scripts/generate-assets.js && expo export --platform web --output-dir dist && node scripts/finish-web-build.js dist",
-    "seed": "node scripts/generate-seed.js"
+    "seed": "node scripts/generate-seed.js",
+    "sql": "node scripts/build-install-sql.js"
   },
   "private": true
 }
