@@ -81,7 +81,6 @@ export default function LoginScreen() {
           keyboardShouldPersistTaps="handled"
         >
           <View style={styles.brand}>
-            <Text style={styles.overline}>Helonium</Text>
             <BrandLogo size={64} align="left" />
             <Text style={styles.tagline}>
               {mode === 'login'
@@ -213,13 +212,6 @@ const styles = StyleSheet.create({
   scroll: { paddingHorizontal: screenPadding, gap: spacing.xxl },
 
   brand: { gap: 12 },
-  overline: {
-    fontFamily: fonts.bodyMedium,
-    fontSize: 10,
-    letterSpacing: 4.5,
-    textTransform: 'uppercase',
-    color: colors.cyan,
-  },
   tagline: {
     fontFamily: fonts.body,
     fontSize: 14.5,

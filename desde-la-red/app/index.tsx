@@ -108,7 +108,6 @@ export default function SplashRoute() {
       />
 
       <Animated.View style={[styles.brand, { opacity: fade, transform: [{ translateY: rise }] }]}>
-        <Text style={styles.overline}>Helonium</Text>
         <BrandLogo size={82} />
         <Animated.View
           style={[
@@ -132,14 +131,6 @@ const styles = StyleSheet.create({
     right: 0,
     alignItems: 'center',
     paddingHorizontal: 28,
-  },
-  overline: {
-    fontFamily: fonts.bodyMedium,
-    fontSize: 10.5,
-    letterSpacing: 5,
-    textTransform: 'uppercase',
-    color: colors.cyan,
-    marginBottom: 20,
   },
   rule: {
     height: StyleSheet.hairlineWidth,
