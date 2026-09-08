@@ -4,39 +4,58 @@ import { useRouter } from 'expo-router';
 import React, { useEffect, useRef } from 'react';
 import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
 
+import { BrandLogo } from '@/components/BrandLogo';
 import { imageSource } from '@/data/images';
 import { useApp } from '@/store/app-store';
 import { colors, fonts } from '@/theme';
 
-/** Pantalla 1 — Splash. Constelación que respira antes de entrar. */
+/** Pantalla 1 — Splash. El globo de la Red asciende y la marca aparece. */
 export default function SplashRoute() {
   const router = useRouter();
   const { state, hydrated } = useApp();
 
   const fade = useRef(new Animated.Value(0)).current;
-  const rise = useRef(new Animated.Value(18)).current;
-  const halo = useRef(new Animated.Value(0.85)).current;
+  const rise = useRef(new Animated.Value(20)).current;
+  const globeRise = useRef(new Animated.Value(46)).current;
+  const globeFade = useRef(new Animated.Value(0)).current;
   const line = useRef(new Animated.Value(0)).current;
+  const pulse = useRef(new Animated.Value(1)).current;
 
   useEffect(() => {
+    Animated.parallel([
+      Animated.timing(globeFade, {
+        toValue: 1,
+        duration: 1400,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+      Animated.timing(globeRise, {
+        toValue: 0,
+        duration: 2000,
+        easing: Easing.out(Easing.cubic),
+        useNativeDriver: true,
+      }),
+    ]).start();
+
     Animated.sequence([
+      Animated.delay(260),
       Animated.parallel([
         Animated.timing(fade, {
           toValue: 1,
-          duration: 1100,
+          duration: 1000,
           easing: Easing.out(Easing.cubic),
           useNativeDriver: true,
         }),
         Animated.timing(rise, {
           toValue: 0,
-          duration: 1100,
+          duration: 1000,
           easing: Easing.out(Easing.cubic),
           useNativeDriver: true,
         }),
       ]),
       Animated.timing(line, {
         toValue: 1,
-        duration: 700,
+        duration: 620,
         easing: Easing.inOut(Easing.quad),
         useNativeDriver: false,
       }),
@@ -44,58 +63,60 @@ export default function SplashRoute() {
 
     Animated.loop(
       Animated.sequence([
-        Animated.timing(halo, {
-          toValue: 1.06,
-          duration: 2400,
+        Animated.timing(pulse, {
+          toValue: 1.03,
+          duration: 2600,
           easing: Easing.inOut(Easing.sin),
           useNativeDriver: true,
         }),
-        Animated.timing(halo, {
-          toValue: 0.9,
-          duration: 2400,
+        Animated.timing(pulse, {
+          toValue: 0.98,
+          duration: 2600,
           easing: Easing.inOut(Easing.sin),
           useNativeDriver: true,
         }),
       ]),
     ).start();
-  }, [fade, rise, halo, line]);
+  }, [fade, rise, globeFade, globeRise, line, pulse]);
 
   useEffect(() => {
     if (!hydrated) return;
     const timeout = setTimeout(() => {
       router.replace(state.user ? '/(tabs)/hoy' : '/(auth)/login');
-    }, 1900);
+    }, 2200);
     return () => clearTimeout(timeout);
   }, [hydrated, state.user, router]);
 
   return (
     <View style={styles.root}>
-      <Animated.View style={[StyleSheet.absoluteFill, { transform: [{ scale: halo }] }]}>
+      <Animated.View
+        style={[
+          StyleSheet.absoluteFill,
+          { opacity: globeFade, transform: [{ translateY: globeRise }, { scale: pulse }] },
+        ]}
+      >
         <Image
-          source={imageSource('bg-network')}
+          source={imageSource('bg-auth')}
           style={StyleSheet.absoluteFill}
           contentFit="cover"
         />
       </Animated.View>
       <LinearGradient
-        colors={['rgba(4,7,15,0.5)', 'rgba(4,7,15,0.86)', '#04070F']}
-        style={StyleSheet.absoluteFill}
+        colors={['rgba(3,8,20,0.55)', 'rgba(3,8,20,0.15)', 'rgba(3,8,20,0.0)']}
+        style={styles.topScrim}
+        pointerEvents="none"
       />
 
-      <Animated.View
-        style={[styles.center, { opacity: fade, transform: [{ translateY: rise }] }]}
-      >
+      <Animated.View style={[styles.brand, { opacity: fade, transform: [{ translateY: rise }] }]}>
         <Text style={styles.overline}>Helonium</Text>
-        <Text style={styles.title}>Desde{'\n'}la Red</Text>
+        <BrandLogo size={82} />
         <Animated.View
           style={[
             styles.rule,
-            {
-              width: line.interpolate({ inputRange: [0, 1], outputRange: [0, 84] }),
-            },
+            { width: line.interpolate({ inputRange: [0, 1], outputRange: [0, 108] }) },
           ]}
         />
-        <Text style={styles.tagline}>Enseñanza viva para el alma contemporánea</Text>
+        <Text style={styles.tagline}>Nos daremos a conocer muy pronto</Text>
       </Animated.View>
     </View>
   );
@@ -103,15 +124,14 @@ export default function SplashRoute() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.night },
-  center: {
+  topScrim: { position: 'absolute', top: 0, left: 0, right: 0, height: '52%' },
+  brand: {
     position: 'absolute',
-    top: 0,
+    top: '16%',
     left: 0,
     right: 0,
-    bottom: 0,
     alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: 32,
+    paddingHorizontal: 28,
   },
   overline: {
     fontFamily: fonts.bodyMedium,
@@ -119,25 +139,17 @@ const styles = StyleSheet.create({
     letterSpacing: 5,
     textTransform: 'uppercase',
     color: colors.cyan,
-    marginBottom: 22,
-  },
-  title: {
-    fontFamily: fonts.displayLight,
-    fontSize: 58,
-    lineHeight: 62,
-    letterSpacing: 1,
-    textAlign: 'center',
-    color: colors.text,
+    marginBottom: 20,
   },
   rule: {
     height: StyleSheet.hairlineWidth,
-    backgroundColor: colors.gold,
-    marginTop: 26,
-    marginBottom: 22,
+    backgroundColor: colors.cyan,
+    marginTop: 24,
+    marginBottom: 18,
   },
   tagline: {
-    fontFamily: fonts.displayItalic,
-    fontSize: 16,
+    fontFamily: fonts.body,
+    fontSize: 15,
     letterSpacing: 0.4,
     textAlign: 'center',
     color: colors.textSoft,

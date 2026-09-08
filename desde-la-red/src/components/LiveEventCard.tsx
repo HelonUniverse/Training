@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     fontSize: 10.5,
     letterSpacing: 1.6,
     textTransform: 'uppercase',
-    color: colors.gold,
+    color: colors.glow,
     marginBottom: 8,
   },
   title: {
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 11,
     paddingVertical: 6,
     borderRadius: radius.pill,
-    backgroundColor: 'rgba(4,7,15,0.6)',
+    backgroundColor: 'rgba(3,8,20,0.6)',
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: colors.borderSoft,
   },
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: radius.pill,
-    backgroundColor: 'rgba(4,7,15,0.55)',
+    backgroundColor: 'rgba(3,8,20,0.55)',
   },
   attendeesText: {
     fontFamily: fonts.bodyMedium,

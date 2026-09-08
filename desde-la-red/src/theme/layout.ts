@@ -45,7 +45,7 @@ export const shadows: Record<'soft' | 'lifted' | 'glow', ViewStyle> = {
   }) as ViewStyle,
   glow: Platform.select({
     ios: {
-      shadowColor: '#6FD8E6',
+      shadowColor: '#4FC9F8',
       shadowOpacity: 0.35,
       shadowRadius: 22,
       shadowOffset: { width: 0, height: 8 },

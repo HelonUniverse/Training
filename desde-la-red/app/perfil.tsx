@@ -45,11 +45,11 @@ export default function PerfilScreen() {
   return (
     <Screen padded={false} header={<ScreenHeader title="Perfil" />}>
       <View style={styles.hero}>
-        <Avatar initials={state.user?.initials ?? 'CM'} accent="gold" size={92} />
+        <Avatar initials={state.user?.initials ?? 'CM'} accent="glow" size={92} />
         <Text style={styles.name}>{state.user?.name ?? 'Carla'}</Text>
         <Text style={styles.email}>{state.user?.email ?? 'invitada@desdelared.app'}</Text>
         <View style={styles.memberTag}>
-          <Feather name="star" size={11} color={colors.gold} />
+          <Feather name="star" size={11} color={colors.glow} />
           <Text style={styles.memberText}>Miembro de la Red</Text>
         </View>
       </View>
@@ -75,7 +75,7 @@ export default function PerfilScreen() {
           onAction={() => router.push('/(tabs)/mi-camino')}
         />
         <View style={{ height: spacing.lg }} />
-        <Card glow accent="gold">
+        <Card glow accent="glow">
           {intentions.length > 0 ? (
             <>
               <Text style={styles.intentionText}>{intentions.join(' · ')}</Text>
@@ -218,7 +218,7 @@ function Toggle({
           onValueChange(v);
         }}
         trackColor={{ false: 'rgba(255,255,255,0.12)', true: 'rgba(231,194,125,0.5)' }}
-        thumbColor={value ? colors.gold : '#8FA3B4'}
+        thumbColor={value ? colors.glow : '#8FA3B4'}
         accessibilityLabel={label}
       />
     </View>
@@ -243,16 +243,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: radius.pill,
-    backgroundColor: colors.goldGlow,
+    backgroundColor: colors.glowSoft,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.borderGold,
+    borderColor: colors.borderGlow,
   },
   memberText: {
     fontFamily: fonts.bodyMedium,
     fontSize: 10,
     letterSpacing: 1.4,
     textTransform: 'uppercase',
-    color: colors.gold,
+    color: colors.glow,
   },
 
   statsRow: {
@@ -281,7 +281,7 @@ const styles = StyleSheet.create({
     fontFamily: fonts.display,
     fontSize: 24,
     lineHeight: 30,
-    color: colors.gold,
+    color: colors.glow,
   },
   intentionHint: {
     fontFamily: fonts.body,

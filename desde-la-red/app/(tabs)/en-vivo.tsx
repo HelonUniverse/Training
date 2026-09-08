@@ -149,7 +149,7 @@ export default function EnVivoScreen() {
                     <Button
                       label={isJoined ? 'Reservado' : 'Reservar mi lugar'}
                       icon={isJoined ? 'check' : 'calendar'}
-                      variant={isJoined ? 'outline' : 'gold'}
+                      variant={isJoined ? 'outline' : 'brand'}
                       size="sm"
                       full
                       onPress={() => toggleJoin(event.id, event.title)}

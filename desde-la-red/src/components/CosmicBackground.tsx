@@ -31,7 +31,7 @@ export function CosmicBackground({ image, intensity = 0.5, children, style }: Pr
             transition={420}
           />
           <LinearGradient
-            colors={['rgba(4,7,15,0.25)', 'rgba(4,7,15,0.72)', 'rgba(4,7,15,0.97)']}
+            colors={['rgba(3,8,20,0.25)', 'rgba(3,8,20,0.72)', 'rgba(3,8,20,0.97)']}
             style={StyleSheet.absoluteFill}
           />
         </>

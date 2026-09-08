@@ -31,7 +31,7 @@ export function ScreenHeader({ title, subtitle, action, transparent, onBack }: P
     <View style={[styles.wrap, { paddingTop: insets.top + 6 }]}>
       {!transparent ? (
         <LinearGradient
-          colors={['rgba(4,7,15,0.95)', 'rgba(4,7,15,0.0)']}
+          colors={['rgba(3,8,20,0.95)', 'rgba(3,8,20,0.0)']}
           style={StyleSheet.absoluteFill}
           pointerEvents="none"
         />
@@ -83,7 +83,7 @@ export function ScreenHeader({ title, subtitle, action, transparent, onBack }: P
             <Feather
               name={action.icon}
               size={17}
-              color={action.active ? colors.gold : colors.text}
+              color={action.active ? colors.glow : colors.text}
             />
           </Pressable>
         ) : (
@@ -109,9 +109,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: colors.borderSoft,
-    backgroundColor: 'rgba(8,19,38,0.65)',
+    backgroundColor: 'rgba(6,16,36,0.65)',
   },
-  circleActive: { borderColor: colors.borderGold, backgroundColor: colors.goldGlow },
+  circleActive: { borderColor: colors.borderGlow, backgroundColor: colors.glowSoft },
   circlePlaceholder: { width: 40, height: 40 },
   titleBox: { flex: 1, alignItems: 'center' },
   title: {

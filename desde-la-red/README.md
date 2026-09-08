@@ -1,9 +1,9 @@
 # Desde la Red — app móvil (React Native + Expo)
 
-App móvil real y navegable de **Desde la Red**, construida sobre el sistema visual
-aprobado: fondo azul noche/cósmico, cyan elegante, dorado cálido, tipografía
-premium (Cormorant Garamond + Inter), imágenes cinematográficas y tarjetas
-oscuras con bordes finos.
+App móvil real y navegable de **Desde la Red**, construida sobre el key art
+oficial de marca: espacio azul noche, globo terráqueo recubierto por una malla
+de nodos en cyan brillante, azul eléctrico, destellos blanco-hielo, tipografía
+tecnológica (Exo 2 + Inter) y tarjetas oscuras con bordes finos.
 
 Funciona **100 % en modo demo**: todo el estado vive en el dispositivo con
 AsyncStorage. **Todavía no hay Supabase ni ningún backend conectado.**
@@ -78,12 +78,22 @@ assets/images/          imágenes cinematográficas
 scripts/generate-assets.js  generador procedural de esas imágenes
 ```
 
+### Sistema visual
+
+- **Paleta** (`src/theme/colors.ts`): azul noche `#030814`, cyan `#4FC9F8`,
+  azul eléctrico `#2E7DF0` y blanco-hielo `#BFE9FF` como acento de mayor
+  jerarquía. Sin dorado: el key art es monocromo azul.
+- **Tipografía** (`src/theme/typography.ts`): Exo 2 para titulares (geométrica y
+  ancha, en la línea del logotipo) e Inter para interfaz y lectura larga.
+- **Logotipo** (`src/components/BrandLogo.tsx`): reconstruido en SVG — la "D"
+  con su racimo de nodos, el wordmark y el nodo-antena sobre la "d" de *Red*.
+
 ### Imágenes
 
-Las imágenes son **generadas proceduralmente** (nebulosas, auroras, rayos de luz,
-horizontes cósmicos) con la paleta oficial, así que no dependen de ningún
-servicio externo ni de licencias de terceros. Para regenerarlas o ajustar
-paletas:
+Las imágenes son **generadas proceduralmente** con la paleta oficial: el globo
+de red (continentes punteados, malla de nodos enlazados y halo atmosférico) más
+nebulosas, auroras y rayos de luz. No dependen de ningún servicio externo ni de
+licencias de terceros. Para regenerarlas o ajustar paletas:
 
 ```bash
 npm run assets

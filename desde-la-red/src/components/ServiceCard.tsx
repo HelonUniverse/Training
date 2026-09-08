@@ -36,7 +36,7 @@ export function ServiceCard({ service, onPress, selected, guideName }: Props) {
           <View style={styles.dot} />
           <Text style={styles.modality}>{service.modality}</Text>
         </View>
-        {selected ? <Feather name="check-circle" size={17} color={colors.gold} /> : null}
+        {selected ? <Feather name="check-circle" size={17} color={colors.glow} /> : null}
       </View>
 
       <Text style={styles.name}>{service.name}</Text>
@@ -66,8 +66,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
   },
   selected: {
-    borderColor: colors.borderGold,
-    backgroundColor: colors.goldGlow,
+    borderColor: colors.borderGlow,
+    backgroundColor: colors.glowSoft,
   },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   tags: { flexDirection: 'row', alignItems: 'center', gap: 8 },
@@ -112,7 +112,7 @@ const styles = StyleSheet.create({
   price: {
     fontFamily: fonts.displaySemi,
     fontSize: 19,
-    color: colors.gold,
+    color: colors.glow,
     letterSpacing: 0.3,
   },
 });

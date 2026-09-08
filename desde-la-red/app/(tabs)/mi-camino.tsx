@@ -61,7 +61,7 @@ export default function MiCaminoScreen() {
               </Text>
               {state.pathSavedAt ? (
                 <View style={styles.savedTag}>
-                  <Feather name="check" size={11} color={colors.gold} />
+                  <Feather name="check" size={11} color={colors.glow} />
                   <Text style={styles.savedTagText}>Guardado</Text>
                 </View>
               ) : null}
@@ -172,7 +172,7 @@ export default function MiCaminoScreen() {
               const service = findService(booking.serviceId);
               const guide = findGuide(booking.guideId);
               return (
-                <Card key={booking.id} glow accent="gold">
+                <Card key={booking.id} glow accent="glow">
                   <Text style={styles.bookingWhen}>
                     {booking.date} · {booking.time}
                   </Text>
@@ -228,7 +228,7 @@ export default function MiCaminoScreen() {
                 }}
                 style={({ pressed }) => [styles.savedRow, pressed && { opacity: 0.8 }]}
               >
-                <Feather name="bookmark" size={15} color={colors.gold} />
+                <Feather name="bookmark" size={15} color={colors.glow} />
                 <Text style={styles.savedTitle} numberOfLines={1}>
                   {t.title}
                 </Text>
@@ -249,7 +249,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     letterSpacing: 2.4,
     textTransform: 'uppercase',
-    color: colors.gold,
+    color: colors.glow,
   },
   title: {
     fontFamily: fonts.displayLight,
@@ -290,14 +290,14 @@ const styles = StyleSheet.create({
     paddingHorizontal: 9,
     paddingVertical: 4,
     borderRadius: radius.pill,
-    backgroundColor: colors.goldGlow,
+    backgroundColor: colors.glowSoft,
   },
   savedTagText: {
     fontFamily: fonts.bodyMedium,
     fontSize: 9.5,
     letterSpacing: 1.2,
     textTransform: 'uppercase',
-    color: colors.gold,
+    color: colors.glow,
   },
   track: {
     height: 3,
@@ -305,7 +305,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255,255,255,0.08)',
     overflow: 'hidden',
   },
-  fill: { height: 3, borderRadius: 2, backgroundColor: colors.gold },
+  fill: { height: 3, borderRadius: 2, backgroundColor: colors.glow },
 
   question: {
     fontFamily: fonts.display,
@@ -330,14 +330,14 @@ const styles = StyleSheet.create({
     borderColor: colors.borderSoft,
     backgroundColor: colors.surface,
   },
-  optionActive: { borderColor: colors.borderGold, backgroundColor: colors.goldGlow },
+  optionActive: { borderColor: colors.borderGlow, backgroundColor: colors.glowSoft },
   optionBody: { flex: 1, gap: 3 },
   optionLabel: {
     fontFamily: fonts.bodySemi,
     fontSize: 14.5,
     color: colors.text,
   },
-  optionLabelActive: { color: colors.gold },
+  optionLabelActive: { color: colors.glow },
   optionDescription: { fontFamily: fonts.body, fontSize: 12, color: colors.textMuted },
   check: {
     width: 22,
@@ -348,7 +348,7 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: colors.borderSoft,
   },
-  checkActive: { backgroundColor: colors.gold, borderColor: colors.gold },
+  checkActive: { backgroundColor: colors.glow, borderColor: colors.glow },
 
   reset: {
     flexDirection: 'row',
@@ -377,7 +377,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     letterSpacing: 1.8,
     textTransform: 'uppercase',
-    color: colors.gold,
+    color: colors.glow,
   },
   bookingName: {
     fontFamily: fonts.display,

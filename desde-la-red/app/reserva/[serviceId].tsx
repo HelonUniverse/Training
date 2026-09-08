@@ -61,7 +61,7 @@ export default function ReservaScreen() {
       <Screen header={<ScreenHeader title="Reserva confirmada" />}>
         <View style={styles.doneWrap}>
           <View style={styles.doneMark}>
-            <Feather name="check" size={26} color={colors.gold} />
+            <Feather name="check" size={26} color={colors.glow} />
           </View>
           <Text style={styles.doneTitle}>Tu lugar está reservado</Text>
           <Text style={styles.doneBody}>
@@ -70,7 +70,7 @@ export default function ReservaScreen() {
             {selectedDay?.full} · {time}
           </Text>
 
-          <Card glow accent="gold" style={{ marginTop: spacing.xxl, alignSelf: 'stretch' }}>
+          <Card glow accent="glow" style={{ marginTop: spacing.xxl, alignSelf: 'stretch' }}>
             <Text style={styles.doneNoteLabel}>Modo demo</Text>
             <Text style={styles.doneNote}>
               La reserva quedó guardada en este dispositivo. La verás en Mi Camino.
@@ -112,7 +112,7 @@ export default function ReservaScreen() {
           <View style={styles.summaryMeta}>
             <Meta icon="clock" text={formatDuration(service.durationMinutes)} />
             <Meta icon="map-pin" text={service.modality} />
-            <Meta icon="tag" text={formatPrice(service.price, service.currency)} gold />
+            <Meta icon="tag" text={formatPrice(service.price, service.currency)} strong />
           </View>
           <Text style={styles.summaryDescription}>{service.description}</Text>
           <View style={styles.includes}>
@@ -230,16 +230,16 @@ export default function ReservaScreen() {
 function Meta({
   icon,
   text,
-  gold,
+  strong,
 }: {
   icon: keyof typeof Feather.glyphMap;
   text: string;
-  gold?: boolean;
+  strong?: boolean;
 }) {
   return (
     <View style={styles.metaItem}>
-      <Feather name={icon} size={12} color={gold ? colors.gold : colors.textMuted} />
-      <Text style={[styles.metaText, gold && { color: colors.gold }]}>{text}</Text>
+      <Feather name={icon} size={12} color={strong ? colors.glow : colors.textMuted} />
+      <Text style={[styles.metaText, strong && { color: colors.glow }]}>{text}</Text>
     </View>
   );
 }
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
     borderColor: colors.borderSoft,
     backgroundColor: colors.surface,
   },
-  dayActive: { borderColor: colors.borderGold, backgroundColor: colors.goldGlow },
+  dayActive: { borderColor: colors.borderGlow, backgroundColor: colors.glowSoft },
   dayWeekday: {
     fontFamily: fonts.bodyMedium,
     fontSize: 10,
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
   },
   dayNumber: { fontFamily: fonts.display, fontSize: 24, color: colors.text },
   dayMonth: { fontFamily: fonts.body, fontSize: 10.5, color: colors.textMuted },
-  dayTextActive: { color: colors.gold },
+  dayTextActive: { color: colors.glow },
 
   timeGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   time: {
@@ -362,7 +362,7 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     color: colors.textMuted,
   },
-  totalValue: { fontFamily: fonts.display, fontSize: 28, color: colors.gold },
+  totalValue: { fontFamily: fonts.display, fontSize: 28, color: colors.glow },
   legal: {
     fontFamily: fonts.body,
     fontSize: 11,
@@ -379,8 +379,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.borderGold,
-    backgroundColor: colors.goldGlow,
+    borderColor: colors.borderGlow,
+    backgroundColor: colors.glowSoft,
     marginBottom: spacing.xxl,
   },
   doneTitle: {
@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     letterSpacing: 2,
     textTransform: 'uppercase',
-    color: colors.gold,
+    color: colors.glow,
     marginBottom: 8,
   },
   doneNote: {

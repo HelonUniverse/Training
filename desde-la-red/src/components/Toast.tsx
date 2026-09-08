@@ -62,7 +62,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
           ]}
         >
           <View style={styles.inner}>
-            <Feather name={message.icon ?? 'check'} size={14} color={colors.gold} />
+            <Feather name={message.icon ?? 'check'} size={14} color={colors.glow} />
             <Text style={styles.text}>{message.text}</Text>
           </View>
         </Animated.View>
@@ -89,8 +89,8 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: radius.pill,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.borderGold,
-    backgroundColor: 'rgba(9,17,32,0.96)',
+    borderColor: colors.borderGlow,
+    backgroundColor: 'rgba(6,16,36,0.96)',
   },
   text: {
     fontFamily: fonts.bodyMedium,

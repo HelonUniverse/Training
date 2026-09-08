@@ -38,7 +38,7 @@ export interface Guide {
   title: string;
   location: string;
   initials: string;
-  accent: 'cyan' | 'gold' | 'violet';
+  accent: 'cyan' | 'glow' | 'electric';
   years: number;
   circleCount: number;
   rating: number;
@@ -89,7 +89,7 @@ export interface NetworkPost {
   id: string;
   authorName: string;
   authorInitials: string;
-  accent: 'cyan' | 'gold' | 'violet';
+  accent: 'cyan' | 'glow' | 'electric';
   role: string;
   timeAgo: string;
   text: string;

@@ -39,7 +39,7 @@ export function ActionButton({ icon, label, onPress, active, flex = true }: Prop
         <Feather
           name={icon}
           size={15}
-          color={active ? colors.gold : colors.cyan}
+          color={active ? colors.glow : colors.cyan}
         />
         <Text style={[styles.label, active && styles.labelActive]} numberOfLines={1}>
           {label}
@@ -62,8 +62,8 @@ const styles = StyleSheet.create({
   },
   flex: { flex: 1 },
   active: {
-    borderColor: colors.borderGold,
-    backgroundColor: colors.goldGlow,
+    borderColor: colors.borderGlow,
+    backgroundColor: colors.glowSoft,
   },
   pressed: { opacity: 0.72, transform: [{ scale: 0.98 }] },
   row: { flexDirection: 'row', alignItems: 'center', gap: 7 },
@@ -73,5 +73,5 @@ const styles = StyleSheet.create({
     letterSpacing: 0.2,
     color: colors.textSoft,
   },
-  labelActive: { color: colors.gold },
+  labelActive: { color: colors.glow },
 });

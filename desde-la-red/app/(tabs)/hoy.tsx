@@ -77,7 +77,7 @@ export default function HoyScreen() {
             }}
             style={({ pressed }) => pressed && { opacity: 0.7 }}
           >
-            <Avatar initials={state.user?.initials ?? 'CM'} size={48} accent="gold" />
+            <Avatar initials={state.user?.initials ?? 'CM'} size={48} accent="glow" />
           </Pressable>
         </View>
 
@@ -101,7 +101,7 @@ export default function HoyScreen() {
           >
             <Text style={styles.readLabel}>Leer la enseñanza completa</Text>
             <View style={styles.readIcon}>
-              <Feather name="arrow-right" size={15} color={colors.gold} />
+              <Feather name="arrow-right" size={15} color={colors.glow} />
             </View>
           </Pressable>
 
@@ -189,7 +189,7 @@ export default function HoyScreen() {
 
         {/* Práctica del día */}
         <View style={styles.block}>
-          <Card glow accent="gold" padding={22}>
+          <Card glow accent="glow" padding={22}>
             <Text style={styles.practiceOverline}>Práctica de hoy</Text>
             <Text style={styles.practiceTitle}>Cinco minutos antes del teléfono</Text>
             <Text style={styles.practiceBody}>
@@ -197,7 +197,7 @@ export default function HoyScreen() {
               respondas. Solo sostenla.
             </Text>
             <View style={styles.streakRow}>
-              <Feather name="sunrise" size={14} color={colors.gold} />
+              <Feather name="sunrise" size={14} color={colors.glow} />
               <Text style={styles.streakText}>
                 Llevas {state.practiceDays} días seguidos
               </Text>
@@ -283,7 +283,7 @@ const styles = StyleSheet.create({
     fontFamily: fonts.bodyMedium,
     fontSize: 13.5,
     letterSpacing: 0.5,
-    color: colors.gold,
+    color: colors.glow,
   },
   readIcon: {
     width: 34,
@@ -292,8 +292,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.borderGold,
-    backgroundColor: colors.goldGlow,
+    borderColor: colors.borderGlow,
+    backgroundColor: colors.glowSoft,
   },
   actions: { flexDirection: 'row', gap: spacing.sm, marginTop: spacing.lg },
 
@@ -334,7 +334,7 @@ const styles = StyleSheet.create({
     fontSize: 10,
     letterSpacing: 2,
     textTransform: 'uppercase',
-    color: colors.gold,
+    color: colors.glow,
   },
   practiceTitle: {
     fontFamily: fonts.display,
@@ -359,5 +359,5 @@ const styles = StyleSheet.create({
     borderTopWidth: StyleSheet.hairlineWidth,
     borderTopColor: colors.borderSoft,
   },
-  streakText: { fontFamily: fonts.bodyMedium, fontSize: 12, color: colors.gold },
+  streakText: { fontFamily: fonts.bodyMedium, fontSize: 12, color: colors.glow },
 });

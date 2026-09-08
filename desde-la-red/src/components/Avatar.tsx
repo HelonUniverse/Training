@@ -4,12 +4,12 @@ import { StyleSheet, Text, View, ViewStyle } from 'react-native';
 
 import { colors, fonts } from '@/theme';
 
-type Accent = 'cyan' | 'gold' | 'violet';
+type Accent = 'cyan' | 'glow' | 'electric';
 
 const ACCENTS: Record<Accent, readonly [string, string]> = {
   cyan: ['#6FD8E6', '#1F6E86'],
-  gold: ['#F0D8A4', '#B98F45'],
-  violet: ['#A9A8F0', '#4B4A9B'],
+  glow: ['#DCF4FF', '#4FC9F8'],
+  electric: ['#7FB4FF', '#1348A8'],
 };
 
 interface Props {
@@ -32,7 +32,7 @@ export function Avatar({ initials, size = 44, accent = 'cyan', ring = true, styl
           borderRadius: size / 2,
           padding: ring ? 2 : 0,
           borderWidth: ring ? StyleSheet.hairlineWidth : 0,
-          borderColor: accent === 'gold' ? colors.borderGold : colors.border,
+          borderColor: accent === 'glow' ? colors.borderGlow : colors.border,
         },
         styles.center,
         style,
@@ -49,7 +49,7 @@ export function Avatar({ initials, size = 44, accent = 'cyan', ring = true, styl
             fontFamily: fonts.bodySemi,
             fontSize: inner * 0.36,
             letterSpacing: 0.5,
-            color: '#05121B',
+            color: '#03101E',
           }}
         >
           {initials}

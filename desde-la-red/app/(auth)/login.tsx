@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { BrandLogo } from '@/components/BrandLogo';
 import { Button } from '@/components/Button';
 import { useToast } from '@/components/Toast';
 import { imageSource } from '@/data/images';
@@ -62,7 +63,8 @@ export default function LoginScreen() {
     <View style={styles.root}>
       <Image source={imageSource('bg-auth')} style={StyleSheet.absoluteFill} contentFit="cover" />
       <LinearGradient
-        colors={['rgba(4,7,15,0.35)', 'rgba(4,7,15,0.88)', '#04070F']}
+        colors={['rgba(3,8,20,0.45)', 'rgba(3,8,20,0.9)', 'rgba(3,8,20,0.6)']}
+        locations={[0, 0.55, 1]}
         style={StyleSheet.absoluteFill}
       />
 
@@ -80,7 +82,7 @@ export default function LoginScreen() {
         >
           <View style={styles.brand}>
             <Text style={styles.overline}>Helonium</Text>
-            <Text style={styles.title}>Desde la Red</Text>
+            <BrandLogo size={64} align="left" />
             <Text style={styles.tagline}>
               {mode === 'login'
                 ? 'Vuelve al lugar donde tu práctica te espera.'
@@ -218,18 +220,12 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     color: colors.cyan,
   },
-  title: {
-    fontFamily: fonts.displayLight,
-    fontSize: 48,
-    lineHeight: 54,
-    letterSpacing: 0.5,
-    color: colors.text,
-  },
   tagline: {
-    fontFamily: fonts.displayItalic,
-    fontSize: 17,
-    lineHeight: 25,
+    fontFamily: fonts.body,
+    fontSize: 14.5,
+    lineHeight: 22,
     color: colors.textSoft,
+    marginTop: 4,
   },
 
   switcher: {

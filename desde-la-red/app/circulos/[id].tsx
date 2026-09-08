@@ -76,7 +76,7 @@ export default function CirculoDetalleScreen() {
           <Button
             label={joined ? 'Perteneces a este círculo' : 'Entrar al círculo'}
             icon={joined ? 'check' : 'user-plus'}
-            variant={joined ? 'outline' : 'gold'}
+            variant={joined ? 'outline' : 'brand'}
             size="lg"
             full
             onPress={() => {

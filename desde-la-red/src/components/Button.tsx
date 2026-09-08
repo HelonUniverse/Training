@@ -14,7 +14,7 @@ import {
 import * as haptics from '@/lib/haptics';
 import { colors, gradients, radius, shadows, type } from '@/theme';
 
-type Variant = 'gold' | 'cyan' | 'outline' | 'ghost';
+type Variant = 'brand' | 'cyan' | 'outline' | 'ghost';
 type Size = 'sm' | 'md' | 'lg';
 
 interface Props {
@@ -35,7 +35,7 @@ const HEIGHTS: Record<Size, number> = { sm: 38, md: 48, lg: 56 };
 export function Button({
   label,
   onPress,
-  variant = 'gold',
+  variant = 'brand',
   size = 'md',
   icon,
   iconRight,
@@ -45,8 +45,8 @@ export function Button({
   style,
 }: Props) {
   const height = HEIGHTS[size];
-  const filled = variant === 'gold' || variant === 'cyan';
-  const textColor = filled ? '#06101A' : variant === 'outline' ? colors.text : colors.cyan;
+  const filled = variant === 'brand' || variant === 'cyan';
+  const textColor = filled ? '#03101E' : variant === 'outline' ? colors.text : colors.cyan;
   const iconSize = size === 'sm' ? 14 : 16;
 
   const content = (
@@ -98,7 +98,7 @@ export function Button({
     >
       {filled ? (
         <LinearGradient
-          colors={variant === 'gold' ? gradients.gold : gradients.cyan}
+          colors={variant === 'brand' ? gradients.brand : gradients.cyan}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={[StyleSheet.absoluteFill, { borderRadius: radius.pill }]}

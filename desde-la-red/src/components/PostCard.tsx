@@ -54,9 +54,9 @@ export function PostCard({ post, resonated, onResonate }: Props) {
           <Feather
             name="feather"
             size={14}
-            color={resonated ? colors.gold : colors.textMuted}
+            color={resonated ? colors.glow : colors.textMuted}
           />
-          <Text style={[styles.actionText, resonated && { color: colors.gold }]}>{count}</Text>
+          <Text style={[styles.actionText, resonated && { color: colors.glow }]}>{count}</Text>
         </Pressable>
 
         <View style={styles.action}>
@@ -89,9 +89,9 @@ const styles = StyleSheet.create({
   time: { fontFamily: fonts.body, fontSize: 11, color: colors.textMuted },
   dot: { width: 3, height: 3, borderRadius: 2, backgroundColor: colors.textMuted },
   text: {
-    fontFamily: fonts.displayLight,
-    fontSize: 18,
-    lineHeight: 28,
+    fontFamily: fonts.bodyLight,
+    fontSize: 15,
+    lineHeight: 24,
     color: colors.textSoft,
     marginTop: 14,
   },

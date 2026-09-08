@@ -58,7 +58,7 @@ export function TeachingCard({ teaching, onPress, variant = 'tall', width = 210,
             ) : null}
           </View>
         </View>
-        {saved ? <Feather name="bookmark" size={15} color={colors.gold} /> : null}
+        {saved ? <Feather name="bookmark" size={15} color={colors.glow} /> : null}
       </Pressable>
     );
   }
@@ -79,7 +79,7 @@ export function TeachingCard({ teaching, onPress, variant = 'tall', width = 210,
       <LinearGradient colors={gradients.scrim} locations={[0, 0.4, 1]} style={StyleSheet.absoluteFill} />
       <View style={styles.tallTop}>
         <Text style={styles.tallOverline}>{teaching.theme}</Text>
-        {saved ? <Feather name="bookmark" size={14} color={colors.gold} /> : null}
+        {saved ? <Feather name="bookmark" size={14} color={colors.glow} /> : null}
       </View>
       <View style={styles.tallBody}>
         <Text style={styles.tallTitle} numberOfLines={3}>

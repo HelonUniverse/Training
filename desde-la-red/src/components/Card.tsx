@@ -10,7 +10,7 @@ interface Props {
   onPress?: () => void;
   /** Añade el velo de degradado cyan interior. */
   glow?: boolean;
-  accent?: 'default' | 'gold';
+  accent?: 'default' | 'glow';
   padding?: number;
   style?: StyleProp<ViewStyle>;
   accessibilityLabel?: string;
@@ -31,7 +31,7 @@ export function Card({
       {glow ? (
         <LinearGradient
           colors={
-            accent === 'gold'
+            accent === 'glow'
               ? ['rgba(231,194,125,0.12)', 'rgba(255,255,255,0.02)']
               : ['rgba(111,216,230,0.10)', 'rgba(255,255,255,0.015)']
           }
@@ -46,7 +46,7 @@ export function Card({
 
   const cardStyle: StyleProp<ViewStyle> = [
     styles.card,
-    accent === 'gold' && styles.gold,
+    accent === 'glow' && styles.glowEdge,
     shadows.soft,
     style,
   ];
@@ -79,5 +79,5 @@ const styles = StyleSheet.create({
     backgroundColor: colors.surface,
     overflow: 'hidden',
   },
-  gold: { borderColor: colors.borderGold },
+  glowEdge: { borderColor: colors.borderGlow },
 });

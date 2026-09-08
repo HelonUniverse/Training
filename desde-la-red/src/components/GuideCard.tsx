@@ -37,7 +37,7 @@ export function GuideCard({ guide, onPress, variant = 'row' }: Props) {
           {guide.title}
         </Text>
         <View style={styles.ratingRow}>
-          <Feather name="star" size={11} color={colors.gold} />
+          <Feather name="star" size={11} color={colors.glow} />
           <Text style={styles.rating}>{guide.rating.toFixed(1)}</Text>
         </View>
       </Pressable>
@@ -66,7 +66,7 @@ export function GuideCard({ guide, onPress, variant = 'row' }: Props) {
           <Feather name="map-pin" size={10.5} color={colors.textMuted} />
           <Text style={styles.meta}>{guide.location}</Text>
           <View style={styles.dot} />
-          <Feather name="star" size={10.5} color={colors.gold} />
+          <Feather name="star" size={10.5} color={colors.glow} />
           <Text style={styles.meta}>{guide.rating.toFixed(1)}</Text>
         </View>
         <View style={styles.chips}>
@@ -136,5 +136,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   ratingRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginTop: 2 },
-  rating: { fontFamily: fonts.bodyMedium, fontSize: 11.5, color: colors.gold },
+  rating: { fontFamily: fonts.bodyMedium, fontSize: 11.5, color: colors.glow },
 });

@@ -37,7 +37,7 @@ export function CircleCard({ circle, guideName, joined, onPress }: Props) {
 
       {joined ? (
         <View style={styles.joined}>
-          <Feather name="check" size={11} color={colors.gold} />
+          <Feather name="check" size={11} color={colors.glow} />
           <Text style={styles.joinedText}>Perteneces</Text>
         </View>
       ) : null}
@@ -78,16 +78,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: radius.pill,
-    backgroundColor: 'rgba(4,7,15,0.6)',
+    backgroundColor: 'rgba(3,8,20,0.6)',
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.borderGold,
+    borderColor: colors.borderGlow,
   },
   joinedText: {
     fontFamily: fonts.bodyMedium,
     fontSize: 9.5,
     letterSpacing: 1.2,
     textTransform: 'uppercase',
-    color: colors.gold,
+    color: colors.glow,
   },
   body: { padding: 18 },
   name: {

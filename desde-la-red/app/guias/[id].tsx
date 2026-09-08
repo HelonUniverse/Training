@@ -143,7 +143,7 @@ export default function GuiaPerfilScreen() {
 function Stat({ value, label, accent }: { value: string; label: string; accent?: boolean }) {
   return (
     <View style={styles.stat}>
-      <Text style={[styles.statValue, accent && { color: colors.gold }]}>{value}</Text>
+      <Text style={[styles.statValue, accent && { color: colors.glow }]}>{value}</Text>
       <Text style={styles.statLabel}>{label}</Text>
     </View>
   );
@@ -195,9 +195,9 @@ const styles = StyleSheet.create({
 
   section: { paddingHorizontal: screenPadding, marginTop: spacing.xxl },
   bio: {
-    fontFamily: fonts.displayLight,
-    fontSize: 19,
-    lineHeight: 31,
+    fontFamily: fonts.bodyLight,
+    fontSize: 15.5,
+    lineHeight: 26,
     color: 'rgba(232,243,249,0.84)',
   },
   chipRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm, marginTop: spacing.lg },

@@ -2,12 +2,16 @@ import { TextStyle } from 'react-native';
 
 import { colors } from './colors';
 
-/** Familias tipográficas cargadas en app/_layout.tsx */
+/**
+ * Tipografía del key art: Exo 2 para titulares (geométrica, ancha y
+ * tecnológica, en la línea del logotipo) e Inter para la interfaz.
+ */
 export const fonts = {
-  display: 'CormorantGaramond_500Medium',
-  displayLight: 'CormorantGaramond_300Light',
-  displaySemi: 'CormorantGaramond_600SemiBold',
-  displayItalic: 'CormorantGaramond_400Regular_Italic',
+  display: 'Exo2_500Medium',
+  displayLight: 'Exo2_300Light',
+  displaySemi: 'Exo2_600SemiBold',
+  displayBold: 'Exo2_700Bold',
+  displayItalic: 'Exo2_300Light_Italic',
   body: 'Inter_400Regular',
   bodyMedium: 'Inter_500Medium',
   bodySemi: 'Inter_600SemiBold',
@@ -31,44 +35,45 @@ type Variant =
 export const type: Record<Variant, TextStyle> = {
   hero: {
     fontFamily: fonts.displayLight,
-    fontSize: 44,
-    lineHeight: 50,
-    letterSpacing: 0.3,
+    fontSize: 40,
+    lineHeight: 47,
+    letterSpacing: 0.4,
     color: colors.text,
   },
   display: {
-    fontFamily: fonts.display,
-    fontSize: 34,
-    lineHeight: 41,
-    letterSpacing: 0.2,
+    fontFamily: fonts.displayLight,
+    fontSize: 31,
+    lineHeight: 39,
+    letterSpacing: 0.3,
     color: colors.text,
   },
   title: {
     fontFamily: fonts.display,
-    fontSize: 27,
-    lineHeight: 34,
-    letterSpacing: 0.2,
+    fontSize: 25,
+    lineHeight: 32,
+    letterSpacing: 0.3,
     color: colors.text,
   },
   sectionTitle: {
     fontFamily: fonts.display,
-    fontSize: 22,
-    lineHeight: 28,
-    letterSpacing: 0.3,
+    fontSize: 21,
+    lineHeight: 27,
+    letterSpacing: 0.4,
     color: colors.text,
   },
   cardTitle: {
     fontFamily: fonts.displaySemi,
-    fontSize: 19,
-    lineHeight: 25,
-    letterSpacing: 0.2,
+    fontSize: 18,
+    lineHeight: 24,
+    letterSpacing: 0.25,
     color: colors.text,
   },
+  /** Cuerpo de lectura: Exo 2 Light, generoso y aireado. */
   serifBody: {
     fontFamily: fonts.displayLight,
-    fontSize: 19,
-    lineHeight: 31,
-    letterSpacing: 0.15,
+    fontSize: 17,
+    lineHeight: 29,
+    letterSpacing: 0.2,
     color: colors.textSoft,
   },
   body: {

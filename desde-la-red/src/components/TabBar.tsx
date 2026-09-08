@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     overflow: 'hidden',
   },
-  webFallback: { backgroundColor: 'rgba(4,7,15,0.94)' },
+  webFallback: { backgroundColor: 'rgba(3,8,20,0.94)' },
   hairline: {
     position: 'absolute',
     top: 0,
@@ -126,5 +126,5 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     backgroundColor: 'transparent',
   },
-  pipActive: { backgroundColor: colors.gold },
+  pipActive: { backgroundColor: colors.glow },
 });

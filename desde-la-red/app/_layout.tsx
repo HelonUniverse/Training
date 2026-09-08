@@ -1,10 +1,10 @@
 import {
-  CormorantGaramond_300Light,
-  CormorantGaramond_400Regular,
-  CormorantGaramond_400Regular_Italic,
-  CormorantGaramond_500Medium,
-  CormorantGaramond_600SemiBold,
-} from '@expo-google-fonts/cormorant-garamond';
+  Exo2_300Light,
+  Exo2_300Light_Italic,
+  Exo2_500Medium,
+  Exo2_600SemiBold,
+  Exo2_700Bold,
+} from '@expo-google-fonts/exo-2';
 import {
   Inter_300Light,
   Inter_400Regular,
@@ -28,11 +28,11 @@ SplashScreen.preventAutoHideAsync().catch(() => {});
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
-    CormorantGaramond_300Light,
-    CormorantGaramond_400Regular,
-    CormorantGaramond_400Regular_Italic,
-    CormorantGaramond_500Medium,
-    CormorantGaramond_600SemiBold,
+    Exo2_300Light,
+    Exo2_300Light_Italic,
+    Exo2_500Medium,
+    Exo2_600SemiBold,
+    Exo2_700Bold,
     Inter_300Light,
     Inter_400Regular,
     Inter_500Medium,

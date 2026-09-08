@@ -82,7 +82,7 @@ export default function LecturaScreen() {
             transition={500}
           />
           <LinearGradient
-            colors={['rgba(4,7,15,0.55)', 'rgba(4,7,15,0.35)', '#04070F']}
+            colors={['rgba(3,8,20,0.55)', 'rgba(3,8,20,0.35)', '#030814']}
             locations={[0, 0.42, 1]}
             style={StyleSheet.absoluteFill}
           />
@@ -118,7 +118,7 @@ export default function LecturaScreen() {
                 pressed && { opacity: 0.7 },
               ]}
             >
-              <Feather name="bookmark" size={17} color={saved ? colors.gold : colors.text} />
+              <Feather name="bookmark" size={17} color={saved ? colors.glow : colors.text} />
             </Pressable>
           </View>
 
@@ -253,9 +253,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderWidth: StyleSheet.hairlineWidth,
     borderColor: colors.borderSoft,
-    backgroundColor: 'rgba(8,19,38,0.7)',
+    backgroundColor: 'rgba(6,16,36,0.7)',
   },
-  circleActive: { borderColor: colors.borderGold, backgroundColor: colors.goldGlow },
+  circleActive: { borderColor: colors.borderGlow, backgroundColor: colors.glowSoft },
   coverBody: { paddingHorizontal: screenPadding, paddingBottom: spacing.xxl },
   theme: {
     fontFamily: fonts.bodyMedium,
@@ -304,10 +304,10 @@ const styles = StyleSheet.create({
 
   body: { paddingHorizontal: screenPadding, marginTop: spacing.xxl, gap: spacing.xl },
   paragraph: {
-    fontFamily: fonts.displayLight,
-    fontSize: 20,
-    lineHeight: 33,
-    letterSpacing: 0.15,
+    fontFamily: fonts.bodyLight,
+    fontSize: 16,
+    lineHeight: 28,
+    letterSpacing: 0.1,
     color: 'rgba(232,243,249,0.86)',
   },
   blockSubtitle: {
@@ -315,7 +315,7 @@ const styles = StyleSheet.create({
     fontSize: 11,
     letterSpacing: 2.2,
     textTransform: 'uppercase',
-    color: colors.gold,
+    color: colors.glow,
     marginTop: spacing.md,
   },
   verseWrap: {
@@ -323,15 +323,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 22,
     borderRadius: radius.lg,
     borderWidth: StyleSheet.hairlineWidth,
-    borderColor: colors.borderGold,
+    borderColor: colors.borderGlow,
     overflow: 'hidden',
   },
   verse: {
-    fontFamily: fonts.displayItalic,
-    fontSize: 21,
-    lineHeight: 32,
+    fontFamily: fonts.displayLight,
+    fontSize: 20,
+    lineHeight: 31,
     textAlign: 'center',
-    color: colors.gold,
+    color: colors.glow,
   },
 
   tags: {

@@ -168,7 +168,7 @@ export default function LaRedScreen() {
                         ))}
                       </View>
                     </View>
-                    {joined ? <Feather name="check-circle" size={17} color={colors.gold} /> : null}
+                    {joined ? <Feather name="check-circle" size={17} color={colors.glow} /> : null}
                     <Feather name="chevron-right" size={18} color={colors.textMuted} />
                   </Pressable>
                 );
