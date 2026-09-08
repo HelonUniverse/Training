@@ -63,8 +63,6 @@ interface AppContextValue {
   busy: boolean;
   signIn: (email: string, password: string) => Promise<AuthResult>;
   signUp: (email: string, password: string, name: string) => Promise<AuthResult>;
-  /** Entrada sin cuenta, para probar la app. */
-  continueAsGuest: (name?: string) => void;
   signOut: () => Promise<void>;
   toggleSaved: (teachingId: string) => void;
   isSaved: (teachingId: string) => boolean;
@@ -259,20 +257,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     [loadProfile],
   );
 
-  const continueAsGuest = useCallback((name = 'Invitada') => {
-    setState((prev) => ({
-      ...prev,
-      user: {
-        id: null,
-        name,
-        email: '',
-        initials: initialsFrom(name),
-        role: 'member',
-        joinedOn: new Date().toISOString(),
-      },
-    }));
-  }, []);
-
   const signOut = useCallback(async () => {
     if (supabase) await supabase.auth.signOut().catch(() => {});
     setState({ ...initialState });
@@ -422,7 +406,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       busy,
       signIn,
       signUp,
-      continueAsGuest,
       signOut,
       toggleSaved,
       isSaved: (id: string) => state.savedTeachings.includes(id),
@@ -439,7 +422,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       resetDemo,
     }),
     [
-      state, hydrated, busy, signIn, signUp, continueAsGuest, signOut, toggleSaved,
+      state, hydrated, busy, signIn, signUp, signOut, toggleSaved,
       markAsRead, toggleCircle, toggleResonance, setPathAnswer, savePath, resetPath,
       addBooking, cancelBooking, resetDemo,
     ],

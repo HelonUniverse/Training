@@ -12,7 +12,7 @@ import {
   Inter_600SemiBold,
 } from '@expo-google-fonts/inter';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Stack, useRouter, useSegments } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect } from 'react';
@@ -21,7 +21,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { ToastProvider } from '@/components/Toast';
-import { AppProvider } from '@/store/app-store';
+import { AppProvider, useApp } from '@/store/app-store';
 import { ContentProvider } from '@/store/content';
 import { colors } from '@/theme';
 
@@ -53,6 +53,7 @@ export default function RootLayout() {
           <ContentProvider>
             <ToastProvider>
               <StatusBar style="light" />
+              <AuthGate />
               <Stack
                 screenOptions={{
                   headerShown: false,
@@ -84,6 +85,34 @@ export default function RootLayout() {
       </SafeAreaProvider>
     </GestureHandlerRootView>
   );
+}
+
+/**
+ * La Red es para quien tiene cuenta. Esconder el botón de entrar no basta:
+ * sin esto, escribir /hoy a mano o volver con una sesión vieja guardada en el
+ * teléfono dejaba pasar a cualquiera. Aquí se comprueba en cada navegación.
+ *
+ * Pide `user.id`, no solo `user`: así las sesiones de invitada que quedaron
+ * guardadas de antes —que no tienen id— también quedan fuera.
+ */
+function AuthGate() {
+  const { state, hydrated } = useApp();
+  const segments = useSegments();
+  const router = useRouter();
+
+  const signedIn = !!state.user?.id;
+  const group = segments[0] as string | undefined;
+  // El splash decide por su cuenta a dónde mandar; no se le interrumpe.
+  const onSplash = !group;
+  const inAuth = group === '(auth)';
+
+  useEffect(() => {
+    if (!hydrated || onSplash) return;
+    if (!signedIn && !inAuth) router.replace('/(auth)/login');
+    else if (signedIn && inAuth) router.replace('/(tabs)/hoy');
+  }, [hydrated, signedIn, inAuth, onSplash, router]);
+
+  return null;
 }
 
 const styles = StyleSheet.create({

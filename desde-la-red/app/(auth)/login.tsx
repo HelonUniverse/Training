@@ -30,7 +30,7 @@ type Mode = 'login' | 'registro';
 export default function LoginScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const { signIn, signUp, continueAsGuest, hasAccounts, busy } = useApp();
+  const { signIn, signUp, busy } = useApp();
   const toast = useToast();
 
   const [mode, setMode] = useState<Mode>('login');
@@ -43,14 +43,6 @@ export default function LoginScreen() {
   const submit = async () => {
     if (busy) return;
     setNotice(null);
-
-    if (!hasAccounts) {
-      // Sin backend configurado la app sigue funcionando en modo demo local.
-      continueAsGuest(name.trim() || undefined);
-      haptics.success();
-      router.replace('/(tabs)/hoy');
-      return;
-    }
 
     const mail = email.trim().toLowerCase();
     if (!mail || !mail.includes('@')) {
@@ -90,13 +82,6 @@ export default function LoginScreen() {
       text: mode === 'login' ? 'Bienvenida de vuelta' : 'Tu lugar en la Red está abierto',
       icon: 'sun',
     });
-    router.replace('/(tabs)/hoy');
-  };
-
-  const enterAsGuest = () => {
-    if (busy) return;
-    continueAsGuest(name.trim() || undefined);
-    haptics.select();
     router.replace('/(tabs)/hoy');
   };
 
@@ -201,19 +186,24 @@ export default function LoginScreen() {
             ) : (
               <Pressable
                 accessibilityRole="button"
-                onPress={enterAsGuest}
+                onPress={() => {
+                  haptics.select();
+                  setMode(mode === 'login' ? 'registro' : 'login');
+                  setError(null);
+                  setNotice(null);
+                }}
                 style={({ pressed }) => [styles.guest, pressed && { opacity: 0.6 }]}
               >
-                <Text style={styles.guestText}>Explorar sin cuenta</Text>
+                <Text style={styles.guestText}>
+                  {mode === 'login' ? '¿Primera vez? Crea tu cuenta' : 'Ya tengo cuenta'}
+                </Text>
                 <Feather name="arrow-right" size={14} color={colors.cyan} />
               </Pressable>
             )}
           </View>
 
           <Text style={styles.legal}>
-            {hasAccounts
-              ? 'Tu cuenta guarda tu camino en todos tus dispositivos'
-              : 'Modo demo · los datos se guardan solo en este dispositivo'}
+            Tu cuenta guarda tu camino en todos tus dispositivos
           </Text>
         </ScrollView>
       </KeyboardAvoidingView>

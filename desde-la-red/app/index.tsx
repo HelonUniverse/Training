@@ -82,10 +82,10 @@ export default function SplashRoute() {
   useEffect(() => {
     if (!hydrated) return;
     const timeout = setTimeout(() => {
-      router.replace(state.user ? '/(tabs)/hoy' : '/(auth)/login');
+      router.replace(state.user?.id ? '/(tabs)/hoy' : '/(auth)/login');
     }, 2200);
     return () => clearTimeout(timeout);
-  }, [hydrated, state.user, router]);
+  }, [hydrated, state.user?.id, router]);
 
   return (
     <View style={styles.root}>
