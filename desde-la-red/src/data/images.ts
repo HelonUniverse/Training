@@ -1,5 +1,7 @@
 import { ImageSourcePropType } from 'react-native';
 
+import { brand, brandAssets } from '@/brand';
+
 /**
  * Los `require` deben ser estáticos para que Metro los empaquete, así que
  * todas las imágenes viven en este registro y el resto de la app las
@@ -26,4 +28,8 @@ export const images = {
 
 export type ImageKey = keyof typeof images;
 
-export const imageSource = (key: ImageKey): ImageSourcePropType => images[key];
+/** Fondos que el key art oficial reemplaza cuando está disponible. */
+const KEYART_KEYS: ImageKey[] = ['bg-auth', 'bg-network'];
+
+export const imageSource = (key: ImageKey): ImageSourcePropType =>
+  brand.useOfficialKeyArt && KEYART_KEYS.includes(key) ? brandAssets.keyart : images[key];

@@ -1,3 +1,4 @@
+import { Image } from 'expo-image';
 import React from 'react';
 import { StyleSheet, Text, View, ViewStyle } from 'react-native';
 import Svg, {
@@ -10,6 +11,7 @@ import Svg, {
   Stop,
 } from 'react-native-svg';
 
+import { brand, brandAssets } from '@/brand';
 import { colors, fonts } from '@/theme';
 
 /**
@@ -116,6 +118,25 @@ interface Props {
 /** Logotipo completo de Desde la Red. */
 export function BrandLogo({ size = 76, tagline, align = 'center', style }: Props) {
   const s = size / 76;
+
+  // Con el archivo oficial en assets/brand/logo.png no hace falta reconstruir
+  // nada: se muestra tal cual, respetando su proporción.
+  if (brand.useOfficialLogo) {
+    return (
+      <View style={[align === 'center' ? styles.center : styles.left, style]}>
+        <Image
+          source={brandAssets.logo}
+          style={{ width: size * 4.2, height: size * 1.9 }}
+          contentFit="contain"
+          accessibilityLabel="Desde la Red"
+        />
+        {tagline ? (
+          <Text style={[styles.tagline, { fontSize: 15 * s, marginTop: 14 * s }]}>{tagline}</Text>
+        ) : null}
+      </View>
+    );
+  }
+
   return (
     <View style={[align === 'center' ? styles.center : styles.left, style]}>
       <View style={styles.rowOne}>
