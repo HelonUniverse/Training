@@ -41,8 +41,13 @@ export const floridaBestMathematicsAdapter: SourceAdapter = {
   authority: 'state_education_agency',
 
   supports({ format, text, artifactName }) {
-    if (!['pdf', 'docx', 'xlsx', 'csv', 'html'].includes(format)) {
-      return { ok: false, reason: `unsupported source format: ${format}` };
+    // This adapter reads ONE thing: a delimited export. It used to say yes to
+    // pdf/docx/xlsx/html and then refuse them in parse(), which is a promise it
+    // could not keep - and with a second Florida adapter now in the registry,
+    // an over-broad `supports` is how the wrong reader gets handed the right
+    // document.
+    if (format !== 'csv') {
+      return { ok: false, reason: `this adapter reads the delimited export; the bytes are ${format}` };
     }
     // Refuse a document that does not look like the thing this adapter reads.
     // Parsing an unrecognised artifact produces rows that look fine and are wrong.

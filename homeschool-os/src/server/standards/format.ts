@@ -1,5 +1,5 @@
 import { createHash } from 'node:crypto';
-import type { SourceFormat } from './types';
+import type { ArtifactRepresentation, SourceFormat } from './types';
 
 /**
  * What is this file, really?
@@ -52,4 +52,55 @@ export function formatDisagreement(declaredMime: string | null, detected: Source
   };
   const ok = expected[detected].some((m) => declaredMime.toLowerCase().startsWith(m));
   return ok ? null : `declared ${declaredMime} but the bytes are ${detected}`;
+}
+
+/**
+ * HOW is the content carried?
+ *
+ * Separate from `detectFormat`, which answers what the bytes are. The artifact
+ * that forced the distinction is CPALMS's B.E.S.T. Mathematics report: named
+ * `.doc`, served as Word, opened by Word, and byte-for-byte HTML whose
+ * benchmark code and benchmark wording are adjacent cells of one table row.
+ * `detectFormat` correctly says `html`. That says nothing about whether the
+ * code-to-wording association can be READ rather than inferred, and that is the
+ * question which decides whether a benchmark is trustworthy.
+ *
+ * The test for `canonical_structured` is deliberately about STRUCTURE and not
+ * about Florida: markup that carries a substantial number of two-cell rows is
+ * markup where an identity sits beside its text. A state's press release about
+ * its standards is also `html` and has no such rows, so it lands on
+ * `canonical_html`, where an adapter must recover the association from document
+ * order and should be far more suspicious of what it produces.
+ *
+ * This function never returns a `canonical_*` verdict for a format it cannot
+ * see into. It is a floor, not a promise: an adapter still has to decide
+ * whether it understands the particular document.
+ */
+export function detectRepresentation(bytes: Uint8Array, format?: SourceFormat): ArtifactRepresentation {
+  const fmt = format ?? detectFormat(bytes);
+  switch (fmt) {
+    case 'pdf': return 'canonical_pdf';
+    case 'csv':
+    case 'xlsx': return 'canonical_tabular';
+    case 'json':
+    case 'xml': return 'canonical_structured';
+    case 'docx': return 'canonical_html';   // a ZIP of XML; prose-flow inside
+    case 'html': break;
+    default: return 'unknown';
+  }
+
+  // Read enough to judge, not the whole file: a 40 MB document should not cost
+  // 40 MB of decoding to answer a structural question.
+  const text = new TextDecoder('utf-8', { fatal: false }).decode(bytes.slice(0, 512 * 1024));
+  const rows = countMatches(text, /<\s*tr\b/gi);
+  const cells = countMatches(text, /<\s*t[dh]\b/gi);
+  if (rows >= 8 && cells >= rows * 1.5) return 'canonical_structured';
+  return 'canonical_html';
+}
+
+function countMatches(text: string, pattern: RegExp): number {
+  let n = 0;
+  pattern.lastIndex = 0;
+  while (pattern.exec(text) !== null) n += 1;
+  return n;
 }
