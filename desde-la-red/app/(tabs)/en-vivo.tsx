@@ -14,7 +14,7 @@ import { useToast } from '@/components/Toast';
 import { liveEvents } from '@/data/community';
 import { findGuide } from '@/data/guides';
 import { formatDuration } from '@/lib/format';
-import { colors, fonts, screenPadding, spacing, tabBarHeight } from '@/theme';
+import { colors, fonts, glowText, screenPadding, spacing, tabBarHeight } from '@/theme';
 
 type Filter = 'todos' | 'hoy' | 'proximos';
 
@@ -51,7 +51,7 @@ export default function EnVivoScreen() {
   };
 
   return (
-    <CosmicBackground>
+    <CosmicBackground horizon>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
@@ -175,6 +175,7 @@ const styles = StyleSheet.create({
     color: colors.live,
   },
   title: {
+    ...glowText,
     fontFamily: fonts.displayLight,
     fontSize: 36,
     lineHeight: 42,

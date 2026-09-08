@@ -77,6 +77,7 @@ export function TeachingCard({ teaching, onPress, variant = 'tall', width = 210,
         transition={400}
       />
       <LinearGradient colors={gradients.scrim} locations={[0, 0.4, 1]} style={StyleSheet.absoluteFill} />
+      <LinearGradient colors={gradients.topFade} style={styles.topVeil} pointerEvents="none" />
       <View style={styles.tallTop}>
         <Text style={styles.tallOverline}>{teaching.theme}</Text>
         {saved ? <Feather name="bookmark" size={14} color={colors.glow} /> : null}
@@ -95,6 +96,7 @@ export function TeachingCard({ teaching, onPress, variant = 'tall', width = 210,
 }
 
 const styles = StyleSheet.create({
+  topVeil: { position: 'absolute', top: 0, left: 0, right: 0, height: 72 },
   pressed: { opacity: 0.88, transform: [{ scale: 0.985 }] },
 
   tall: {

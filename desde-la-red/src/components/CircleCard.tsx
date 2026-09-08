@@ -34,6 +34,11 @@ export function CircleCard({ circle, guideName, joined, onPress }: Props) {
         transition={400}
       />
       <LinearGradient colors={gradients.scrim} locations={[0, 0.4, 1]} style={StyleSheet.absoluteFill} />
+      <LinearGradient
+        colors={gradients.topFade}
+        style={styles.topVeil}
+        pointerEvents="none"
+      />
 
       {joined ? (
         <View style={styles.joined}>
@@ -59,6 +64,7 @@ export function CircleCard({ circle, guideName, joined, onPress }: Props) {
 }
 
 const styles = StyleSheet.create({
+  topVeil: { position: 'absolute', top: 0, left: 0, right: 0, height: 96 },
   card: {
     height: 196,
     borderRadius: radius.lg,

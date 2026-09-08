@@ -9,7 +9,7 @@ import { ScreenHeader } from '@/components/ScreenHeader';
 import { SearchField } from '@/components/SearchField';
 import { guides } from '@/data/guides';
 import { matches } from '@/lib/format';
-import { colors, fonts, screenPadding, spacing } from '@/theme';
+import { colors, fonts, glowText, screenPadding, spacing } from '@/theme';
 
 const APPROACHES = Array.from(new Set(guides.flatMap((g) => g.approach)));
 
@@ -77,6 +77,7 @@ export default function GuiasScreen() {
 const styles = StyleSheet.create({
   head: { paddingHorizontal: screenPadding, gap: 10, marginBottom: spacing.xl },
   title: {
+    ...glowText,
     fontFamily: fonts.displayLight,
     fontSize: 36,
     lineHeight: 42,

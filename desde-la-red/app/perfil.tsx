@@ -14,7 +14,7 @@ import { circles, pathQuestions } from '@/data/community';
 import { teachings } from '@/data/teachings';
 import * as haptics from '@/lib/haptics';
 import { useApp } from '@/store/app-store';
-import { colors, fonts, radius, screenPadding, spacing } from '@/theme';
+import { colors, fonts, glowText, radius, screenPadding, spacing } from '@/theme';
 
 /** Pantalla 14 — Perfil. */
 export default function PerfilScreen() {
@@ -228,6 +228,7 @@ function Toggle({
 const styles = StyleSheet.create({
   hero: { alignItems: 'center', gap: 8, paddingHorizontal: screenPadding, marginTop: spacing.md },
   name: {
+    ...glowText,
     fontFamily: fonts.display,
     fontSize: 32,
     lineHeight: 38,

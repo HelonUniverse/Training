@@ -13,7 +13,7 @@ import { findGuide, findService } from '@/data/guides';
 import { formatDuration, formatPrice, timeSlots, upcomingDays } from '@/lib/format';
 import * as haptics from '@/lib/haptics';
 import { useApp } from '@/store/app-store';
-import { colors, fonts, radius, screenPadding, spacing } from '@/theme';
+import { colors, fonts, glowText, radius, screenPadding, spacing } from '@/theme';
 
 /** Pantalla 12 — Reserva. */
 export default function ReservaScreen() {
@@ -250,6 +250,7 @@ const styles = StyleSheet.create({
   summaryRow: { flexDirection: 'row', alignItems: 'center', gap: 14 },
   summaryBody: { flex: 1, gap: 4 },
   summaryName: {
+    ...glowText,
     fontFamily: fonts.display,
     fontSize: 24,
     lineHeight: 29,
@@ -384,6 +385,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xxl,
   },
   doneTitle: {
+    ...glowText,
     fontFamily: fonts.displayLight,
     fontSize: 34,
     lineHeight: 40,

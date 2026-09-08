@@ -698,115 +698,126 @@ function render(spec) {
 const W = 960;
 const H = 680;
 
+/**
+ * Todo el imaginario de la app nace del mismo key art: espacio casi negro,
+ * el globo de la Red y su malla de nodos. Lo que cambia entre piezas es el
+ * encuadre — el globo entero, un limbo encendido cruzando el cuadro, o un
+ * campo de nodos suelto — nunca el idioma visual.
+ */
+
+/** Haz un fondo de espacio con bruma azul muy tenue. */
+const space = (seed, gain = 0.55) => ({
+  style: 'veil',
+  palette: 'abyss',
+  seed,
+  gain,
+  stars: 0.0016,
+});
+
 const IMAGES = [
-  // Enseñanzas / biblioteca
-  { file: 'teaching-silence.png', style: 'nebula', palette: 'deep', seed: 1207, opts: { cx: 0.66, cy: 0.34 } },
+  // --- Enseñanzas / biblioteca ---------------------------------------------
   {
+    // Limbo encendido cruzando la parte baja, como en el póster.
+    file: 'teaching-silence.png',
+    ...space(1207, 0.5),
+    globe: { cx: 0.42, cy: 1.62, r: 1.15, tilt: 14 * DEG, spin: -30 * DEG, nodeCount: 210 },
+  },
+  {
+    // Globo asomando desde abajo, encuadre cerrado.
     file: 'teaching-light.png',
-    style: 'rays',
-    palette: 'ice',
-    seed: 3391,
-    opts: { cx: 0.46, cy: -0.15 },
+    ...space(3391, 0.5),
+    globe: { cx: 0.5, cy: 1.28, r: 0.86, tilt: 12 * DEG, spin: 24 * DEG, nodeCount: 190 },
   },
-  { file: 'teaching-water.png', style: 'aurora', palette: 'ice', seed: 5517 },
   {
+    // Campo de nodos abierto, sin globo.
+    file: 'teaching-water.png',
+    ...space(5517, 0.6),
+    mesh: { density: 38, linkDist: 0.23, intensity: 0.9 },
+  },
+  {
+    // Arco superior: la curva del planeta cruzando por arriba.
     file: 'teaching-threshold.png',
-    style: 'horizon',
-    palette: 'deep',
-    seed: 7723,
-    opts: { hy: 0.66 },
+    ...space(7723, 0.45),
+    globe: { cx: 0.55, cy: -0.75, r: 1.05, tilt: 20 * DEG, spin: -70 * DEG, nodeCount: 200 },
   },
   {
+    // Globo completo, pequeño y centrado.
     file: 'teaching-roots.png',
-    style: 'nebula',
-    palette: 'electric',
-    seed: 9109,
-    opts: { cx: 0.34, cy: 0.46 },
+    ...space(9109, 0.5),
+    globe: { cx: 0.5, cy: 0.5, r: 0.33, tilt: 18 * DEG, spin: -10 * DEG, nodeCount: 160 },
   },
-  { file: 'teaching-breath.png', style: 'ripple', palette: 'ice', seed: 2467 },
   {
+    // Malla densa: la Red como constelación.
+    file: 'teaching-breath.png',
+    ...space(2467, 0.55),
+    mesh: { density: 46, linkDist: 0.21, intensity: 1.0 },
+  },
+  {
+    // Encuadre cerrado por la izquierda.
     file: 'teaching-fire.png',
-    style: 'nebula',
-    palette: 'electric',
-    seed: 6151,
-    opts: { cx: 0.5, cy: 0.55 },
+    ...space(6151, 0.5),
+    globe: { cx: 0.02, cy: 0.52, r: 0.72, tilt: 16 * DEG, spin: 60 * DEG, nodeCount: 190 },
   },
   {
+    // Globo lejano, arriba a la derecha.
     file: 'teaching-return.png',
-    style: 'horizon',
-    palette: 'abyss',
-    seed: 8837,
-    opts: { hy: 0.58 },
+    ...space(8837, 0.55),
+    globe: { cx: 0.74, cy: 0.3, r: 0.2, tilt: 15 * DEG, spin: -130 * DEG, nodeCount: 140 },
+    mesh: { density: 26, linkDist: 0.28, intensity: 0.6, top: 0.45, bottom: 1 },
   },
 
-  // En vivo / círculos
+  // --- En vivo / círculos ---------------------------------------------------
   {
     file: 'live-ceremony.png',
-    style: 'rays',
-    palette: 'deep',
-    seed: 4409,
-    opts: { cx: 0.52, cy: -0.08 },
+    ...space(4409, 0.5),
+    globe: { cx: 0.5, cy: 0.52, r: 0.4, tilt: 16 * DEG, spin: -20 * DEG, nodeCount: 180 },
   },
   {
     file: 'live-meditation.png',
-    style: 'nebula',
-    palette: 'abyss',
-    seed: 1613,
-    opts: { cx: 0.55, cy: 0.42 },
-    mesh: { density: 30, linkDist: 0.3, intensity: 0.85 },
+    ...space(1613, 0.6),
+    mesh: { density: 40, linkDist: 0.22, intensity: 0.95 },
   },
   {
     file: 'circle-luna.png',
-    style: 'nebula',
-    palette: 'ice',
-    seed: 7057,
-    opts: { cx: 0.4, cy: 0.4 },
+    ...space(7057, 0.5),
+    globe: { cx: 0.3, cy: 1.35, r: 0.95, tilt: 12 * DEG, spin: 100 * DEG, nodeCount: 195 },
   },
   {
     file: 'circle-fuego.png',
-    style: 'aurora',
-    palette: 'electric',
-    seed: 3163,
+    ...space(3163, 0.45),
+    globe: { cx: 0.45, cy: -0.6, r: 0.92, tilt: 22 * DEG, spin: 150 * DEG, nodeCount: 195 },
   },
   {
     file: 'circle-raiz.png',
-    style: 'horizon',
-    palette: 'deep',
-    seed: 5843,
-    opts: { hy: 0.7 },
+    ...space(5843, 0.5),
+    globe: { cx: 0.78, cy: 1.2, r: 0.7, tilt: 14 * DEG, spin: -95 * DEG, nodeCount: 175 },
+    mesh: { density: 24, linkDist: 0.3, intensity: 0.55, top: 0, bottom: 0.5 },
   },
 
-  // Fondos de pantalla completa
+  // --- Fondos de pantalla completa -----------------------------------------
   {
-    // Login: composición del key art — espacio arriba, globo asomando abajo.
+    // Login y splash: la composición exacta del póster.
     file: 'bg-auth.png',
     w: 828,
     h: 1500,
-    style: 'veil',
-    palette: 'abyss',
-    seed: 9973,
-    gain: 0.75,
-    globe: { cx: 0.5, cy: 1.16, r: 0.72, tilt: 14 * DEG, spin: -22 * DEG, nodeCount: 150 },
+    ...space(9973, 0.45),
+    globe: { cx: 0.5, cy: 1.16, r: 0.72, tilt: 14 * DEG, spin: -22 * DEG, nodeCount: 200 },
   },
   {
     file: 'bg-path.png',
     w: 828,
     h: 1500,
-    style: 'veil',
-    palette: 'deep',
-    seed: 2711,
-    gain: 0.8,
-    mesh: { density: 40, linkDist: 0.28, intensity: 0.7, top: 0.02, bottom: 0.55 },
+    ...space(2711, 0.5),
+    mesh: { density: 34, linkDist: 0.22, intensity: 0.8, top: 0.02, bottom: 0.6 },
+    globe: { cx: 0.5, cy: 1.4, r: 0.8, tilt: 14 * DEG, spin: 40 * DEG, nodeCount: 190 },
   },
   {
-    // La Red: el globo completo, centrado.
+    // La Red: el globo entero.
     file: 'bg-network.png',
     w: 828,
     h: 1500,
-    style: null,
-    seed: 6379,
-    stars: 0.0018,
-    globe: { cx: 0.5, cy: 0.5, r: 0.56, tilt: 18 * DEG, spin: -14 * DEG, nodeCount: 165 },
+    ...space(6379, 0.4),
+    globe: { cx: 0.5, cy: 0.5, r: 0.56, tilt: 18 * DEG, spin: -14 * DEG, nodeCount: 200 },
   },
 ];
 

@@ -18,7 +18,7 @@ import { findGuide } from '@/data/guides';
 import { findTeaching, teachings } from '@/data/teachings';
 import * as haptics from '@/lib/haptics';
 import { useApp } from '@/store/app-store';
-import { colors, fonts, gradients, radius, screenPadding, spacing } from '@/theme';
+import { colors, fonts, glowText, gradients, radius, screenPadding, spacing } from '@/theme';
 
 /** Pantalla 4 — Lectura completa. */
 export default function LecturaScreen() {
@@ -48,7 +48,7 @@ export default function LecturaScreen() {
 
   if (!teaching) {
     return (
-      <CosmicBackground>
+      <CosmicBackground horizon>
         <ScreenHeader title="Lectura" />
         <View style={styles.missing}>
           <Text style={styles.missingText}>Esta enseñanza ya no está disponible.</Text>
@@ -68,7 +68,7 @@ export default function LecturaScreen() {
   };
 
   return (
-    <CosmicBackground>
+    <CosmicBackground horizon>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: insets.bottom + 48 }}
@@ -266,6 +266,7 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   title: {
+    ...glowText,
     fontFamily: fonts.displayLight,
     fontSize: 42,
     lineHeight: 48,

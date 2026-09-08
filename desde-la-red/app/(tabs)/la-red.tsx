@@ -15,7 +15,7 @@ import { findGuide, guides } from '@/data/guides';
 import { matches } from '@/lib/format';
 import * as haptics from '@/lib/haptics';
 import { useApp } from '@/store/app-store';
-import { colors, fonts, radius, screenPadding, spacing, tabBarHeight } from '@/theme';
+import { colors, fonts, glowText, radius, screenPadding, spacing, tabBarHeight } from '@/theme';
 
 type Tab = 'voces' | 'guias' | 'circulos';
 
@@ -194,6 +194,7 @@ const styles = StyleSheet.create({
     color: colors.cyan,
   },
   title: {
+    ...glowText,
     fontFamily: fonts.displayLight,
     fontSize: 36,
     lineHeight: 42,

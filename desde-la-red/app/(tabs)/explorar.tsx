@@ -14,7 +14,7 @@ import { findGuide, guides } from '@/data/guides';
 import { teachingThemes, teachings } from '@/data/teachings';
 import { matches } from '@/lib/format';
 import { useApp } from '@/store/app-store';
-import { colors, fonts, radius, screenPadding, spacing, tabBarHeight } from '@/theme';
+import { colors, fonts, glowText, radius, screenPadding, spacing, tabBarHeight } from '@/theme';
 
 type Filter = 'todas' | 'guardadas' | 'sin-leer';
 
@@ -45,7 +45,7 @@ export default function ExplorarScreen() {
   ];
 
   return (
-    <CosmicBackground>
+    <CosmicBackground horizon>
       <ScrollView
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
@@ -168,6 +168,7 @@ const styles = StyleSheet.create({
     color: colors.cyan,
   },
   title: {
+    ...glowText,
     fontFamily: fonts.displayLight,
     fontSize: 36,
     lineHeight: 42,

@@ -5,15 +5,15 @@
  */
 export const colors = {
   // Fondos — el negro azulado del espacio profundo
-  night: '#030814',
-  nightDeep: '#01050E',
-  nightSoft: '#061024',
-  nightLift: '#0A1B38',
+  night: '#01050D',
+  nightDeep: '#000308',
+  nightSoft: '#040D1C',
+  nightLift: '#07162E',
 
   // Superficies (tarjetas oscuras con bordes finos)
   surface: 'rgba(255, 255, 255, 0.045)',
   surfaceStrong: 'rgba(255, 255, 255, 0.075)',
-  surfaceSunken: 'rgba(1, 6, 18, 0.6)',
+  surfaceSunken: 'rgba(0, 4, 12, 0.62)',
   border: 'rgba(79, 201, 248, 0.18)',
   borderSoft: 'rgba(255, 255, 255, 0.08)',
   /** Borde de énfasis: el cyan encendido de los nodos. */
@@ -45,14 +45,14 @@ export const colors = {
 
 /** Degradados reutilizables (siempre tuplas de al menos 2 colores). */
 export const gradients = {
-  screen: ['#030814', '#061024', '#030814'] as const,
+  screen: ['#01050D', '#04101F', '#01050D'] as const,
   card: ['rgba(79,201,248,0.10)', 'rgba(255,255,255,0.02)'] as const,
   /** Degradado principal de marca: hielo → cyan → azul eléctrico. */
   brand: ['#DCF4FF', '#6FD6FA', '#1C7FD6'] as const,
   cyan: ['#8FE3FF', '#4FC9F8', '#1C7FD6'] as const,
   electric: ['#5AA6FF', '#2E7DF0', '#1348A8'] as const,
-  scrim: ['transparent', 'rgba(3,8,20,0.55)', 'rgba(3,8,20,0.96)'] as const,
-  scrimSoft: ['transparent', 'rgba(3,8,20,0.82)'] as const,
-  topFade: ['rgba(3,8,20,0.92)', 'rgba(3,8,20,0.0)'] as const,
-  tabBar: ['rgba(5,13,28,0.86)', 'rgba(3,8,20,0.98)'] as const,
+  scrim: ['transparent', 'rgba(1,5,13,0.5)', 'rgba(1,5,13,0.95)'] as const,
+  scrimSoft: ['transparent', 'rgba(1,5,13,0.8)'] as const,
+  topFade: ['rgba(1,5,13,0.92)', 'rgba(1,5,13,0.0)'] as const,
+  tabBar: ['rgba(3,10,22,0.86)', 'rgba(1,5,13,0.98)'] as const,
 } as const;

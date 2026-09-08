@@ -41,6 +41,11 @@ export function TeachingHero({ teaching, guideName, onPress }: Props) {
         transition={500}
       />
       <LinearGradient colors={gradients.scrim} locations={[0, 0.45, 1]} style={StyleSheet.absoluteFill} />
+      <LinearGradient
+        colors={gradients.topFade}
+        style={styles.topVeil}
+        pointerEvents="none"
+      />
 
       <View style={styles.topRow}>
         <View style={styles.badge}>
@@ -71,6 +76,7 @@ export function TeachingHero({ teaching, guideName, onPress }: Props) {
 }
 
 const styles = StyleSheet.create({
+  topVeil: { position: 'absolute', top: 0, left: 0, right: 0, height: 96 },
   card: {
     height: 430,
     borderRadius: radius.xl,

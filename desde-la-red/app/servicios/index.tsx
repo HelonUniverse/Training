@@ -10,7 +10,7 @@ import { ServiceCard } from '@/components/ServiceCard';
 import { findGuide, services } from '@/data/guides';
 import { Service } from '@/data/types';
 import { matches } from '@/lib/format';
-import { colors, fonts, screenPadding, spacing } from '@/theme';
+import { colors, fonts, glowText, screenPadding, spacing } from '@/theme';
 
 type Format = Service['format'] | 'Todos';
 
@@ -88,6 +88,7 @@ export default function ServiciosScreen() {
 const styles = StyleSheet.create({
   head: { paddingHorizontal: screenPadding, gap: 10, marginBottom: spacing.xl },
   title: {
+    ...glowText,
     fontFamily: fonts.displayLight,
     fontSize: 36,
     lineHeight: 42,

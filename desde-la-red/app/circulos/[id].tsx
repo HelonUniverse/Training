@@ -19,7 +19,7 @@ import { findCircle, networkPosts } from '@/data/community';
 import { findGuide } from '@/data/guides';
 import { imageSource } from '@/data/images';
 import { useApp } from '@/store/app-store';
-import { colors, fonts, gradients, screenPadding, spacing } from '@/theme';
+import { colors, fonts, glowText, gradients, screenPadding, spacing } from '@/theme';
 
 /** Pantalla 8b — Detalle de un Círculo. */
 export default function CirculoDetalleScreen() {
@@ -34,7 +34,7 @@ export default function CirculoDetalleScreen() {
 
   if (!circle) {
     return (
-      <CosmicBackground>
+      <CosmicBackground horizon>
         <ScreenHeader title="Círculo" />
         <Text style={styles.empty}>Este círculo ya no existe.</Text>
       </CosmicBackground>
@@ -45,7 +45,7 @@ export default function CirculoDetalleScreen() {
   const posts = networkPosts.filter((p) => p.circleName === circle.name);
 
   return (
-    <CosmicBackground>
+    <CosmicBackground horizon>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: insets.bottom + 48 }}
@@ -141,6 +141,7 @@ const styles = StyleSheet.create({
   cover: { height: 400, justifyContent: 'space-between' },
   coverBody: { paddingHorizontal: screenPadding, paddingBottom: spacing.xxl },
   name: {
+    ...glowText,
     fontFamily: fonts.displayLight,
     fontSize: 42,
     lineHeight: 48,

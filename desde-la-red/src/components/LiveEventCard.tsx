@@ -57,6 +57,11 @@ export function LiveEventCard({ event, guideName, onPress, variant = 'wide' }: P
         transition={400}
       />
       <LinearGradient colors={gradients.scrim} locations={[0, 0.42, 1]} style={StyleSheet.absoluteFill} />
+      <LinearGradient
+        colors={gradients.topFade}
+        style={styles.topVeil}
+        pointerEvents="none"
+      />
 
       <View style={styles.top}>
         <LiveStatus status={event.status} />
@@ -78,6 +83,7 @@ export function LiveEventCard({ event, guideName, onPress, variant = 'wide' }: P
 }
 
 const styles = StyleSheet.create({
+  topVeil: { position: 'absolute', top: 0, left: 0, right: 0, height: 96 },
   card: {
     borderRadius: radius.lg,
     overflow: 'hidden',

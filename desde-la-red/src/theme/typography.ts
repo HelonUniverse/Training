@@ -32,8 +32,19 @@ type Variant =
   | 'caption'
   | 'button';
 
+/**
+ * Resplandor cyan de marca. En el key art ningún titular es plano: todos
+ * respiran luz. Se aplica a los títulos grandes de cada pantalla.
+ */
+export const glowText = {
+  textShadowColor: 'rgba(79, 201, 248, 0.55)',
+  textShadowOffset: { width: 0, height: 0 },
+  textShadowRadius: 18,
+} as const;
+
 export const type: Record<Variant, TextStyle> = {
   hero: {
+    ...glowText,
     fontFamily: fonts.displayLight,
     fontSize: 40,
     lineHeight: 47,
@@ -41,6 +52,7 @@ export const type: Record<Variant, TextStyle> = {
     color: colors.text,
   },
   display: {
+    ...glowText,
     fontFamily: fonts.displayLight,
     fontSize: 31,
     lineHeight: 39,
@@ -48,6 +60,7 @@ export const type: Record<Variant, TextStyle> = {
     color: colors.text,
   },
   title: {
+    ...glowText,
     fontFamily: fonts.display,
     fontSize: 25,
     lineHeight: 32,

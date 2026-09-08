@@ -20,6 +20,8 @@ interface Props {
   contentStyle?: StyleProp<ViewStyle>;
   header?: React.ReactNode;
   footer?: React.ReactNode;
+  /** Deja asomar el globo por el borde inferior (activado por defecto). */
+  horizon?: boolean;
 }
 
 export function Screen({
@@ -32,6 +34,7 @@ export function Screen({
   contentStyle,
   header,
   footer,
+  horizon = true,
 }: Props) {
   const insets = useSafeAreaInsets();
   const bottomPad = (withTabBar ? tabBarHeight + insets.bottom + 18 : insets.bottom + 28) + 8;
@@ -41,7 +44,7 @@ export function Screen({
   );
 
   return (
-    <CosmicBackground image={image} intensity={imageIntensity}>
+    <CosmicBackground image={image} intensity={imageIntensity} horizon={horizon}>
       {header}
       {scroll ? (
         <ScrollView

@@ -10,7 +10,7 @@ import { circles } from '@/data/community';
 import { findGuide } from '@/data/guides';
 import { matches } from '@/lib/format';
 import { useApp } from '@/store/app-store';
-import { colors, fonts, screenPadding, spacing } from '@/theme';
+import { colors, fonts, glowText, screenPadding, spacing } from '@/theme';
 
 /** Pantalla 8 — Círculos. */
 export default function CirculosScreen() {
@@ -63,6 +63,7 @@ export default function CirculosScreen() {
 const styles = StyleSheet.create({
   head: { paddingHorizontal: screenPadding, gap: 10, marginBottom: spacing.xl },
   title: {
+    ...glowText,
     fontFamily: fonts.displayLight,
     fontSize: 36,
     lineHeight: 42,

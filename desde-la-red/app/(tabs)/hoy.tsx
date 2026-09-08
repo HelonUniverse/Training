@@ -19,7 +19,7 @@ import { featuredTeaching, teachings } from '@/data/teachings';
 import { greetingForNow, todayLabel } from '@/lib/format';
 import * as haptics from '@/lib/haptics';
 import { useApp } from '@/store/app-store';
-import { colors, fonts, radius, screenPadding, spacing, tabBarHeight, type } from '@/theme';
+import { colors, fonts, glowText, radius, screenPadding, spacing, tabBarHeight, type } from '@/theme';
 
 /** Pantalla 3 — Hoy. La pieza central de la app. */
 export default function HoyScreen() {
@@ -52,7 +52,7 @@ export default function HoyScreen() {
   };
 
   return (
-    <CosmicBackground>
+    <CosmicBackground horizon>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
@@ -256,6 +256,7 @@ const styles = StyleSheet.create({
     color: colors.cyan,
   },
   greeting: {
+    ...glowText,
     fontFamily: fonts.display,
     fontSize: 30,
     lineHeight: 36,

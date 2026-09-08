@@ -14,7 +14,7 @@ import { findGuide, findService } from '@/data/guides';
 import { teachings } from '@/data/teachings';
 import * as haptics from '@/lib/haptics';
 import { useApp } from '@/store/app-store';
-import { colors, fonts, radius, screenPadding, spacing, tabBarHeight } from '@/theme';
+import { colors, fonts, glowText, radius, screenPadding, spacing, tabBarHeight } from '@/theme';
 
 /** Pantalla 13 — Mi Camino. */
 export default function MiCaminoScreen() {
@@ -252,6 +252,7 @@ const styles = StyleSheet.create({
     color: colors.glow,
   },
   title: {
+    ...glowText,
     fontFamily: fonts.displayLight,
     fontSize: 36,
     lineHeight: 42,

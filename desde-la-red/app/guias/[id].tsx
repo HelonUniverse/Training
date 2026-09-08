@@ -14,7 +14,7 @@ import { ServiceCard } from '@/components/ServiceCard';
 import { circles } from '@/data/community';
 import { findGuide, servicesOfGuide } from '@/data/guides';
 import { teachings } from '@/data/teachings';
-import { colors, fonts, radius, screenPadding, spacing } from '@/theme';
+import { colors, fonts, glowText, radius, screenPadding, spacing } from '@/theme';
 
 /** Pantalla 10 — Perfil de Guía. */
 export default function GuiaPerfilScreen() {
@@ -153,6 +153,7 @@ const styles = StyleSheet.create({
   hero: { alignItems: 'center', gap: 10, paddingHorizontal: screenPadding, marginTop: spacing.md },
   nameRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 },
   name: {
+    ...glowText,
     fontFamily: fonts.display,
     fontSize: 32,
     lineHeight: 38,
