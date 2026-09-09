@@ -405,6 +405,71 @@ end $$;
 rollback;
 
 -- =============================================================================
+-- 8bis. The one way a computed state may legitimately fall
+-- =============================================================================
+-- The rule has two halves and they are easy to conflate, so they are tested
+-- against each other on the same profile:
+--
+--   a NEW LOWER OBSERVATION changes nothing - the evidence that supported the
+--   characterization is all still there, and one more data point is not a
+--   reason to contradict it;
+--
+--   RETRACTING THE SUPPORTING EVIDENCE changes everything - the evidence set
+--   that justified the characterization no longer exists, so continuing to
+--   assert it would be Nestra standing on something it no longer has.
+--
+-- The difference is not the direction of the change. It is whether the basis
+-- for the old answer is still true.
+
+begin;
+do $$
+declare e1 uuid; e2 uuid; e3 uuid; j jsonb;
+begin
+  perform t.login('11111111-1111-4111-8111-000000000001');
+  e1 := t.observe('44444444-4444-4444-8444-00000000000d','00000000-0000-4000-8000-000000000201',
+                  date '2026-09-01','developing','parent');
+  e2 := t.observe('44444444-4444-4444-8444-00000000000d','00000000-0000-4000-8000-000000000201',
+                  date '2026-09-03','developing','tutor');
+  e3 := t.observe('44444444-4444-4444-8444-00000000000d','00000000-0000-4000-8000-000000000201',
+                  date '2026-09-05','developing','portfolio_artifact');
+  j := public.recompute_student_skill('44444444-4444-4444-8444-00000000000d','00000000-0000-4000-8000-000000000201');
+  perform t.assert_eq(j->>'computed_state','developing','8e. three supporting observations: developing');
+  perform t.assert_eq(j->>'evidence_sufficiency','corroborated','8f. on corroborated evidence');
+
+  -- half one: a new, lower, conflicting observation
+  perform t.observe('44444444-4444-4444-8444-00000000000d','00000000-0000-4000-8000-000000000201',
+                    date '2026-09-10','emerging','parent');
+  j := public.recompute_student_skill('44444444-4444-4444-8444-00000000000d','00000000-0000-4000-8000-000000000201');
+  perform t.assert_eq(j->>'computed_state','developing',
+    '8g. a new lower observation does NOT lower the state - the old basis still stands');
+  perform t.assert((j->'state_reasons') ? 'conflicting_assertions_present',
+    '8h. it is surfaced as a conflict instead');
+
+  -- half two: the evidence that justified `developing` is retracted
+  perform public.exclude_skill_evidence(e1,'recorded_in_error','TEST7P wrong child');
+  perform public.exclude_skill_evidence(e2,'recorded_in_error','TEST7P wrong child');
+  j := public.exclude_skill_evidence(e3,'recorded_in_error','TEST7P wrong child');
+  perform t.assert_eq(j->>'computed_state','emerging',
+    '8i. once the supporting evidence is retracted the state DOES fall - the basis is gone');
+  perform t.assert_eq(j->>'evidence_sufficiency','preliminary',
+    '8j. and sufficiency falls with it');
+  perform t.assert_eq(j->>'usable_evidence_count','1',
+    '8k. leaving only the observation nobody retracted');
+
+  -- and it is reversible, because a retraction is a human act like any other
+  j := public.restore_skill_evidence(e1);
+  perform t.assert_eq(j->>'computed_state','developing',
+    '8l. restoring the evidence restores the characterization it supported');
+
+  -- the retracted events themselves were never touched
+  perform t.assert_eq(
+    (select count(*)::int from public.student_skill_events
+      where id in (e1,e2,e3)), 3,
+    '8m. and none of the retracted evidence was deleted - only set aside');
+end $$;
+rollback;
+
+-- =============================================================================
 -- 9. A parent's decision outranks the computation and survives it
 -- =============================================================================
 

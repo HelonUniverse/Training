@@ -39,12 +39,27 @@
 -- disagreement is reported as `conflicting_assertions_present` and changes
 -- nothing about the value.
 --
--- The consequence, stated plainly because it is a real trade: automatic
--- recompute never walks a child backwards. A state comes down only when a human
--- does it - by deciding (an override) or by retracting the evidence underneath
--- it (an exclusion). Both are one call away and both are recorded. Nestra being
--- slightly behind a child's bad week is a cost worth paying; Nestra announcing
--- a regression on its own is not.
+-- WHEN A COMPUTED STATE MAY FALL, which is the same rule read the other way.
+-- The test is not the direction of the change; it is whether the basis for the
+-- old answer is still true.
+--
+--   A new lower observation             -> nothing changes. The evidence that
+--                                          supported the characterization is
+--                                          all still there.
+--   The supporting evidence retracted,
+--   excluded, or corrected              -> the state falls, and should. Nestra
+--                                          would otherwise be standing on
+--                                          something it no longer has.
+--   A human changes or releases a
+--   decision                            -> the effective state follows them.
+--
+-- Both halves are tested against each other on one profile (14_step7_profile,
+-- section 8bis), because they are easy to conflate and the difference is the
+-- whole rule.
+--
+-- The trade, stated plainly: Nestra will sometimes lag behind a genuinely
+-- harder week. That is a cost worth paying; Nestra announcing a regression on
+-- its own is not.
 --
 -- Nothing here decays with time. Elapsed time alone is never evidence.
 --

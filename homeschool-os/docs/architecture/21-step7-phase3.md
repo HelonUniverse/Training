@@ -107,21 +107,26 @@ Recompute writing under invoker rights is safe for determinism for a specific
 reason: the SELECT policy on `student_skill_events` scopes by **student**, not
 by row, so two authorized callers necessarily compute over the same evidence.
 
-## The decision that is not mine to make
+## When a computed state may fall — approved 2026-09-09
 
-**Automatic recompute never walks a child backwards.** If a child has three
-observations at `developing` and then one wobbly afternoon recorded at
-`emerging`, the computed state stays `developing` and the disagreement is
-reported as `conflicting_assertions_present`. A state comes down only when a
-human does it — by deciding, or by retracting the evidence underneath it.
+The test is not the direction of the change. It is whether the basis for the old
+answer is still true.
 
-The first version took the most recent occasion instead. The smoke test showed
-what that means: Nestra announcing a regression on the strength of one
-afternoon. That is the thing this product exists not to do, so the rule changed.
+| | |
+|---|---|
+| A new lower or conflicting observation | **nothing changes.** The evidence that supported the characterization is all still there. The disagreement is surfaced as `conflicting_assertions_present`, preserved in history, and acted on by nobody but a human. |
+| Supporting evidence retracted, excluded, or corrected | **the state falls, and should.** The evidence set that justified it no longer exists; continuing to assert it would be Nestra standing on something it no longer has. |
+| A human changes or releases a decision | the effective state follows them. |
 
-But the brief says two things that pull apart here — *conflicting evidence must
-not become a negative judgment*, and *prefer the conservative state*. This
-resolves that tension in the direction of never making a negative claim, at the
-cost of Nestra sometimes lagging behind a genuinely harder week. That is a
-product decision about what a family sees, and it is recorded here rather than
-buried in a function.
+Both halves are tested against each other on the same profile, because they are
+easy to conflate and the difference between them is the whole rule.
+
+The first version of this took the most recent occasion instead, and the smoke
+test showed what that means: a child with three observations at `developing`
+walked back to `emerging` by one wobbly afternoon — a machine announcing a
+regression. Evidence is never averaged into a score, and recency never wins on
+its own.
+
+The trade, stated plainly: Nestra will sometimes lag behind a genuinely harder
+week. That is a cost worth paying; Nestra announcing a regression on its own is
+not.
