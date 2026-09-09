@@ -9,6 +9,15 @@
 -- could not answer came out explicitly unknown rather than plausibly filled in.
 -- =============================================================================
 
+-- Taken before a single assertion runs. Several tests below deliberately mutate
+-- rows to prove a constraint refuses something, and section 10 was comparing
+-- against the wreckage they leave rather than against what the migration
+-- produced. The snapshot is the migration's actual output.
+create temporary table mig_profile_snapshot as
+  select student_id, skill_id, notes, skill_state, computed_state,
+         active_override_id, override_state
+    from public.student_skills;
+
 do $$
 declare v_n int; v_state text; v_src text; v_prov text;
 begin
@@ -182,5 +191,66 @@ begin
   perform t.assert_eq(v_err, 'REFUSED',
     '9c. adding refresh_suggested to the state enum fails the invariants');
 end $$;
+
+-- =============================================================================
+-- 10. Phase 3 carried every legacy state forward without reclassifying anybody
+-- =============================================================================
+-- The failure this guards against: a legacy row holds a state a person typed,
+-- with no events underneath it, because the profile predates the idea that a
+-- state comes from evidence. The first recompute finds nothing and computes
+-- `unknown`. Without the carry-forward in 0084 that is a machine erasing a
+-- parent's record on the strength of having no information.
+
+select t.assert_eq(
+  (select count(*)::int from mig_profile_snapshot where skill_state <> 'unknown'),
+  (select count(*)::int from mig_profile_snapshot
+    where skill_state <> 'unknown' and active_override_id is not null
+      and override_state = skill_state),
+  '10a. every legacy state that said something became a linked human decision');
+
+select t.assert_eq(
+  (select count(*)::int from public.student_skill_overrides
+    where status = 'active' and carried_forward),
+  (select count(*)::int from mig_profile_snapshot where skill_state <> 'unknown'),
+  '10b. one carried decision per state, and none invented for a state nobody set');
+
+select t.assert_eq(
+  (select count(*)::int from mig_profile_snapshot where computed_state <> 'unknown'),
+  0, '10c. while no computed state was invented for rows that have no evidence');
+
+-- The point of the carry-forward, proved rather than asserted. Not every legacy
+-- row is evidence-free - the seed gives one of them events, and that one
+-- computes `emerging` on its own. What must hold for all of them is that the
+-- computation never silently replaces what a person recorded with something
+-- lower, and that at least one row would have lost its state outright.
+do $$
+declare r record; v jsonb; v_checked int := 0; v_would_have_lost int := 0;
+begin
+  for r in select student_id, skill_id, skill_state from mig_profile_snapshot
+            where skill_state <> 'unknown' loop
+    v := app.compute_skill_state(r.student_id, r.skill_id);
+    perform t.assert(
+      (v->>'computed_state')::app.skill_state <= r.skill_state,
+      '10d. evidence never characterizes a carried row higher than the person did ('
+        || r.skill_state::text || ' vs ' || (v->>'computed_state') || ')');
+    if (v->>'computed_state') = 'unknown' then
+      v_would_have_lost := v_would_have_lost + 1;
+    end if;
+    v_checked := v_checked + 1;
+  end loop;
+  perform t.assert(v_checked >= 4,
+    '10e. and enough carried rows existed for that to mean something');
+  perform t.assert(v_would_have_lost >= 1,
+    '10f. at least one state would have been erased outright without the carry-forward');
+end $$;
+
+select t.assert_eq(
+  (select count(*)::int from public.student_skill_overrides
+    where carried_forward and decided_by is null),
+  (select count(*)::int from public.student_skill_overrides o
+    join public.student_skills ss on ss.id = o.student_skill_id
+   where o.carried_forward
+     and coalesce(ss.human_confirmed_by, ss.entered_by, ss.created_by, ss.updated_by) is null),
+  '10g. rows that named nobody are carried anonymously rather than attributed to a guardian');
 
 select t.assert(true, '--- migration regression complete ---');
