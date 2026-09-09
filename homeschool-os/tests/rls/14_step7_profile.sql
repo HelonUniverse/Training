@@ -831,6 +831,45 @@ end $$;
 rollback;
 
 -- =============================================================================
+-- 15bis. The explanation cites the evidence that supports the answer
+-- =============================================================================
+-- When sufficiency caps an observation, the state and the evidence behind it can
+-- come apart. The first version cited only the observations at the highest
+-- asserted level, so a profile computed as `developing` cited a single row that
+-- said `secure`, dated before the two that actually said `developing`. The state
+-- was right and the answer for it was wrong.
+--
+-- Asserting that as_of was merely NOT NULL passed the whole time. This asserts
+-- the value.
+
+begin;
+do $$
+declare e1 uuid; e2 uuid; e3 uuid; j jsonb;
+begin
+  perform t.login('11111111-1111-4111-8111-000000000001');
+  e1 := t.observe('44444444-4444-4444-8444-00000000000d','00000000-0000-4000-8000-000000000201',
+                  date '2026-09-01','secure','parent');
+  e2 := t.observe('44444444-4444-4444-8444-00000000000d','00000000-0000-4000-8000-000000000201',
+                  date '2026-09-03','developing','tutor');
+  e3 := t.observe('44444444-4444-4444-8444-00000000000d','00000000-0000-4000-8000-000000000201',
+                  date '2026-09-05','developing','portfolio_artifact');
+  j := public.recompute_student_skill('44444444-4444-4444-8444-00000000000d',
+                                      '00000000-0000-4000-8000-000000000201');
+
+  perform t.assert_eq(j->>'computed_state','developing','15e. the ceiling holds the state at developing');
+  perform t.assert((j->'state_reasons') ? 'limited_by_sufficiency', '15f. and says so');
+  perform t.assert_eq(j->>'state_as_of','2026-09-05',
+    '15g. the as-of is the most recent observation that SUPPORTS that state, not the highest one');
+  perform t.assert_eq(
+    (select count(*)::int from jsonb_array_elements_text(j->'state_evidence_ids')), 3,
+    '15h. and all three supporting observations are cited, not just the strongest');
+  perform t.assert(
+    (select bool_and(x::uuid in (e1,e2,e3)) from jsonb_array_elements_text(j->'state_evidence_ids') t(x)),
+    '15i. and every cited id is one of them');
+end $$;
+rollback;
+
+-- =============================================================================
 -- 16. STEP 6 and the phase 1-2 guarantees are still intact
 -- =============================================================================
 

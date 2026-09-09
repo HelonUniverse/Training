@@ -39,6 +39,36 @@ select 'functions_app_public', count(*)::text,
   from pg_proc p join pg_namespace n on n.oid = p.pronamespace
  where n.nspname in ('app','public')
 union all
+-- STEP 7 phase 3: hash the function BODIES, not only their signatures. The
+-- signature row above agreed between local and managed while 24 bodies
+-- differed, because every migration applied by hand through the MCP channel was
+-- retyped and some had their comments trimmed on the way. The check that says
+-- "these two databases run the same code" has to look at the code.
+--
+-- TWO ROWS, and the difference between them is the diagnosis:
+--
+--   function_bodies            the text as stored. Differs if so much as a
+--                              comment differs, which is what you want from a
+--                              "is the deployed code the code in this repo"
+--                              check.
+--   canonical_function_bodies  comments stripped and all whitespace removed.
+--                              This is the one that means "the same code runs".
+--
+-- If the first differs and the second matches, the deployment is behaviourally
+-- identical and textually drifted - annoying, not dangerous. If the second
+-- differs, something real is wrong.
+select 'function_bodies', count(*)::text,
+       md5(string_agg(p.prosrc, chr(10)
+                      order by n.nspname, p.proname, pg_get_function_identity_arguments(p.oid)))
+  from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+ where n.nspname in ('app','public') and p.prokind = 'f'
+union all
+select 'canonical_function_bodies', count(*)::text,
+       md5(string_agg(regexp_replace(regexp_replace(p.prosrc, '--[^\n]*', '', 'g'), '\s', '', 'g'), chr(10)
+                      order by n.nspname, p.proname, pg_get_function_identity_arguments(p.oid)))
+  from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+ where n.nspname in ('app','public') and p.prokind = 'f'
+union all
 select 'triggers_public', count(*)::text,
        md5(string_agg(c.relname||'.'||t.tgname, ',' order by c.relname, t.tgname))
   from pg_trigger t join pg_class c on c.oid = t.tgrelid
