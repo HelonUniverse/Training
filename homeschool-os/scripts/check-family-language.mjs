@@ -24,6 +24,13 @@ const LOCALES = ['en-US', 'es-US'];
  * external framework. Wording that describes OUR RECORDS is fine and absent
  * here on purpose: "no learning evidence is linked to this reference" says what
  * we hold, not what the child is.
+ *
+ * A third element narrows an entry to matching KEYS. Most of these words are a
+ * deficit claim wherever they appear, but a few are only a deficit claim when
+ * they are about a child: an invitation that is `Vencida` has genuinely
+ * expired, and saying so is correct. Banning the word outright failed on
+ * exactly that string, so the ambiguous ones are scoped to the copy where the
+ * subject is a child rather than a token.
  */
 const BANNED = [
   // English
@@ -37,6 +44,21 @@ const BANNED = [
   [/\bcatch up\b/i,                     'same'],
   [/\bbelow grade\b/i,                  'same'],
   [/\boff[- ]grade\b/i,                 'asynchronous development across subjects is normal'],
+  // STEP 7 phase 4. A revisit suggestion is the single most likely place for a
+  // deficit claim to appear, because the feature is genuinely about something
+  // fading - and the honest version of that sentence is about OUR RECORDS
+  // ("you haven't captured recent evidence"), never about the child
+  // ("your child is forgetting this").
+  [/\bforgetting\b/i,                   'a gap in our records is not a claim about how a child remembers'],
+  [/\b(skill|mastery) (has )?declined\b/i, 'nothing declined; we simply have not seen it lately'],
+  [/\bno longer secure\b/i,             '`secure` stays `secure` while a revisit is suggested'],
+  [/\bneeds? remediation\b/i,           'a revisit is an invitation, not a treatment plan'],
+  [/\boverdue\b/i,                      'an interval elapsing is not a deadline missed', /^refresh\./],
+  [/\bregress(ed|ion|ing)\b/i,          'Nestra never asserts a child went backwards'],
+  [/\bolvidando\b/i,                    'a gap in our records is not a claim about how a child remembers'],
+  [/\bha disminuido\b/i,                'nothing declined; we simply have not seen it lately'],
+  [/\bya no (es|est[áa]) seguro\b/i,    '`secure` stays `secure` while a revisit is suggested'],
+  [/\bvencid[oa]\b/i,                   'an interval elapsing is not a deadline missed', /^refresh\./],
   // Spanish - the same claims, which is the point of checking both catalogs
   [/\best[áa]ndar requerido\b/i,        'a standard is a reference, never a requirement'],
   [/\bdebe completar\b/i,               'nothing must be completed by a date'],
@@ -59,7 +81,8 @@ const problems = [];
 for (const locale of LOCALES) {
   const catalog = JSON.parse(readFileSync(join(ROOT, 'messages', `${locale}.json`), 'utf8'));
   for (const [key, value] of flatten(catalog)) {
-    for (const [pattern, why] of BANNED) {
+    for (const [pattern, why, keyScope] of BANNED) {
+      if (keyScope && !keyScope.test(key)) continue;
       if (pattern.test(value)) problems.push({ locale, key, value, why });
     }
   }

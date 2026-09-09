@@ -929,5 +929,30 @@
       "publish": "Publicar filas aprobadas",
       "emptyQueue": "No hay nada esperando revisión."
     }
+  },
+  "refresh": {
+    "title": "Sugerencias para repasar",
+    "help": "Si lo activas, Nestra puede señalar una destreza que quizás disfruten repasar juntos. Nunca cambia lo que tu hijo ha demostrado.",
+    "enable": "Sugerir repasos",
+    "intervalLabel": "Sugerir después de",
+    "intervalDays": "{days} días",
+    "intervalHelp": "Un punto de partida, no una regla sobre los niños. Cámbialo cuando quieras.",
+    "suggested": "¿Listos para un repaso rápido?",
+    "suggestedBody": "Quizás valga la pena repasar esto juntos. {name} sigue con dominio seguro — esto es solo un recordatorio, no un cambio.",
+    "noRecentEvidence": "No has registrado evidencia reciente de esta destreza.",
+    "stillSecure": "Sigue seguro",
+    "dismiss": "Ahora no",
+    "dismissed": "No lo mencionaremos otra vez por un tiempo.",
+    "requestRevisit": "Recuérdame repasar esto",
+    "requested": "Guardado. Lo mostraremos la próxima vez que entres.",
+    "markRevisited": "Ya lo repasamos",
+    "whyTitle": "¿Por qué aparece esto?",
+    "whyGoal": "Tienes una meta activa para esta destreza.",
+    "whyPlan": "Es una prioridad en el plan de aprendizaje actual.",
+    "whyCourse": "Forma parte de un curso en el que {name} está inscrito.",
+    "whyPrerequisite": "Sostiene algo en lo que {name} está trabajando ahora.",
+    "whyRequested": "Pediste que te recordáramos esta.",
+    "offTitle": "Las sugerencias para repasar están desactivadas",
+    "offBody": "No se está midiendo ni juzgando nada. Puedes activarlas cuando te sean útiles."
   }
 }

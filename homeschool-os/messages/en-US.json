@@ -929,5 +929,30 @@
       "publish": "Publish approved rows",
       "emptyQueue": "Nothing is waiting for review."
     }
+  },
+  "refresh": {
+    "title": "Revisit suggestions",
+    "help": "When you turn this on, Nestra can point out a skill you might enjoy revisiting together. It never changes what your child has shown.",
+    "enable": "Suggest revisits",
+    "intervalLabel": "Suggest after",
+    "intervalDays": "{days} days",
+    "intervalHelp": "A starting point, not a rule about children. Change it whenever you like.",
+    "suggested": "Ready for a quick revisit?",
+    "suggestedBody": "It may be useful to revisit this together. {name} is still secure in it — this is just a nudge, not a change.",
+    "noRecentEvidence": "You haven't captured recent evidence for this skill.",
+    "stillSecure": "Still secure",
+    "dismiss": "Not now",
+    "dismissed": "We won't bring this one up again for a while.",
+    "requestRevisit": "Remind me to revisit this",
+    "requested": "Saved. We'll show this when you next look.",
+    "markRevisited": "We revisited this",
+    "whyTitle": "Why is this here?",
+    "whyGoal": "You have an active goal for this skill.",
+    "whyPlan": "It's a priority in the current learning plan.",
+    "whyCourse": "It's part of a course {name} is enrolled in.",
+    "whyPrerequisite": "It underpins something {name} is working on now.",
+    "whyRequested": "You asked to be reminded about this one.",
+    "offTitle": "Revisit suggestions are off",
+    "offBody": "Nothing is being tracked or judged. You can turn this on whenever it would be useful."
   }
 }
