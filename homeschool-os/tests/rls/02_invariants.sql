@@ -7,21 +7,42 @@
 \set LUCASU '11111111-1111-4111-8111-000000000009'
 \set MARLA '44444444-4444-4444-8444-00000000000e'
 
--- 1. AI alone may never mark a skill mastered.
+-- 1. AI alone may never decide a child is secure in a skill.
+--
+-- The 0012 version of this test required confidence in ('teacher_observed',
+-- 'assessment_confirmed') before a skill could be 'mastered'. That rule made a
+-- PARENT's own observation insufficient - in a homeschool, where the parent is
+-- the teacher, no parent could ever record that their child is secure without a
+-- third party or a test. 0082 corrected it: the guarantee is that a MACHINE may
+-- not decide, not that a particular kind of human must. This test now proves
+-- both halves.
 do $$
 begin
+  -- An unreviewed AI proposal may not carry a state at all.
   begin
-    insert into public.student_skills (student_id, skill_id, mastery_level, confidence, score)
+    insert into public.student_skills (student_id, skill_id, skill_state, record_provenance)
     values ('44444444-4444-4444-8444-00000000000d', '00000000-0000-4000-8000-000000000204',
-            'mastered', 'ai_suggested', 95);
-    raise exception 'ASSERTION FAILED: AI-only mastery was accepted';
+            'secure', 'ai_proposed_unreviewed');
+    raise exception 'ASSERTION FAILED: an unreviewed AI proposal was given a state';
   exception when check_violation then null;
   end;
-  -- a human-confirmed assessment result may.
-  insert into public.student_skills (student_id, skill_id, mastery_level, confidence, score,
+
+  -- Nor may anything reach `secure` without a human confirmation.
+  begin
+    insert into public.student_skills (student_id, skill_id, skill_state, evidence_source)
+    values ('44444444-4444-4444-8444-00000000000d', '00000000-0000-4000-8000-000000000204',
+            'secure', 'teacher');
+    raise exception 'ASSERTION FAILED: secure was accepted with no human confirmation';
+  exception when check_violation then null;
+  end;
+
+  -- A PARENT's own confirmation is sufficient. This is the half the old rule
+  -- got wrong, and it is the half a homeschool depends on.
+  insert into public.student_skills (student_id, skill_id, skill_state, evidence_source,
+                                     evidence_confidence, record_provenance,
                                      human_confirmed_by, human_confirmed_at)
   values ('44444444-4444-4444-8444-00000000000d', '00000000-0000-4000-8000-000000000204',
-          'mastered', 'assessment_confirmed', 95,
+          'secure', 'parent', 'corroborated', 'human_entered',
           '11111111-1111-4111-8111-000000000001', now());
   delete from public.student_skills where student_id = '44444444-4444-4444-8444-00000000000d';
 end $$;
@@ -161,19 +182,43 @@ begin
 end $$;
 
 -- 11. Skill history is append-only.
+--
+-- This used to attempt `update ... set score = 99`. 0082 retired `score`, and
+-- deleting the test with the column would have silently dropped an append-only
+-- guarantee on a child's history. It is re-pointed at surviving columns, and
+-- extended to cover DELETE - which the trigger always forbade and this test
+-- never checked.
 do $$
 declare v_ss uuid; v_ev uuid;
 begin
-  insert into public.student_skills (student_id, skill_id, confidence)
-  values ('44444444-4444-4444-8444-00000000000d', '00000000-0000-4000-8000-000000000206', 'teacher_observed')
+  insert into public.student_skills (student_id, skill_id, evidence_source)
+  values ('44444444-4444-4444-8444-00000000000d', '00000000-0000-4000-8000-000000000206', 'teacher')
   returning id into v_ss;
-  insert into public.student_skill_events (student_skill_id, student_id, skill_id, confidence, source_type, score)
+  insert into public.student_skill_events (student_skill_id, student_id, skill_id,
+                                           evidence_source, evidence_confidence,
+                                           source_type, skill_state, evidence_note)
   values (v_ss, '44444444-4444-4444-8444-00000000000d', '00000000-0000-4000-8000-000000000206',
-          'teacher_observed', 'observation', 68)
+          'teacher', 'supported', 'observation', 'developing', 'observed during a lesson')
   returning id into v_ev;
+
+  -- Rewriting what we said we observed.
   begin
-    update public.student_skill_events set score = 99 where id = v_ev;
-    raise exception 'ASSERTION FAILED: a skill event was rewritten';
+    update public.student_skill_events set evidence_note = 'rewritten' where id = v_ev;
+    raise exception 'ASSERTION FAILED: a skill event note was rewritten';
+  exception when restrict_violation then null;
+  end;
+
+  -- Rewriting what we said we believed.
+  begin
+    update public.student_skill_events set skill_state = 'secure' where id = v_ev;
+    raise exception 'ASSERTION FAILED: a skill event state was rewritten';
+  exception when restrict_violation then null;
+  end;
+
+  -- Removing it altogether.
+  begin
+    delete from public.student_skill_events where id = v_ev;
+    raise exception 'ASSERTION FAILED: a skill event was deleted';
   exception when restrict_violation then null;
   end;
 end $$;

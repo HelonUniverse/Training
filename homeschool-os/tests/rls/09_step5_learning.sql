@@ -336,7 +336,7 @@ begin
    where student_id = '44444444-4444-4444-8444-00000000000d';
   select count(*)::int into v_events_before from public.student_skill_events
    where student_id = '44444444-4444-4444-8444-00000000000d';
-  select mastery_level::text into v_level_before from public.student_skills
+  select skill_state::text into v_level_before from public.student_skills
    where student_id = '44444444-4444-4444-8444-00000000000d' limit 1;
 
   v_ev := public.confirm_skill_evidence(
@@ -357,7 +357,7 @@ begin
                         where student_id = '44444444-4444-4444-8444-00000000000d'),
                       v_events_before,
     '5d. and no mastery event');
-  perform t.assert_eq((select mastery_level::text from public.student_skills
+  perform t.assert_eq((select skill_state::text from public.student_skills
                         where student_id = '44444444-4444-4444-8444-00000000000d'
                         limit 1), v_level_before,
     '5e. and did not move the mastery level that was already there');

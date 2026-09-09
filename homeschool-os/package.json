@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit",
     "test:e2e": "playwright test",
     "guard": "bash scripts/check-service-role.sh && node scripts/check-i18n.mjs && node scripts/check-family-language.mjs",
-    "test:sql": "bash tests/local/meta_discovery.sh && bash tests/local/test.sh"
+    "test:sql": "bash tests/local/meta_discovery.sh && bash tests/migration/run.sh && bash tests/local/test.sh"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.6",
