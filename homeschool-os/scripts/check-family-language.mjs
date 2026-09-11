@@ -59,6 +59,21 @@ const BANNED = [
   [/\bha disminuido\b/i,                'nothing declined; we simply have not seen it lately'],
   [/\bya no (es|est[áa]) seguro\b/i,    '`secure` stays `secure` while a revisit is suggested'],
   [/\bvencid[oa]\b/i,                   'an interval elapsing is not a deadline missed', /^refresh\./],
+  // STEP 7 phase 5. A diagnostic is where grade level tries hardest to come
+  // back, because the whole genre it resembles is built on it. An item is never
+  // a grade's item, a child is never too old or too young for one, and an
+  // observation that did not demonstrate something is never a failure.
+  [/\b(\d+(st|nd|rd|th)|first|second|third|fourth|fifth)[- ]grade (question|item|level)\b/i,
+                                        'an item belongs to a skill, never to a grade'],
+  [/\byou should know this\b/i,         'nobody owes a skill by a date'],
+  [/\btoo easy for your age\b/i,        'age is not a claim about what a child finds easy'],
+  [/\b(you |she |he )?failed\b/i,       'an observation that did not demonstrate a skill is not a failure'],
+  [/\bdeficien(t|cy)\b/i,               'Nestra describes what it can support, never what is missing from a child'],
+  [/\bplacement (test|level|grade)\b/i, 'this is not a placement test and must never be described as one'],
+  [/\bdemasiado f[áa]cil para (tu|su) edad\b/i, 'age is not a claim about what a child finds easy'],
+  [/\bya deber[ií]as saber\b/i,         'nobody owes a skill by a date'],
+  [/\breprob[óo]\b/i,                   'an observation that did not demonstrate a skill is not a failure'],
+  [/\bdeficien(te|cia)\b/i,             'Nestra describes what it can support, never what is missing from a child'],
   // Spanish - the same claims, which is the point of checking both catalogs
   [/\best[áa]ndar requerido\b/i,        'a standard is a reference, never a requirement'],
   [/\bdebe completar\b/i,               'nothing must be completed by a date'],
